@@ -10,8 +10,20 @@
 
 using namespace std;
 
-int subscribe(PGconn *conn)
+void *subscribe(void *info_p)
 {
+	char *info;
+	info = (char*)info_p;
+
+	PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
+			user=postgres \
+			password=postgres \
+			dbname=testdb");
+
+	if (PQstatus(conn) == CONNECTION_BAD) {
+		printf("db connect failed\n");
+	}
+
 	zmq::context_t context_sub (1);
 	zmq::socket_t subscriber (context_sub, ZMQ_SUB);
 
@@ -31,6 +43,8 @@ int subscribe(PGconn *conn)
 	// tx_processing(recv_msg);
 
 	tx_save(conn, recv_msg);
+
+        PQfinish(conn);
 
 	return 0;
 }

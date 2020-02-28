@@ -1,7 +1,7 @@
 PROGRAM = speedup
 CPP = g++
 
-LIB = -lzmq -lpq
+LIB = -lzmq -lpq -lpthread
 
 INCLUDE = -I/usr/include/postgresql
 

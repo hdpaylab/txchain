@@ -1,24 +1,31 @@
 #include <stdio.h>
-#include <libpq-fe.h>
+#include <pthread.h>
 
 #include "subscribe.h"
 
 int main () {
+	
+	pthread_t p_thread[4];
+	int thr_id;
+	int status;	
+	int i;
 
-	PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
-				    user=postgres \
-				    password=postgres \
-				    dbname=testdb");
+	char info[4][1024];  
 
-	if (PQstatus(conn) == CONNECTION_BAD) {
-		printf("db connect failed\n");
+	for (i = 0; i < 4; i ++) {
+
+		thr_id = pthread_create(&p_thread[i], NULL, subscribe, 
+				(void *)info[i]);
+		if (thr_id < 0)
+		{
+			perror("thread create error : ");
+			return 0;
+		}
+
 	}
-
-
-	// thread 	
-	subscribe(conn);
-
-	PQfinish(conn);
+	for (i = 0; i < 4; i++) {
+		pthread_join(p_thread[i], (void **)&status);
+	}
 
 	return 0;
 }

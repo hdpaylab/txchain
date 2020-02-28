@@ -1,3 +1,1 @@
-#include <libpq-fe.h>
-
-int subscribe(PGconn *conn);
+void *subscribe(void *info_p);
