@@ -9,7 +9,9 @@ sudo apt-get install libpq-dev -y
 
 
 $ sudo -u postgres psql postgres
+
 psql (9.3.9)
+
 Type "help" for help.
 
 postgres=# \password postgres
