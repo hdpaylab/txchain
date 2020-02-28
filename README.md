@@ -24,7 +24,7 @@ postgres=# \password postgres
 sudo -u postgres createdb testdb
 
 create table transactions (
-        id              bigserial primarykey,
+        id              bigserial primary key,
         txid            varchar(1024) NOT NULL,
         recv_index      int,
         file_path       varchar(1024),
