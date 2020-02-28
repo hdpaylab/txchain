@@ -1,12 +1,16 @@
 # txchain
 tx speed up processing
 
+#Dependencies
+
 sudo apt install libzmqpp-dev -y
 
 sudo apt install postgresql -y
 
 sudo apt-get install libpq-dev -y
 
+
+#DB 
 
 $ sudo -u postgres psql postgres
 
