@@ -2,9 +2,7 @@
 tx speed up processing
 
 sudo apt install libzmqpp-dev -y
-
 sudo apt install postgresql -y
-
 sudo apt-get install libpq-dev -y
 
 
