@@ -1,33 +1,43 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 #include "xsub.h"
 #include "xpub.h"
 
-int main (int ac, char *av[])
+
+int	main(int ac, char *av[])
 {
 	
-	pthread_t p_thread[5];
-	int thr_id;
-	int status;	
-	int i;
-	char info[5][1024];  
+	pthread_t thrid[5];
+	int	ret = 0;
+	int	ii = 0;
+	int	maxnode = 1;	// 나중에 설정으로 뺄 것 
+	char	info[5][256];
 
-	thr_id = pthread_create(&p_thread[0], NULL, publish, (void *)info[0]);
-	if (thr_id < 0)
+	if (ac == 2 && atoi(av[1]) > 1)
+	{
+		maxnode = atoi(av[1]);
+		if (maxnode > 10)
+			maxnode = 10;	// 당분간 최대 node는 10개로..
+	}
+
+	// 발신자 
+	ret = pthread_create(&thrid[0], NULL, publish, (void *)info[0]);
+	if (ret < 0)
 	{
 		perror("thread create error : ");
 		return 0;
 	}
 
 
-//	for (i = 1; i < 4; i ++) {
-	for (i = 1; i < 2; i ++)
+	// 수신자 
+	for (ii = 1; ii <= maxnode; ii ++)
 	{
-		thr_id = pthread_create(&p_thread[i], NULL, subscribe, 
-				(void *)info[i]);
-		if (thr_id < 0)
+		ret = pthread_create(&thrid[ii], NULL, subscribe, 
+				(void *)info[ii]);
+		if (ret < 0)
 		{
 			perror("thread create error : ");
 			return 0;
@@ -35,8 +45,8 @@ int main (int ac, char *av[])
 
 	}
 
-	for (i = 0; i < 4; i++) {
-		pthread_detach(p_thread[i]);
+	for (ii = 0; ii <= maxnode; ii++) {
+		pthread_detach(thrid[ii]);
 	}
 
 	while (1)

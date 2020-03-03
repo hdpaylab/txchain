@@ -6,15 +6,16 @@
 #include <unistd.h>
 
 #include "zhelpers.hpp"
-
 #include "xdb.h"
 
 using namespace std;
 
-void *publish(void *info_p)
+
+void	*publish(void *info_p)
 {
         char	*info = (char*)info_p;
 	int	count = 0;
+	const char *filter = "!@#$";
 
 	/****
         PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
@@ -36,8 +37,7 @@ void *publish(void *info_p)
 		zmq::socket_t xpub(context_pub, ZMQ_PUB);
 		xpub.bind("tcp://*:5556");
 
-		char	data[256] = {0}, tmp[200] = {0};
-		char	*filter = "!@#$";
+		char	data[1024] = {0}, tmp[200] = {0};
 
 		sleep(2);
 
@@ -47,17 +47,17 @@ void *publish(void *info_p)
 		{
 			usleep(1);
 
-			// send 100 bytes
+			// send 260 bytes
 			count++;
-			strcpy(tmp, "1234567890");
+			strcpy(tmp, "123456789012345678901234567890");
 			sprintf(data, "%s%6d----------%s%s%s%s%s%s%s%s", filter, count,
 				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
 			s_sendmore(xpub, data);
 		//	cout << "s_sendmore: " << data << endl;
 
-			// send 100 bytes
+			// send 260 bytes
 			count++;
-			strcpy(tmp, "1234567890");
+			strcpy(tmp, "123456789012345678901234567890");
 			sprintf(data, "%s%6d==========%s%s%s%s%s%s%s%s", filter, count,
 				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
 

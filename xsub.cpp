@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 void *subscribe(void *info_p)
 {
 	char	*info = (char*)info_p;
@@ -37,12 +38,12 @@ void *subscribe(void *info_p)
 
 		xsock.connect("tcp://192.168.1.10:5556");
 		
-		char	end[100] = {0};
+		char	endmark[100] = {0};
 		const char *filter = "!@#$";	// s_sendmore()로 publish에서 보내는 것만 수용함 
 
 		xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 
-		sprintf(end, "%s CLOSE", filter);
+		sprintf(endmark, "%s CLOSE", filter);
 
 		sleep (1);
 
@@ -54,7 +55,7 @@ void *subscribe(void *info_p)
 
 			count++;
 			printf("RECV(cliid=%d): %s\n", count, data.c_str());
-			if (data == end)
+			if (data == endmark)
 			{
 				fprintf(stderr, "Subscriber RECV CLOSE!\n");
 				break;
