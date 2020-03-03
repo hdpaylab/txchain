@@ -2,6 +2,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <time.h>
 #include <unistd.h>
 #include <libpq-fe.h>
@@ -15,6 +16,7 @@ void *subscribe(void *info_p)
 	char *info;
 	info = (char*)info_p;
 
+	/***
 	PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
 			user=postgres \
 			password=postgres \
@@ -23,28 +25,44 @@ void *subscribe(void *info_p)
 	if (PQstatus(conn) == CONNECTION_BAD) {
 		printf("db connect failed\n");
 	}
+	***/
 
-	zmq::context_t context_sub (1);
-	zmq::socket_t subscriber (context_sub, ZMQ_SUB);
+	while (1)
+	{
+		sleep (1);
 
-	subscriber.connect("tcp://192.168.70.140:5556");
-	
-	const char *filter = "100 ";
-	subscriber.setsockopt(ZMQ_SUBSCRIBE, filter, strlen (filter));
+		printf("Subscriber started!\n\n");
 
-	zmq::message_t update;
-	subscriber.recv(&update);
+		zmq::context_t context_sub (1);
+		zmq::socket_t subscriber (context_sub, ZMQ_SUB);
 
-	string recv_msg = 
-		string(static_cast<char*>(update.data()), update.size());
+		subscriber.connect("tcp://192.168.1.10:5556");
+		
+		const char *filter = "tx";
+		subscriber.setsockopt(ZMQ_SUBSCRIBE, filter, strlen (filter));
 
-	cout << recv_msg << endl;
+		while (1)
+		{
+			sleep(1);
 
-	// tx_processing(recv_msg);
+			printf("---1\n");
+			zmq::message_t update;
+			subscriber.recv(&update);
 
+			string recv_msg = string(static_cast<char*>(update.data()), update.size());
+
+			cout << "RECV: " << recv_msg << endl;
+
+			// tx_processing(recv_msg);
+
+		}
+	}
+
+	/***
 	tx_save(conn, recv_msg);
 
         PQfinish(conn);
+	***/
 
 	return 0;
 }

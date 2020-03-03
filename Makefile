@@ -1,4 +1,4 @@
-PROGRAM = speedup
+PROGRAM = tx
 CPP = g++
 
 LIB = -lzmq -lpq -lpthread

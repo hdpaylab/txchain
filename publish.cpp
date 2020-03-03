@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <libpq-fe.h>
+#include <unistd.h>
 
 #include "data_control.h"
 
@@ -13,6 +14,7 @@ void *publish(void *info_p)
         char *info;
         info = (char*)info_p;
 
+	/****
         PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
                         user=postgres \
                         password=postgres \
@@ -21,6 +23,7 @@ void *publish(void *info_p)
         if (PQstatus(conn) == CONNECTION_BAD) {
                 printf("db connect failed\n");
         }
+	***/
 
 	//  Prepare our context and publisher
 	zmq::context_t context_pub (1);
@@ -28,18 +31,27 @@ void *publish(void *info_p)
 	zmq::socket_t publisher (context_pub, ZMQ_PUB);
 	publisher.bind("tcp://*:5556");
 
-	// data select
-	// string tx = tx_get(conn);
-	string tx = "test text";
+	printf("publisher started!\n\n");
 
-	//  Send message to all subscribers
-	zmq::message_t message(200);
-	snprintf ((char *) message.data(), tx.size(), tx.data());
-	publisher.send(message);
+	while (1)
+	{
+		sleep(1);
 
-	cout << tx << endl;
+		// data select
+		// string tx = tx_get(conn);
+		string tx = "test text";
+
+		//  Send message to all subscribers
+		zmq::message_t message(200);
+		snprintf ((char *) message.data(), tx.size(), tx.data());
+		publisher.send(message);
+
+		cout << "SEND: " << tx << endl;
+	}
 	
+	/***
         PQfinish(conn);
+	***/
 
 	return 0;
 }
