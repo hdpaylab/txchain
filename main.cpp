@@ -42,6 +42,7 @@ int main (int ac, char *av[])
 	while (1)
 	{
 		sleep(1);
+		fflush(stdout);
 	}
 
 	return 0;
