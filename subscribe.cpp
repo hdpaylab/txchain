@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <libpq-fe.h>
 
+#include "zhelpers.hpp"
 #include "data_control.h"
 
 using namespace std;
@@ -33,27 +34,33 @@ void *subscribe(void *info_p)
 
 		printf("Subscriber started!\n\n");
 
-		zmq::context_t context_sub (1);
-		zmq::socket_t subscriber (context_sub, ZMQ_SUB);
+		zmq::context_t context_sub(1);
+		zmq::socket_t xsub(context_sub, ZMQ_SUB);
 
-		subscriber.connect("tcp://192.168.1.10:5556");
+		xsub.connect("tcp://localhost:5556");
 		
-		const char *filter = "tx";
-		subscriber.setsockopt(ZMQ_SUBSCRIBE, filter, strlen (filter));
+		const char *filter = "TX";	// s_sendmore()로 publish에서 보내는 것만 수용함 
+		xsub.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 
 		while (1)
 		{
 			sleep(1);
 
-			printf("---1\n");
+			/***
 			zmq::message_t update;
-			subscriber.recv(&update);
+			xsub.recv(&update);
 
+			printf("---2\n");
 			string recv_msg = string(static_cast<char*>(update.data()), update.size());
 
 			cout << "RECV: " << recv_msg << endl;
 
 			// tx_processing(recv_msg);
+			***/
+
+			std::string data = s_recv(xsub);
+
+			cout << "RECV: " << data << endl;
 
 		}
 	}

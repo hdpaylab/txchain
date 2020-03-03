@@ -5,6 +5,8 @@
 #include <libpq-fe.h>
 #include <unistd.h>
 
+#include "zhelpers.hpp"
+
 #include "data_control.h"
 
 using namespace std;
@@ -26,17 +28,27 @@ void *publish(void *info_p)
 	***/
 
 	//  Prepare our context and publisher
-	zmq::context_t context_pub (1);
+	zmq::context_t context_pub(1);
+	zmq::socket_t xpub(context_pub, ZMQ_PUB);
+	xpub.bind("tcp://*:5556");
 
-	zmq::socket_t publisher (context_pub, ZMQ_PUB);
-	publisher.bind("tcp://*:5556");
-
-	printf("publisher started!\n\n");
+	printf("Publisher started!\n\n");
 
 	while (1)
 	{
 		sleep(1);
 
+		char	data[256] = {0};
+
+		sprintf(data, "DATA %d", rand());
+
+		s_sendmore(xpub, "TX");
+		s_send(xpub, data);
+
+		s_sendmore(xpub, "TEST");
+		s_send(xpub, data);
+
+		/*****
 		// data select
 		// string tx = tx_get(conn);
 		string tx = "test text";
@@ -44,9 +56,10 @@ void *publish(void *info_p)
 		//  Send message to all subscribers
 		zmq::message_t message(200);
 		snprintf ((char *) message.data(), tx.size(), tx.data());
-		publisher.send(message);
+		xpub.send(message);
+		***/
 
-		cout << "SEND: " << tx << endl;
+		cout << "SEND: " << data << endl;
 	}
 	
 	/***
