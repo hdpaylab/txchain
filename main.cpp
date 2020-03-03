@@ -2,8 +2,8 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include "subscribe.h"
-#include "publish.h"
+#include "xsub.h"
+#include "xpub.h"
 
 int main (int ac, char *av[])
 {

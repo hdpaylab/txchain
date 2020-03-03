@@ -1,19 +1,23 @@
-PROGRAM = tx
 CPP = g++
 
-LIB = -lzmq -lpq -lpthread
+LIBS = -lzmq -lpq -lpthread
 
 INCLUDE = -I/usr/include/postgresql
 
 CPPFLAGS = $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings
 
-SRC = main.cpp data_control.cpp publish.cpp subscribe.cpp 
+SRCS = main.cpp xdb.cpp xpub.cpp xsub.cpp 
 
-OBJ = $(SRC:.cpp=.o)
+OBJS = $(SRCS:.cpp=.o)
 
-all: $(PROGRAM)
-$(PROGRAM): $(OBJ)
-	$(CPP) $(CPPFLAGS) -o $@ $(OBJ) $(LIB)
+
+all: tx tx2
+
+tx: $(OBJS)
+	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(LIBS)
+
+tx2: $(OBJS)
+	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(LIBS)
 
 clean:
-	rm -f $(PROGRAM) $(OBJ) *.o
+	rm -f tx tx2 $(OBJS) *.o
