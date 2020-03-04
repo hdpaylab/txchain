@@ -13,9 +13,9 @@
 using namespace std;
 
 
-void *subscribe(void *info_p)
+void	*thread_subscriber(void *info_p)
 {
-	char	*info = (char*)info_p;
+	char	*peer = (char *)info_p;
 	int	count = 0;
 
 	/***
@@ -31,17 +31,30 @@ void *subscribe(void *info_p)
 
 	while (1)
 	{
-		fprintf(stderr, "Subscriber START!\n\n");
+		FILE	*outfp = NULL;
+		char	peerstr[100] = {0}, endmark[100] = {0};
+		char	tmp[100] = {0}, *tp = NULL;
+		const char *filter = "!@#$";	// s_sendmore()로 publisher에서 보내는 것만 수용함 
+
+		fprintf(stderr, "Subscriber START! peer=%s\n\n", peer);
 
 		zmq::context_t context_sub(1);
 		zmq::socket_t xsock(context_sub, ZMQ_SUB);
 
-		xsock.connect("tcp://192.168.1.10:5556");
-		
-		char	endmark[100] = {0};
-		const char *filter = "!@#$";	// s_sendmore()로 publish에서 보내는 것만 수용함 
+		strcpy(tmp, peer);
+		strcat(tmp, ".out");
+		tp = strchr(tmp, ':');
+		assert(tp != NULL);
+		*tp = '_';
+		outfp = fopen(tmp, "w+b");
+		assert(outfp != NULL);
+
+		sprintf(peerstr, "tcp://%s", peer);
+		xsock.connect(peerstr);
 
 		xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
+		int bufsize = 4 * 1024 * 1024;
+		xsock.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
 		sprintf(endmark, "%s CLOSE", filter);
 
@@ -54,7 +67,8 @@ void *subscribe(void *info_p)
 			std::string data = s_recv(xsock);
 
 			count++;
-			printf("RECV(cliid=%d): %s\n", count, data.c_str());
+			fprintf(outfp, "%d: %s\n", count, data.c_str());
+
 			if (data == endmark)
 			{
 				fprintf(stderr, "Subscriber RECV CLOSE!\n");
@@ -62,14 +76,16 @@ void *subscribe(void *info_p)
 			}
 			else if (count % 100 == 0)
 			{
-				fprintf(stderr, "\r%8d    ", count);
+				fprintf(stderr, "\r%s	%8d    ", peer, count);
 				fflush(stderr);
 			}
 		}
 
-		fprintf(stderr, "\r%8d    \n", count);
+		fclose(outfp);
 
-		fprintf(stderr, "\nSubscriber END!\n");
+		fprintf(stderr, "\r%s	%8d    \n", peer, count);
+
+		fprintf(stderr, "\nSubscriber END! peer=%s\n", peer);
 
 		xsock.close();
 

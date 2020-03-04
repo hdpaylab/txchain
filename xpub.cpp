@@ -11,9 +11,9 @@
 using namespace std;
 
 
-void	*publish(void *info_p)
+void	*thread_publisher(void *info_p)
 {
-        char	*info = (char*)info_p;
+        int	sendport = *(int *)info_p;
 	int	count = 0;
 	const char *filter = "!@#$";
 
@@ -30,22 +30,24 @@ void	*publish(void *info_p)
 
 	for (int loop = 1; loop <= 1; loop++)
 	{
-		fprintf(stderr, "Publisher: %d START!\n\n", loop);
+		char	bindstr[100] = {0}, data[1024] = {0}, tmp[200] = {0};
+
+		fprintf(stderr, "Publisher: %d START! sendport=%d\n\n", loop, sendport);
 
 		//  Prepare our context and publisher
 		zmq::context_t context_pub(1);
 		zmq::socket_t xpub(context_pub, ZMQ_PUB);
-		xpub.bind("tcp://*:5556");
-
-		char	data[1024] = {0}, tmp[200] = {0};
+		sprintf(bindstr, "tcp://*:%d", sendport);
+		xpub.bind(bindstr);
 
 		sleep(2);
 
 		fprintf(stderr, "Publisher: %d START SEND!\n\n", loop);
 
-		for (int ii = 0; ii < 100000; ii++)
+		for (int ii = 0; ii < 1000000; ii++)
 		{
-			usleep(1);
+			if (ii % 10 == 0)
+				usleep(1);
 
 			// send 260 bytes
 			count++;
@@ -79,10 +81,10 @@ void	*publish(void *info_p)
 		printf("SEND: %s\n", data);
 		s_send(xpub, data);
 
-		fprintf(stderr, "Publisher: FINISH!\n");
+		fprintf(stderr, "Publisher: FINISH! sendport=%d\n", sendport);
 
 		sleep(1);
-		fprintf(stderr, "Publisher: END!\n");
+		fprintf(stderr, "Publisher: END! sendport=%d\n", sendport);
 
 		xpub.close();
 	}

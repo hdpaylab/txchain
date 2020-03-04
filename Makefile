@@ -20,4 +20,4 @@ tx2: $(OBJS)
 	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(LIBS)
 
 clean:
-	rm -f tx tx2 $(OBJS) *.o
+	rm -f tx tx2 $(OBJS) *.o *.out

@@ -1,1 +1,1 @@
-void *subscribe(void *info_p);
+void	*thread_subscriber(void *info_p);

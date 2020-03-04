@@ -1,1 +1,1 @@
-void *publish(void *info_p);
+void	*thread_publisher(void *info_p);
