@@ -20,7 +20,9 @@ Type "help" for help.
 
 postgres=# \password postgres
 
+
 // Create table 
+
 $ sudo -u postgres createdb testdb
 
 create table transactions (
