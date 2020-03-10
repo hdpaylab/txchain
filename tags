@@ -1,0 +1,45 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+MAX_NODE	main.cpp	20;"	d	file:
+__ZHELPERS_HPP_INCLUDED__	zhelpers.hpp	3;"	d
+c99_snprintf	zhelpers.hpp	/^	inline int c99_snprintf(char *outBuf, size_t size, const char *format, ...)$/;"	f
+c99_vsnprintf	zhelpers.hpp	/^	inline int c99_vsnprintf(char *outBuf, size_t size, const char *format, va_list ap)$/;"	f
+int64_t	zhelpers.hpp	/^    typedef __int64 int64_t;$/;"	t
+load_config	main.cpp	/^void	load_config(int ac, char *av[])$/;"	f
+main	main.cpp	/^int	main(int ac, char *av[])$/;"	f
+maxnode	main.cpp	/^int	maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
+npeer	main.cpp	/^int	npeer = 0;$/;"	v
+peers	main.cpp	/^char	peers[MAX_NODE][40] = {0};$/;"	v
+random	zhelpers.hpp	37;"	d
+s_catch_signals	zhelpers.hpp	/^inline static void s_catch_signals ()$/;"	f
+s_clock	zhelpers.hpp	/^s_clock (void)$/;"	f
+s_console	zhelpers.hpp	/^s_console (const char *format, ...)$/;"	f
+s_dump	zhelpers.hpp	/^s_dump (zmq::socket_t & socket)$/;"	f
+s_interrupted	zhelpers.hpp	/^static int s_interrupted = 0;$/;"	v
+s_recv	zhelpers.hpp	/^inline static bool s_recv(zmq::socket_t & socket, std::string & ostring, int flags = 0)$/;"	f
+s_recv	zhelpers.hpp	/^s_recv (zmq::socket_t & socket, int flags = 0) {$/;"	f
+s_recv	zhelpers.hpp	/^s_recv(void *socket, int flags = 0) {$/;"	f
+s_send	zhelpers.hpp	/^s_send (zmq::socket_t & socket, const std::string & string, int flags = 0) {$/;"	f
+s_send	zhelpers.hpp	/^s_send(void *socket, const char *string, int flags = 0) {$/;"	f
+s_sendmore	zhelpers.hpp	/^s_sendmore (zmq::socket_t & socket, const std::string & string) {$/;"	f
+s_sendmore	zhelpers.hpp	/^s_sendmore(void *socket, char *string) {$/;"	f
+s_set_id	zhelpers.hpp	/^s_set_id (zmq::socket_t & socket)$/;"	f
+s_set_id	zhelpers.hpp	/^s_set_id(zmq::socket_t & socket, intptr_t id)$/;"	f
+s_signal_handler	zhelpers.hpp	/^inline static void s_signal_handler (int signal_value)$/;"	f
+s_sleep	zhelpers.hpp	/^s_sleep (int msecs)$/;"	f
+s_version	zhelpers.hpp	/^s_version (void)$/;"	f
+s_version_assert	zhelpers.hpp	/^s_version_assert (int want_major, int want_minor)$/;"	f
+sendport	main.cpp	/^int	sendport = 7000;$/;"	v
+snprintf	zhelpers.hpp	44;"	d
+srandom	zhelpers.hpp	36;"	d
+thread_publisher	xpub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
+thread_subscriber	xsub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
+tx_save	xdb.cpp	/^int tx_save(PGconn *conn, string tx)$/;"	f
+uint	zhelpers.hpp	/^    typedef unsigned int  uint;$/;"	t
+ulong	zhelpers.hpp	/^    typedef unsigned long ulong;$/;"	t
+vsnprintf	zhelpers.hpp	45;"	d
+within	zhelpers.hpp	74;"	d
