@@ -13,11 +13,16 @@ ParamsHelperInfo paramsget(const string& Path)
 
 	_params = mapFromFileReadAll(Path);
 
-	snprintf(Params.PrivHelper.privateKeyPrefix, 10, "%s", _params.at("private-key-version").data());
-	snprintf(Params.PrivHelper.addrChecksum, 10, "%s", _params.at("address-checksum-value").data());
-	snprintf(Params.AddrHelper.pubKeyAddrPrefix, 10, "%s", _params.at("address-pubkeyhash-version").data());
-	snprintf(Params.AddrHelper.scriptAddrPrefix, 10, "%s", _params.at("address-scripthash-version").data());
-	snprintf(Params.AddrHelper.addrChecksum, 10, "%s", _params.at("address-checksum-value").data());
+	snprintf(Params.PrivHelper.privateKeyPrefix, 
+		sizeof(Params.PrivHelper.privateKeyPrefix), "%s", _params.at("private-key-version").data());
+	snprintf(Params.PrivHelper.addrChecksum, 
+		sizeof(Params.PrivHelper.addrChecksum), "%s", _params.at("address-checksum-value").data());
+	snprintf(Params.AddrHelper.pubKeyAddrPrefix, 
+		sizeof(Params.AddrHelper.pubKeyAddrPrefix), "%s", _params.at("address-pubkeyhash-version").data());
+	snprintf(Params.AddrHelper.scriptAddrPrefix, 
+		sizeof(Params.AddrHelper.scriptAddrPrefix), "%s", _params.at("address-scripthash-version").data());
+	snprintf(Params.AddrHelper.addrChecksum, 
+		sizeof(Params.AddrHelper.addrChecksum), "%s", _params.at("address-checksum-value").data());
 
 	return Params;
 }
