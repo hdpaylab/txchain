@@ -5,9 +5,9 @@
 
 using namespace std;
 
-ParamsHelperInfo paramsget(const string& Path)
+Params_type_t paramsget(const string& Path)
 {
-	static ParamsHelperInfo Params;
+	static Params_type_t Params;
 
 	map<std::string, std::string> _params;
 

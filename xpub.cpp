@@ -7,6 +7,7 @@
 
 #include "zhelpers.hpp"
 #include "xdb.h"
+#include "xparams.h"
 
 using namespace std;
 
@@ -27,6 +28,9 @@ void	*thread_publisher(void *info_p)
                 printf("db connect failed\n");
         }
 	***/
+
+	// params set
+	Params_type_t params = paramsget("params.dat");
 
 	for (int loop = 1; loop <= 1; loop++)
 	{

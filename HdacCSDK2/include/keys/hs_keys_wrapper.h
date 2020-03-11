@@ -43,6 +43,12 @@ struct TestStruct {
 	int32_t intData;
 };
 
+typedef struct ParamsHelperInfo {
+	keypairs_type_t keypairs;
+	struct PrivateKeyHelpInfo PrivHelper;
+	struct WalletAddrHelpInfo AddrHelper;
+}Params_type_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
