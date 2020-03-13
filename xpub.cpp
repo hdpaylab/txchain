@@ -69,15 +69,15 @@ void	*thread_publisher(void *info_p)
 			s_sendmore(xpub, data);
 			//	cout << "s_sendmore: " << data << endl;
 
-			free(signMessage);
-
 			// send 260 bytes
-//			count++;
+			count++;
 //			strcpy(tmp, "123456789012345678901234567890");
 //			sprintf(data, "%s%6d==========%s%s%s%s%s%s%s%s", filter, count,
 //				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
 
-//			s_send(xpub, data);
+			s_send(xpub, data);
+
+			free(signMessage);
 		//	cout << "s_send: " << data << endl;
 
 		//	처음 문자열이 filter가 아니면 수신하지 못함
