@@ -9,6 +9,7 @@
 
 #include "zhelpers.hpp"
 #include "xdb.h"
+#include "xparams.h"
 
 using namespace std;
 
@@ -28,6 +29,9 @@ void	*thread_subscriber(void *info_p)
 		printf("db connect failed\n");
 	}
 	***/
+
+	// params set
+	Params_type_t params = paramsget("params.dat");
 
 	while (1)
 	{
@@ -79,6 +83,15 @@ void	*thread_subscriber(void *info_p)
 				fprintf(stderr, "\r%s	%8d    ", peer, count);
 				fflush(stderr);
 			}
+			
+			int verify_check = verify_message(
+					"18wD7MBodeTYRAvN5bRuWYB11jwHdkGVCBLSnB",
+					data.data(),
+					"Hdac Technology, Solution Dev Team, Test Text.",
+					&params.AddrHelper);
+
+			printf("verify-Message: %s\n", verify_check? "true" : "false" );
+
 		}
 
 		fclose(outfp);

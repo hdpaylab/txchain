@@ -34,7 +34,7 @@ void	*thread_publisher(void *info_p)
 
 	for (int loop = 1; loop <= 1; loop++)
 	{
-		char	bindstr[100] = {0}, data[1024] = {0}, tmp[200] = {0};
+		char	bindstr[100] = {0}, data[1024] = {0}, tmp[1024] = {0};
 
 		fprintf(stderr, "Publisher: %d START! sendport=%d\n\n", loop, sendport);
 
@@ -55,19 +55,29 @@ void	*thread_publisher(void *info_p)
 
 			// send 260 bytes
 			count++;
-			strcpy(tmp, "123456789012345678901234567890");
-			sprintf(data, "%s%6d----------%s%s%s%s%s%s%s%s", filter, count,
-				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
+			char * signMessage = sign_message(
+				"VHXjccrTPdRXG8asyos5oqvw6mhWtqASkbFsVuBnkpi4WXn2jr8eMwwp",
+				"Hdac Technology, Solution Dev Team, Test Text.",
+				&params.PrivHelper, &params.AddrHelper);
+
+			printf("sign-Message: %s\n", signMessage);
+
+			memset(tmp, 0x00, sizeof(tmp));
+			strcpy(tmp, signMessage);
+
+			sprintf(data, "%s%6d--%s", filter, count, tmp);
 			s_sendmore(xpub, data);
-		//	cout << "s_sendmore: " << data << endl;
+			//	cout << "s_sendmore: " << data << endl;
+
+			free(signMessage);
 
 			// send 260 bytes
-			count++;
-			strcpy(tmp, "123456789012345678901234567890");
-			sprintf(data, "%s%6d==========%s%s%s%s%s%s%s%s", filter, count,
-				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
+//			count++;
+//			strcpy(tmp, "123456789012345678901234567890");
+//			sprintf(data, "%s%6d==========%s%s%s%s%s%s%s%s", filter, count,
+//				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
 
-			s_send(xpub, data);
+//			s_send(xpub, data);
 		//	cout << "s_send: " << data << endl;
 
 		//	처음 문자열이 filter가 아니면 수신하지 못함
@@ -79,6 +89,7 @@ void	*thread_publisher(void *info_p)
 		//	cout << "s_sendmore: " << "TEST" << endl;
 		//	s_send(xpub, data);
 		//	cout << "s_send: " << data << endl;
+
 		}
 
 		sprintf(data, "%s CLOSE", filter);
