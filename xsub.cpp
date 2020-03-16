@@ -117,7 +117,7 @@ void	*thread_subscriber(void *info_p)
 					"HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw",
 					signature, message, &params.AddrHelper);
 
-			printf("verify-Message: %s signature=%s\n",
+			fprintf(outfp, "verify-Message: %s signature=%s\n",
 				verify_check ? "true" : "false", signature);
 		}
 

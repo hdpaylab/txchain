@@ -51,26 +51,25 @@ void	*thread_publisher(void *info_p)
 		fprintf(stderr, "Publisher: %d START SEND!\n\n", loop);
 		fprintf(stderr, "Message=%s\n\n", message);
 
-		for (int ii = 0; ii < 1000000; ii++)
+		char	*signature = sign_message(
+			"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
+			message,
+			&params.PrivHelper, &params.AddrHelper);
+
+		printf("Signature: %s\n\n", signature);
+
+		for (int ii = 0; ii < 100000; ii++)
 		{
-			if (ii % 10 == 0)
-				usleep(1);
+		//	if (ii % 10 == 0)
+				usleep(50);
 
 			// send 260 bytes
 			count++;
-			char	*signMessage = sign_message(
-				"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
-				message,
-				&params.PrivHelper, &params.AddrHelper);
-
-			printf("sign-Message: %s\n", signMessage);
-
 			memset(tmp, 0x00, sizeof(tmp));
-			strcpy(tmp, signMessage);
+			strcpy(tmp, signature);
 
 			sprintf(data, "%s%7d %c%s%c%s", filter, count, ESC, message, ESC, tmp);
 			s_sendmore(xpub, data);
-			//	cout << "s_sendmore: " << data << endl;
 
 			// send 260 bytes
 			count++;
@@ -79,10 +78,6 @@ void	*thread_publisher(void *info_p)
 //				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
 
 			s_send(xpub, data);
-
-			free(signMessage);
-
-			sleep(1);
 
 		//	cout << "s_send: " << data << endl;
 
@@ -97,6 +92,8 @@ void	*thread_publisher(void *info_p)
 		//	cout << "s_send: " << data << endl;
 
 		}
+
+		free(signature);
 
 		sprintf(data, "%s CLOSE", filter);
 		printf("SEND: %s\n", data);
