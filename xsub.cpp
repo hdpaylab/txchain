@@ -69,9 +69,14 @@ void	*thread_subscriber(void *info_p)
 		while (1)
 		{
 			std::string data = s_recv(xsock);
+			char	signature[256] = {0};
 
 			count++;
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
+
+			strcpy(tmp, data.c_str());
+			if (strlen(tmp) >= 12)	// 4 byte filter, 8 byte number
+				strcpy(signature, &tmp[12]);
 
 			if (data == endmark)
 			{
@@ -83,14 +88,15 @@ void	*thread_subscriber(void *info_p)
 				fprintf(stderr, "\r%s	%8d    ", peer, count);
 				fflush(stderr);
 			}
-			
+
 			int verify_check = verify_message(
-					"18wD7MBodeTYRAvN5bRuWYB11jwHdkGVCBLSnB",
-					data.data(),
+					"HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw",
+					signature,
 					"Hdac Technology, Solution Dev Team, Test Text.",
 					&params.AddrHelper);
 
-			printf("verify-Message: %s\n", verify_check? "true" : "false" );
+			printf("verify-Message: %s signature=%s\n",
+				verify_check? "true" : "false", signature);
 
 		}
 

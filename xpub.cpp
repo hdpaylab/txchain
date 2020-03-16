@@ -55,8 +55,8 @@ void	*thread_publisher(void *info_p)
 
 			// send 260 bytes
 			count++;
-			char * signMessage = sign_message(
-				"VHXjccrTPdRXG8asyos5oqvw6mhWtqASkbFsVuBnkpi4WXn2jr8eMwwp",
+			char	*signMessage = sign_message(
+				"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
 				"Hdac Technology, Solution Dev Team, Test Text.",
 				&params.PrivHelper, &params.AddrHelper);
 
@@ -78,6 +78,9 @@ void	*thread_publisher(void *info_p)
 			s_send(xpub, data);
 
 			free(signMessage);
+
+			sleep(1);
+
 		//	cout << "s_send: " << data << endl;
 
 		//	처음 문자열이 filter가 아니면 수신하지 못함
