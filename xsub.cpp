@@ -36,8 +36,11 @@ void	*thread_subscriber(void *info_p)
 	while (1)
 	{
 		FILE	*outfp = NULL;
+		char	ESC = 27;
+		char	message[4096] = {0};
+		char	signature[256] = {0};
 		char	peerstr[100] = {0}, endmark[100] = {0};
-		char	tmp[100] = {0}, *tp = NULL;
+		char	tmp[4096] = {0}, *tp = NULL;
 		const char *filter = "!@#$";	// s_sendmore()로 publisher에서 보내는 것만 수용함 
 
 		fprintf(stderr, "Subscriber START! peer=%s\n\n", peer);
@@ -68,15 +71,36 @@ void	*thread_subscriber(void *info_p)
 
 		while (1)
 		{
+			message[0] = 0;
+			signature[0] = 0;
+
 			std::string data = s_recv(xsock);
-			char	signature[256] = {0};
 
 			count++;
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
 
 			strcpy(tmp, data.c_str());
-			if (strlen(tmp) >= 12)	// 4 byte filter, 8 byte number
-				strcpy(signature, &tmp[12]);
+			if (strlen(tmp) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
+			{
+				// "!@#$####### ESCmessageESCsignature"
+				char	*mp = strchr(tmp, ESC), *sp = NULL;
+				if (mp)
+				{
+					sp = strchr(mp + 1, ESC);
+					if (sp)
+					{
+						*sp = 0;
+						strcpy(message, &mp[1]);
+						strcpy(signature, &sp[1]);
+					}
+				}
+			}
+			if (message[0] == 0 || signature[0] == 0)
+			{
+				fprintf(stderr, "Message length %d or Signature length %d error!\n",
+					strlen(message), strlen(signature));
+				continue;
+			}
 
 			if (data == endmark)
 			{
@@ -91,13 +115,10 @@ void	*thread_subscriber(void *info_p)
 
 			int verify_check = verify_message(
 					"HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw",
-					signature,
-					"Hdac Technology, Solution Dev Team, Test Text.",
-					&params.AddrHelper);
+					signature, message, &params.AddrHelper);
 
 			printf("verify-Message: %s signature=%s\n",
-				verify_check? "true" : "false", signature);
-
+				verify_check ? "true" : "false", signature);
 		}
 
 		fclose(outfp);

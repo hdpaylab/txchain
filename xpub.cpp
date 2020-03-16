@@ -17,6 +17,7 @@ void	*thread_publisher(void *info_p)
         int	sendport = *(int *)info_p;
 	int	count = 0;
 	const char *filter = "!@#$";
+	const char ESC = 27;
 
 	/****
         PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
@@ -34,7 +35,8 @@ void	*thread_publisher(void *info_p)
 
 	for (int loop = 1; loop <= 1; loop++)
 	{
-		char	bindstr[100] = {0}, data[1024] = {0}, tmp[1024] = {0};
+		char	bindstr[100] = {0}, data[4096] = {0}, tmp[1024] = {0};
+		char	*message = "Hdac Technology, Solution Dev Team, Test Text. 잘 가는지 검사하는 것임.";
 
 		fprintf(stderr, "Publisher: %d START! sendport=%d\n\n", loop, sendport);
 
@@ -47,6 +49,7 @@ void	*thread_publisher(void *info_p)
 		sleep(2);
 
 		fprintf(stderr, "Publisher: %d START SEND!\n\n", loop);
+		fprintf(stderr, "Message=%s\n\n", message);
 
 		for (int ii = 0; ii < 1000000; ii++)
 		{
@@ -57,7 +60,7 @@ void	*thread_publisher(void *info_p)
 			count++;
 			char	*signMessage = sign_message(
 				"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
-				"Hdac Technology, Solution Dev Team, Test Text.",
+				message,
 				&params.PrivHelper, &params.AddrHelper);
 
 			printf("sign-Message: %s\n", signMessage);
@@ -65,7 +68,7 @@ void	*thread_publisher(void *info_p)
 			memset(tmp, 0x00, sizeof(tmp));
 			strcpy(tmp, signMessage);
 
-			sprintf(data, "%s%6d--%s", filter, count, tmp);
+			sprintf(data, "%s%7d %c%s%c%s", filter, count, ESC, message, ESC, tmp);
 			s_sendmore(xpub, data);
 			//	cout << "s_sendmore: " << data << endl;
 
