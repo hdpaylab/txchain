@@ -25,9 +25,9 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: $(CSDKDIR) tx tx2
+all: $(ALIBS) tx tx2
 
-$(CSDKDIR):
+$(ALIBS): 
 	cd $(CSDKDIR); make; cd ..
 	ln -f -s $(CSDKDIR)/lib/*.a .
 
@@ -39,4 +39,4 @@ tx2: $(OBJS)
 
 clean:
 	cd $(CSDKDIR); make clean; cd ..
-	rm -f tx tx2 $(OBJS) *.o *.out
+	rm -f tx tx2 $(OBJS) *.o *.out *.a
