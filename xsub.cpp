@@ -10,28 +10,29 @@
 #include "zhelpers.hpp"
 #include "xdb.h"
 #include "xparams.h"
+#include "xverify.h"
+#include "xmsq.h"
 
 using namespace std;
-
 
 void	*thread_subscriber(void *info_p)
 {
 	char	*peer = (char *)info_p;
 	int	count = 0;
+	pthread_t thrid[4];
+	int index = 0;
+	int ret = 0;
+	int msqid = -1;
 
-	/***
-	PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
-			user=postgres \
-			password=postgres \
-			dbname=testdb");
+	for (index = 0; index <= MAX_VERIFY; index++) {
+	        ret = pthread_create(&thrid[index], NULL, thread_verify, (void *)peer);
+                if (ret < 0) {
+                        perror("thread create error : ");
+                        return 0;
+                }
+                usleep(10 * 1000);
 
-	if (PQstatus(conn) == CONNECTION_BAD) {
-		printf("db connect failed\n");
 	}
-	***/
-
-	// params set
-	Params_type_t params = paramsget("params.dat");
 
 	while (1)
 	{
@@ -59,6 +60,9 @@ void	*thread_subscriber(void *info_p)
 		sprintf(peerstr, "tcp://%s", peer);
 		xsock.connect(peerstr);
 
+		// message queue connect
+		msqid = ai_msq_open(1234, (BUFF_SIZE * 10));
+
 		xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 		int bufsize = 4 * 1024 * 1024;
 		xsock.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
@@ -73,52 +77,23 @@ void	*thread_subscriber(void *info_p)
 		{
 			message[0] = 0;
 			signature[0] = 0;
+			data_t msq_data;
 
 			std::string data = s_recv(xsock);
 
 			count++;
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
 
-			strcpy(tmp, data.c_str());
-			if (strlen(tmp) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
-			{
-				// "!@#$####### ESCmessageESCsignature"
-				char	*mp = strchr(tmp, ESC), *sp = NULL;
-				if (mp)
-				{
-					sp = strchr(mp + 1, ESC);
-					if (sp)
-					{
-						*sp = 0;
-						strcpy(message, &mp[1]);
-						strcpy(signature, &sp[1]);
-					}
-				}
-			}
-			if (message[0] == 0 || signature[0] == 0)
-			{
-				fprintf(stderr, "Message length %d or Signature length %d error!\n",
-					strlen(message), strlen(signature));
-				continue;
+			msq_data.mtype = (count % MAX_VERIFY);
+			snprintf(msq_data.mtext, sizeof(BUFF_SIZE),
+					"%s", data.c_str());
+
+			// message queue send
+			if (msgsnd(msqid, 
+				&msq_data, sizeof(data_t) - sizeof(long), 0) == -1) {
+				fprintf(outfp, "message queue send error - %d: %s\n", count, data.c_str());
 			}
 
-			if (data == endmark)
-			{
-				fprintf(stderr, "Subscriber RECV CLOSE!\n");
-				break;
-			}
-			else if (count % 100 == 0)
-			{
-				fprintf(stderr, "\r%s	%8d    ", peer, count);
-				fflush(stderr);
-			}
-
-			int verify_check = verify_message(
-					"HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw",
-					signature, message, &params.AddrHelper);
-
-			fprintf(outfp, "verify-Message: %s signature=%s\n",
-				verify_check ? "true" : "false", signature);
 		}
 
 		fclose(outfp);
@@ -130,6 +105,10 @@ void	*thread_subscriber(void *info_p)
 		xsock.close();
 
 		break;
+	}
+
+	for (index = 0; index <= MAX_VERIFY; index++) {
+		pthread_detach(thrid[index]);
 	}
 
 	/***
