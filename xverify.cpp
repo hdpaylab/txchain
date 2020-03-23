@@ -41,6 +41,7 @@ void	*thread_verify(void *info_p)
 	{
 		FILE	*outfp = NULL;
 		char	ESC = 27;
+		char 	pubkey[128] = {0};
 		char	message[4096] = {0};
 		char	signature[256] = {0};
 		char	peerstr[100] = {0}, endmark[100] = {0};
@@ -72,6 +73,7 @@ void	*thread_verify(void *info_p)
 
 		while (1)
 		{
+			pubkey[0] = 0;
 			message[0] = 0;
 			signature[0] = 0;
 			data_t msq_data;
@@ -91,16 +93,20 @@ void	*thread_verify(void *info_p)
 			strcpy(tmp, data.c_str());
 			if (strlen(tmp) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
 			{
-				// "!@#$####### ESCmessageESCsignature"
-				char	*mp = strchr(tmp, ESC), *sp = NULL;
-				if (mp)
+				// "!@#$####### ESCpubkeyESCmessageESCsignature"
+				char	*pp = strchr(tmp, ESC), *mp = NULL, *sp = NULL;
+				if (pp)
 				{
-					sp = strchr(mp + 1, ESC);
-					if (sp)
+					mp = strchr(pp + 1, ESC);
+					if (mp)
 					{
-						*sp = 0;
-						strcpy(message, &mp[1]);
-						strcpy(signature, &sp[1]);
+						sp = strchr(mp + 1, ESC);
+						if (sp) {
+							*sp = 0;
+							strcpy(pubkey, &pp[1]);
+							strcpy(message, &mp[1]);
+							strcpy(signature, &sp[1]);
+						}
 					}
 				}
 			}
@@ -123,9 +129,7 @@ void	*thread_verify(void *info_p)
 			}
 
 
-			int verify_check = verify_message(
-					"HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw",
-					signature, message, &params.AddrHelper);
+			int verify_check = verify_message(pubkey, signature, message, &params.AddrHelper);
 
 			fprintf(outfp, "verify-Message: %s signature=%s\n",
 				verify_check ? "true" : "false", signature);

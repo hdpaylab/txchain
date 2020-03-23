@@ -37,6 +37,7 @@ void	*thread_publisher(void *info_p)
 	{
 		char	bindstr[100] = {0}, data[4096] = {0}, tmp[1024] = {0};
 		char	*message = "Hdac Technology, Solution Dev Team, Test Text. 잘 가는지 검사하는 것임.";
+		char 	*pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 
 		fprintf(stderr, "Publisher: %d START! sendport=%d\n\n", loop, sendport);
 
@@ -68,7 +69,7 @@ void	*thread_publisher(void *info_p)
 			memset(tmp, 0x00, sizeof(tmp));
 			strcpy(tmp, signature);
 
-			sprintf(data, "%s%7d %c%s%c%s", filter, count, ESC, message, ESC, tmp);
+			sprintf(data, "%s%7d %c%s%c%s%c%s", filter, count, ESC, pubkey, ESC, message, ESC, tmp);
 			s_sendmore(xpub, data);
 
 			// send 260 bytes
