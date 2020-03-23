@@ -59,9 +59,12 @@ void	*thread_subscriber(void *info_p)
 
 		sprintf(peerstr, "tcp://%s", peer);
 		xsock.connect(peerstr);
-
+		
 		// message queue connect
-		msqid = ai_msq_open(1234, (BUFF_SIZE * 10));
+ 		msqid = msgget( (key_t)1234, IPC_CREAT | 0666))
+		if (msqid == -1) {
+			fprintf(outfp, "message queue create error");
+		}
 
 		xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 		int bufsize = 4 * 1024 * 1024;
@@ -84,13 +87,13 @@ void	*thread_subscriber(void *info_p)
 			count++;
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
 
-			msq_data.mtype = (count % MAX_VERIFY);
+			msq_data.mtype = 1;
 			snprintf(msq_data.mtext, sizeof(BUFF_SIZE),
 					"%s", data.c_str());
 
 			// message queue send
 			if (msgsnd(msqid, 
-				&msq_data, sizeof(data_t) - sizeof(long), 0) == -1) {
+				&msq_data, sizeof(data_t), 0) == -1) {
 				fprintf(outfp, "message queue send error - %d: %s\n", count, data.c_str());
 			}
 

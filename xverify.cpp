@@ -51,7 +51,9 @@ void	*thread_verify(void *info_p)
 		fprintf(stderr, "Subscriber START! peer=%s\n\n", peer);
 
 		// message queue connect
-		msqid = ai_msq_open(1234, (BUFF_SIZE * 10));
+                msqid = msgget( (key_t)1234, IPC_CREAT | 0666))
+                if (msqid == -1) {
+                }
 
 		strcpy(tmp, peer);
 		strcat(tmp, ".out");
@@ -80,8 +82,7 @@ void	*thread_verify(void *info_p)
 
 			// message queue recv
 			if (msgrcv(msqid, &msq_data, 
-				sizeof(data_t) - sizeof(long), 
-				(count%MAX_VERIFY), 0) == -1) {
+				sizeof(data_t), 1, 0) == -1) {
 				fprintf(outfp, "message queue recv error - %d", count);
 			}
 
