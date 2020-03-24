@@ -61,7 +61,7 @@ void	*thread_subscriber(void *info_p)
 		xsock.connect(peerstr);
 		
 		// message queue connect
- 		msqid = msgget( (key_t)1234, IPC_CREAT | 0666))
+ 		msqid = msgget( (key_t)1234, IPC_CREAT | 0666);
 		if (msqid == -1) {
 			fprintf(outfp, "message queue create error");
 		}
