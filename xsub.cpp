@@ -37,9 +37,6 @@ void	*thread_subscriber(void *info_p)
 	while (1)
 	{
 		FILE	*outfp = NULL;
-		char	ESC = 27;
-		char	message[4096] = {0};
-		char	signature[256] = {0};
 		char	peerstr[100] = {0}, endmark[100] = {0};
 		char	tmp[4096] = {0}, *tp = NULL;
 		const char *filter = "!@#$";	// s_sendmore()로 publisher에서 보내는 것만 수용함 
@@ -78,8 +75,6 @@ void	*thread_subscriber(void *info_p)
 
 		while (1)
 		{
-			message[0] = 0;
-			signature[0] = 0;
 			data_t msq_data;
 
 			std::string data = s_recv(xsock);

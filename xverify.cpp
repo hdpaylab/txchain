@@ -19,8 +19,6 @@ void	*thread_verify(void *info_p)
 {
 	char	*peer = (char *)info_p;
 	int	count = 0;
-	int index = 0;
-	int ret = 0;
 	int msqid = -1;
 
 	/***
@@ -64,8 +62,6 @@ void	*thread_verify(void *info_p)
 		assert(outfp != NULL);
 
 		sprintf(peerstr, "tcp://%s", peer);
-
-		int bufsize = 4 * 1024 * 1024;
 
 		sprintf(endmark, "%s CLOSE", filter);
 
