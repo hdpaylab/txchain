@@ -2,6 +2,7 @@
 tx speed up processing
 
 ubuntu 에서 빌드 방법
+
 빌드 전에 설치해야 할 패키지
 
 sudo apt install -y autoconf libtool cmake g++ libssl-dev pkg-config
@@ -35,7 +36,9 @@ make && sudo make install
 cd -
 
 
+
 json_spirit
+
 git clone https://github.com/smlee-hdactech/json_spirit.git
 
 cd json_spirit
