@@ -15,6 +15,7 @@
 
 #include "xsub.h"
 #include "xpub.h"
+#include "xleveldb.h"
 
 
 #define MAX_NODE	100
@@ -32,7 +33,7 @@ void	load_config(int ac, char *av[]);
 int	main(int ac, char *av[])
 {
 	
-	pthread_t thrid[5];
+	pthread_t thrid[6];
 	int	ret = 0;
 	int	ii = 0;
 
@@ -83,7 +84,19 @@ int	main(int ac, char *av[])
 
 	}
 
-	for (ii = 0; ii <= npeer; ii++) {
+	// level db thread
+	ret = pthread_create(&thrid[ii + 1], NULL, 
+			thread_exleveldb, (void *)&sendport);
+	if (ret < 0)
+	{
+		perror("thread create error : ");
+		return 0;
+	}
+	usleep(10 * 1000);
+
+
+	// npeer+1 = leveldb thread
+	for (ii = 0; ii <= (npeer + 1); ii++) {
 		pthread_detach(thrid[ii]);
 	}
 

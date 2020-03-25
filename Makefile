@@ -3,13 +3,14 @@ CPP = g++
 CSDKDIR	= HdacCSDK2
 
 SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_thread -lpthread
-LIBS	= -lzmq -lpq 
+LIBS	= -lzmq -lpq -lleveldb
 
 INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include
 
 CPPFLAGS = $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
 
-SRCS	= main.cpp xdb.cpp xpub.cpp xsub.cpp xparams.cpp xmsq.cpp xverify.cpp ex.cpp 
+SRCS	= main.cpp xdb.cpp xpub.cpp xsub.cpp \
+	  xparams.cpp xmsq.cpp xverify.cpp ex.cpp xleveldb.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
