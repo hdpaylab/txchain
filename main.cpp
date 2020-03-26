@@ -85,7 +85,7 @@ int	main(int ac, char *av[])
 	}
 
 	// level db thread
-	ret = pthread_create(&thrid[ii + 1], NULL, 
+	ret = pthread_create(&thrid[ii], NULL,
 			thread_exleveldb, (void *)&sendport);
 	if (ret < 0)
 	{
@@ -94,11 +94,11 @@ int	main(int ac, char *av[])
 	}
 	usleep(10 * 1000);
 
-
-	// npeer+1 = leveldb thread
-	for (ii = 0; ii <= (npeer + 1); ii++) {
+	for (ii = 0; ii <= npeer; ii++) {
 		pthread_detach(thrid[ii]);
 	}
+	// npeer+1 = leveldb thread
+	pthread_detach(thrid[ii]);
 
 	while (1)
 	{
