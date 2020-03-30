@@ -78,7 +78,7 @@ void	*thread_verify(void *info_p)
 
 			// message queue recv
 			if (msgrcv(msqid, &msq_data, 
-				sizeof(data_t), 1, 0) == -1) {
+				strlen(msq_data.mtext), 1, 0) == -1) {
 				fprintf(outfp, "message queue recv error - %d", count);
 			}
 
