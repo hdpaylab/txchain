@@ -19,7 +19,8 @@ void	*thread_verify(void *info_p)
 {
 	char	*peer = (char *)info_p;
 	int	count = 0;
-	int msqid = -1;
+	int rmsqid = -1;
+	int smsqid = -1;
 
 	/***
 	PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
@@ -49,8 +50,13 @@ void	*thread_verify(void *info_p)
 		fprintf(stderr, "Subscriber START! peer=%s\n\n", peer);
 
 		// message queue connect
-                msqid = msgget( (key_t)1234, IPC_CREAT | 0666);
-                if (msqid == -1) {
+                rmsqid = msgget( (key_t)1234, IPC_CREAT | 0666);
+                if (rmsqid == -1) {
+                }
+
+		// message queue connect
+                smsqid = msgget( (key_t)1235, IPC_CREAT | 0666);
+                if (smsqid == -1) {
                 }
 
 		strcpy(tmp, peer);
@@ -77,8 +83,8 @@ void	*thread_verify(void *info_p)
 			data_t msq_data;
 
 			// message queue recv
-			if (msgrcv(msqid, &msq_data, 
-				strlen(msq_data.mtext), 1, 0) == -1) {
+			if (msgrcv(rmsqid, &msq_data,
+				sizeof(msq_data), 1, 0) == -1) {
 				fprintf(outfp, "message queue recv error - %d", count);
 			}
 
@@ -130,6 +136,13 @@ void	*thread_verify(void *info_p)
 
 			fprintf(outfp, "verify-Message: %s signature=%s\n",
 				verify_check ? "true" : "false", signature);
+
+                        // message queue send
+                        if (msgsnd(smsqid,
+                                &msq_data, sizeof(msq_data), 0) == -1) {
+                                fprintf(outfp, "message queue send error - %d: %s\n", count, data.c_str());
+                        }
+
 		}
 
 		fclose(outfp);

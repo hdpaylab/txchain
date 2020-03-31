@@ -1,90 +1,84 @@
+#include <iostream>
 #include <leveldb/c.h>
 #include <stdio.h>
 
 #include "xleveldb.h"
+#include "xmsq.h"
+
+using namespace std;
 
 void *thread_exleveldb(void *info_p)
 {
-    leveldb_t *db;
-    leveldb_options_t *options;
-    leveldb_readoptions_t *roptions;
-    leveldb_writeoptions_t *woptions;
-    char *err = NULL;
-    char *read;
-    size_t read_len;
+	leveldb_t *db;
+	leveldb_options_t *options;
+	leveldb_writeoptions_t *woptions;
+	char *err = NULL;
 
-    /******************************************/
-    /* OPEN */
+	int rmsqid = -1;
+	data_t msq_data;
 
-    options = leveldb_options_create();
-    leveldb_options_set_create_if_missing(options, 1);
-    db = leveldb_open(options, "testdb", &err);
+		// message queue connect
+	rmsqid = msgget( (key_t)1235, IPC_CREAT | 0666);
+	if (rmsqid == -1) {
+	}
 
-    if (err != NULL) {
-      fprintf(stderr, "Open fail.\n");
-      return 0;
-    }
+	/******************************************/
+	/* OPEN */
 
-    /* reset error var */
-    leveldb_free(err); err = NULL;
+	options = leveldb_options_create();
+	leveldb_options_set_create_if_missing(options, 1);
+	db = leveldb_open(options, "testdb", &err);
 
-    /******************************************/
-    /* WRITE */
+	if (err != NULL) {
+		fprintf(stderr, "Open fail.\n");
+		return 0;
+	}
 
-    woptions = leveldb_writeoptions_create();
-    leveldb_put(db, woptions, "key", 3, "value", 5, &err);
+	/* reset error var */
+	leveldb_free(err); err = NULL;
 
-    if (err != NULL) {
-      fprintf(stderr, "Write fail.\n");
-      return 0;
-    }
+	while (1) {
 
-    leveldb_free(err); err = NULL;
+		// message queue recv
+		if (msgrcv(rmsqid, &msq_data,
+					sizeof(msq_data), 1, 0) == -1) {
+			printf("message queue recv error\n");
+		}
 
-    /******************************************/
-    /* READ */
+		std::string data(msq_data.mtext);
 
-    roptions = leveldb_readoptions_create();
-    read = leveldb_get(db, roptions, "key", 3, &read_len, &err);
+		/******************************************/
+		/* WRITE */
 
-    if (err != NULL) {
-      fprintf(stderr, "Read fail.\n");
-      return 0;
-    }
+		woptions = leveldb_writeoptions_create();
+		leveldb_put(db, woptions, "key", 3, "value", 5, &err);
 
-    printf("key: %s\n", read);
+		if (err != NULL) {
+			fprintf(stderr, "Write fail.\n");
+			return 0;
+		}
 
-    leveldb_free(err); err = NULL;
+		leveldb_free(err); err = NULL;
 
-    /******************************************/
-    /* DELETE */
+	}
 
-    leveldb_delete(db, woptions, "key", 3, &err);
+	/******************************************/
+	/* CLOSE */
 
-    if (err != NULL) {
-      fprintf(stderr, "Delete fail.\n");
-      return 0;
-    }
+	leveldb_close(db);
 
-    leveldb_free(err); err = NULL;
+	/******************************************/
+	/* DESTROY */
 
-    /******************************************/
-    /* CLOSE */
+	leveldb_destroy_db(options, "testdb", &err);
 
-    leveldb_close(db);
+	if (err != NULL) {
+		fprintf(stderr, "Destroy fail.\n");
+		return 0;
+	}
 
-    /******************************************/
-    /* DESTROY */
-
-    leveldb_destroy_db(options, "testdb", &err);
-
-    if (err != NULL) {
-      fprintf(stderr, "Destroy fail.\n");
-      return 0;
-    }
-
-    leveldb_free(err); err = NULL;
+	leveldb_free(err); err = NULL;
 
 
-    return 0;
+	return 0;
 }

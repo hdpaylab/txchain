@@ -88,8 +88,7 @@ void	*thread_subscriber(void *info_p)
 
 			// message queue send
 			if (msgsnd(msqid, 
-				&msq_data, 
-				strlen(msq_data.mtext), 0) == -1) {
+				&msq_data, sizeof(msq_data), 0) == -1) {
 				fprintf(outfp, "message queue send error - %d: %s\n", count, data.c_str());
 			}
 
