@@ -83,7 +83,7 @@ void	*thread_subscriber(void *info_p)
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
 
 			msq_data.mtype = 1;
-			snprintf(msq_data.mtext, sizeof(BUFF_SIZE),
+			snprintf(msq_data.mtext, BUFF_SIZE,
 					"%s", data.c_str());
 
 			// message queue send
