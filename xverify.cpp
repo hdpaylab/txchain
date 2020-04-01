@@ -39,7 +39,7 @@ void	*thread_verify(void *info_p)
 	while (1)
 	{
 		FILE	*outfp = NULL;
-		char	ESC = 27;
+		char	ESC = '|';
 		char 	pubkey[128] = {0};
 		char	message[4096] = {0};
 		char	signature[256] = {0};

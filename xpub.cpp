@@ -17,7 +17,7 @@ void	*thread_publisher(void *info_p)
         int	sendport = *(int *)info_p;
 	int	count = 0;
 	const char *filter = "!@#$";
-	const char ESC = 27;
+	const char ESC = '|';
 
 	/****
         PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
