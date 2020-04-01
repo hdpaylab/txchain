@@ -41,7 +41,7 @@ void *thread_exleveldb(void *info_p)
 
 		// message queue recv
 		if (msgrcv(rmsqid, &msq_data,
-					sizeof(msq_data), 1, 0) == -1) {
+					BUFF_SIZE, 1, 0) == -1) {
 			printf("message queue recv error\n");
 		}
 

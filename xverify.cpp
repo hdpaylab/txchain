@@ -84,7 +84,7 @@ void	*thread_verify(void *info_p)
 
 			// message queue recv
 			if (msgrcv(rmsqid, &msq_data,
-				sizeof(msq_data), 1, 0) == -1) {
+				BUFF_SIZE, 1, 0) == -1) {
 				fprintf(outfp, "message queue recv error - %d", count);
 			}
 
@@ -97,18 +97,18 @@ void	*thread_verify(void *info_p)
 			if (strlen(tmp) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
 			{
 				// "!@#$####### ESCpubkeyESCmessageESCsignature"
-				char	*pp = strchr(tmp, ESC), *mp = NULL, *sp = NULL;
+				char	*pp = strchr(tmp, ESC); 
 				if (pp)
 				{
-					mp = strchr(pp + 1, ESC);
+					char *mp = strchr(pp + 1, ESC);
 					if (mp)
 					{
-						sp = strchr(mp + 1, ESC);
+						char *sp = strchr(mp + 1, ESC);
 						if (sp) {
-							*sp = 0;
-							strcpy(pubkey, &pp[1]);
-							strcpy(message, &mp[1]);
-							strcpy(signature, &sp[1]);
+							snprintf(pubkey, strlen(pp) - strlen(mp), "%s", pp);
+							snprintf(signature, strlen(mp) - strlen(sp), "%s", mp);
+							snprintf(message, strlen(sp), "%s", sp);
+
 						}
 					}
 				}
@@ -139,7 +139,7 @@ void	*thread_verify(void *info_p)
 
                         // message queue send
                         if (msgsnd(smsqid,
-                                &msq_data, sizeof(msq_data), 0) == -1) {
+                                &msq_data, strlen(msq_data.mtext), 0) == -1) {
                                 fprintf(outfp, "message queue send error - %d: %s\n", count, data.c_str());
                         }
 
