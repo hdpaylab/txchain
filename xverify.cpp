@@ -105,8 +105,8 @@ void	*thread_verify(void *info_p)
 					{
 						char *sp = strchr(mp + 1, ESC);
 						if (sp) {
-							snprintf(pubkey, strlen(pp) - strlen(mp), "%s", pp);
-							snprintf(signature, strlen(mp) - strlen(sp), "%s", mp);
+							snprintf(pubkey, strlen(pp) - strlen(mp), "%s", pp + 1);
+							snprintf(signature, strlen(mp) - strlen(sp), "%s", mp + 1);
 							snprintf(message, strlen(sp), "%s", sp);
 
 						}
@@ -130,6 +130,10 @@ void	*thread_verify(void *info_p)
 				fprintf(stderr, "\r%s	%8d    ", peer, count);
 				fflush(stderr);
 			}
+
+			//printf("pk[%s]\n", pubkey);
+			//printf("sn[%s]\n", signature);
+			//printf("ms[%s]\n", message);
 
 
 			int verify_check = verify_message(pubkey, signature, message, &params.AddrHelper);
