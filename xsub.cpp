@@ -70,7 +70,7 @@ void	*thread_subscriber(void *info_p)
 		}
 
 		xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
-		int bufsize = 64 * 1024 * 1024;	// 64MB 버퍼 
+		int bufsize = 4 * 1024 * 1024;	// 4MB 버퍼 
 		xsock.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
 		sprintf(endmark, "%s CLOSE", filter);

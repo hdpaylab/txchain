@@ -30,7 +30,7 @@ void	*thread_exleveldb(void *info_p)
 	ldb = leveldb_open(options, "testdb", &err);
 
 	if (err != NULL) {
-		fprintf(stderr, "Open fail.\n");
+		fprintf(stderr, "ERROR: Level DB open failed!\n");
 		return 0;
 	}
 
@@ -40,9 +40,10 @@ void	*thread_exleveldb(void *info_p)
 	while (1) {
 
 		// message queue recv
-		if (msgrcv(rmsqid, &msq_data,
-					BUFF_SIZE, 1, 0) == -1) {
-			printf("message queue recv error\n");
+		if (msgrcv(rmsqid, &msq_data, BUFF_SIZE, 1, 0) == -1) {
+			fprintf(stderr, "ERROR: message queue recv error\n");
+			usleep(100);
+			continue;
 		}
 
 		std::string data(msq_data.mtext);
@@ -54,8 +55,9 @@ void	*thread_exleveldb(void *info_p)
 		leveldb_put(ldb, woptions, "key", 3, "value", 5, &err);
 
 		if (err != NULL) {
-			fprintf(stderr, "Write fail.\n");
-			return 0;
+			fprintf(stderr, "ERROR: Level DB write failed!\n");
+			usleep(100);
+			continue;
 		}
 
 		leveldb_free(err); err = NULL;
