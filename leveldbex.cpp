@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int main() {
-    leveldb_t *db;
+    leveldb_t *ldb;
     leveldb_options_t *options;
     leveldb_readoptions_t *roptions;
     leveldb_writeoptions_t *woptions;
@@ -15,7 +15,7 @@ int main() {
 
     options = leveldb_options_create();
     leveldb_options_set_create_if_missing(options, 1);
-    db = leveldb_open(options, "testdb", &err);
+    ldb = leveldb_open(options, "testdb", &err);
 
     if (err != NULL) {
       fprintf(stderr, "Open fail.\n");
@@ -29,7 +29,7 @@ int main() {
     /* WRITE */
 
     woptions = leveldb_writeoptions_create();
-    leveldb_put(db, woptions, "key", 3, "value", 5, &err);
+    leveldb_put(ldb, woptions, "key", 3, "value", 5, &err);
 
     if (err != NULL) {
       fprintf(stderr, "Write fail.\n");
@@ -42,7 +42,7 @@ int main() {
     /* READ */
 
     roptions = leveldb_readoptions_create();
-    read = leveldb_get(db, roptions, "key", 3, &read_len, &err);
+    read = leveldb_get(ldb, roptions, "key", 3, &read_len, &err);
 
     if (err != NULL) {
       fprintf(stderr, "Read fail.\n");
@@ -56,7 +56,7 @@ int main() {
     /******************************************/
     /* DELETE */
 
-    leveldb_delete(db, woptions, "key", 3, &err);
+    leveldb_delete(ldb, woptions, "key", 3, &err);
 
     if (err != NULL) {
       fprintf(stderr, "Delete fail.\n");
@@ -68,7 +68,7 @@ int main() {
     /******************************************/
     /* CLOSE */
 
-    leveldb_close(db);
+    leveldb_close(ldb);
 
     /******************************************/
     /* DESTROY */

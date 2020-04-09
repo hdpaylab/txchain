@@ -7,9 +7,9 @@
 
 using namespace std;
 
-void *thread_exleveldb(void *info_p)
+void	*thread_exleveldb(void *info_p)
 {
-	leveldb_t *db;
+	leveldb_t *ldb;
 	leveldb_options_t *options;
 	leveldb_writeoptions_t *woptions;
 	char *err = NULL;
@@ -27,7 +27,7 @@ void *thread_exleveldb(void *info_p)
 
 	options = leveldb_options_create();
 	leveldb_options_set_create_if_missing(options, 1);
-	db = leveldb_open(options, "testdb", &err);
+	ldb = leveldb_open(options, "testdb", &err);
 
 	if (err != NULL) {
 		fprintf(stderr, "Open fail.\n");
@@ -51,7 +51,7 @@ void *thread_exleveldb(void *info_p)
 		/* WRITE */
 
 		woptions = leveldb_writeoptions_create();
-		leveldb_put(db, woptions, "key", 3, "value", 5, &err);
+		leveldb_put(ldb, woptions, "key", 3, "value", 5, &err);
 
 		if (err != NULL) {
 			fprintf(stderr, "Write fail.\n");
@@ -65,7 +65,7 @@ void *thread_exleveldb(void *info_p)
 	/******************************************/
 	/* CLOSE */
 
-	leveldb_close(db);
+	leveldb_close(ldb);
 
 	/******************************************/
 	/* DESTROY */

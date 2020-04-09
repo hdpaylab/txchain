@@ -97,7 +97,7 @@ void	*thread_publisher(void *info_p)
 		free(signature);
 
 		sprintf(data, "%s CLOSE", filter);
-		printf("SEND: %s\n", data);
+		printf("\n\nSEND: %s\n", data);
 		s_send(xpub, data);
 
 		fprintf(stderr, "Publisher: FINISH! sendport=%d\n", sendport);

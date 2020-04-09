@@ -40,4 +40,5 @@ tx2: $(OBJS)
 
 clean:
 	cd $(CSDKDIR); make clean; cd ..
-	rm -f tx tx2 $(OBJS) *.o *.out *.a
+	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a
+	rm -rf testdb

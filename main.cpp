@@ -104,6 +104,7 @@ int	main(int ac, char *av[])
 	{
 		sleep(1);
 		fflush(stdout);
+		fflush(stderr);
 	}
 
 	return 0;
