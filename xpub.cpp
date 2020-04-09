@@ -61,8 +61,7 @@ void	*thread_publisher(void *info_p)
 
 		for (int ii = 0; ii < 100000; ii++)
 		{
-		//	if (ii % 10 == 0)
-				usleep(50);
+			usleep(1);
 
 			// send 260 bytes
 			count++;
