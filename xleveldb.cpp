@@ -1,25 +1,30 @@
 #include <iostream>
 #include <leveldb/c.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include "xleveldb.h"
 #include "xmsq.h"
 
+
 using namespace std;
+
 
 void	*thread_exleveldb(void *info_p)
 {
-	leveldb_t *ldb;
-	leveldb_options_t *options;
-	leveldb_writeoptions_t *woptions;
-	char *err = NULL;
+	leveldb_t *ldb = NULL;
+	leveldb_options_t *options = NULL;
+	leveldb_writeoptions_t *woptions = NULL;
+	char	*err = NULL;
+	int	count = 0;
+	int	rmsqid = -1;
+	data_t	msq_data;
 
-	int rmsqid = -1;
-	data_t msq_data;
-
-		// message queue connect
+	// message queue connect
 	rmsqid = msgget( (key_t)1235, IPC_CREAT | 0666);
 	if (rmsqid == -1) {
+		perror("msgget(1235)");
+		exit(-1);
 	}
 
 	/******************************************/
@@ -52,7 +57,7 @@ void	*thread_exleveldb(void *info_p)
 		/* WRITE */
 
 		woptions = leveldb_writeoptions_create();
-		leveldb_put(ldb, woptions, "key", 3, "value", 5, &err);
+		leveldb_put(ldb, woptions, "key", 3, data.c_str(), data.length(), &err);
 
 		if (err != NULL) {
 			fprintf(stderr, "ERROR: Level DB write failed!\n");
@@ -62,6 +67,13 @@ void	*thread_exleveldb(void *info_p)
 
 		leveldb_free(err); err = NULL;
 
+		count++;
+		if (count % 10000 == 0)
+		{
+			printf("Level DB: %d\n", count);
+			if (count == 200000)
+				exit(-9);
+		}
 	}
 
 	/******************************************/

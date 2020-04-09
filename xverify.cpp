@@ -75,7 +75,8 @@ void	*thread_verify(void *info_p)
 
 			count++;
 			if (count % 2000 == 0)
-				printf("Verifier %d: count=%d data=%s\n", thrid, count, data.c_str());
+			//	printf("Verifier %d: count=%d data=%s\n", thrid, count, data.c_str());
+				printf("Verifier %d: count=%d \n", thrid, count);
 
 			strcpy(tmp, data.c_str());
 			if (strlen(tmp) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number

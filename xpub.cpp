@@ -47,6 +47,9 @@ void	*thread_publisher(void *info_p)
 		sprintf(bindstr, "tcp://*:%d", sendport);
 		xpub.bind(bindstr);
 
+	//	int bufsize = 4 * 1024 * 1024;	// 4MB ¹öÆÛ 
+	//	xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
+
 		sleep(2);
 
 		fprintf(stderr, "Publisher: %d START SEND!\n\n", loop);
@@ -61,7 +64,8 @@ void	*thread_publisher(void *info_p)
 
 		for (int ii = 0; ii < 100000; ii++)
 		{
-			usleep(1);
+			if (ii % 2 == 0)
+				usleep(10);
 
 			// send 260 bytes
 			count++;
