@@ -7,7 +7,7 @@ LIBS	= -lzmq -lpq -lleveldb
 
 INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include
 
-CPPFLAGS = $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
+CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
 
 SRCS	= main.cpp xdb.cpp xpub.cpp xsub.cpp \
 	  xparams.cpp xmsq.cpp xverify.cpp ex.cpp xleveldb.cpp
@@ -40,5 +40,5 @@ tx2: $(OBJS)
 
 clean:
 	cd $(CSDKDIR); make clean; cd ..
-	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a
+	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a *.log
 	rm -rf testdb

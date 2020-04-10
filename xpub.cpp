@@ -47,8 +47,15 @@ void	*thread_publisher(void *info_p)
 		sprintf(bindstr, "tcp://*:%d", sendport);
 		xpub.bind(bindstr);
 
-	//	int bufsize = 4 * 1024 * 1024;	// 4MB 버퍼 
-	//	xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
+		int bufsize = 1 * 1024 * 1024;	// 4MB 버퍼 
+		xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
+
+		// 이걸 해야 패킷 손실이 없어짐..
+		int one = 1;
+		xpub.setsockopt(ZMQ_XPUB_NODROP, &one, sizeof(one));
+
+		int qsize = 10000;		// 10000 개
+		xpub.setsockopt(ZMQ_SNDHWM, &qsize, sizeof(qsize));
 
 		sleep(2);
 
@@ -64,24 +71,23 @@ void	*thread_publisher(void *info_p)
 
 		for (int ii = 0; ii < 100000; ii++)
 		{
-			if (ii % 2 == 0)
-				usleep(10);
-
 			// send 260 bytes
 			count++;
 			memset(tmp, 0x00, sizeof(tmp));
 			strcpy(tmp, signature);
 
 			sprintf(data, "%s%7d %c%s%c%s%c%s", filter, count, ESC, pubkey, ESC, message, ESC, tmp);
-			s_sendmore(xpub, data);
+			bool ret = s_sendmore(xpub, data);
 
 			// send 260 bytes
 			count++;
 //			strcpy(tmp, "123456789012345678901234567890");
 //			sprintf(data, "%s%6d==========%s%s%s%s%s%s%s%s", filter, count,
 //				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
+			if (count % 10000 == 0)
+				printf("PUB: Send %d\n", count);
 
-			s_send(xpub, data);
+			ret = s_send(xpub, data);
 
 		//	cout << "s_send: " << data << endl;
 
