@@ -7,18 +7,7 @@
 //	tx 4 7003 192.168.1.10:7000 192.168.1.10:7001 192.168.1.10:7002 192.168.1.10:7003
 //
 
-#include <stdio.h>
-#include <pthread.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "xsub.h"
-#include "xpub.h"
-#include "xleveldb.h"
-
-
-#define MAX_NODE	100
+#include "txcommon.h"
 
 
 int	maxnode = 1;		// 나중에 설정으로 뺄 것 
@@ -86,7 +75,7 @@ int	main(int ac, char *av[])
 
 	// level db thread
 	ret = pthread_create(&thrid[ii], NULL,
-			thread_exleveldb, (void *)&sendport);
+			thread_levledb, (void *)&sendport);
 	if (ret < 0)
 	{
 		perror("thread create error : ");

@@ -1,19 +1,4 @@
-#include <zmq.hpp>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <unistd.h>
-#include <libpq-fe.h>
-
-#include "zhelpers.hpp"
-#include "xdb.h"
-#include "xparams.h"
-#include "xverify.h"
-#include "xmsq.h"
-
-using namespace std;
+#include "txcommon.h"
 
 
 void	*thread_subscriber(void *info_p)
@@ -24,7 +9,10 @@ void	*thread_subscriber(void *info_p)
 	int	index = 0;
 	int	ret = 0;
 	int	msqid = -1;
+	double	tmstart = 0, tmend = 0;
 
+
+	// Verifier thread creation
 	for (index = 0; index <= MAX_VERIFY; index++)
 	{
 		int	id = index + 1;
@@ -82,6 +70,7 @@ void	*thread_subscriber(void *info_p)
 		sleep (1);
 
 		fprintf(stderr, "Subscriber START RECV! peer=%s\n\n", peer);
+		tmstart = xgetclock();
 
 		while (1)
 		{
@@ -97,6 +86,8 @@ void	*thread_subscriber(void *info_p)
 
 			count++;
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
+			if (count % 10000 == 0)
+				printf("SUB: Receive %d\n", count);
 
 			msq_data.mtype = 1;
 			snprintf(msq_data.mtext, BUFF_SIZE, "%s", data.c_str());
@@ -108,6 +99,9 @@ void	*thread_subscriber(void *info_p)
 					count, data.c_str());
 			}
 		}
+
+		tmend = xgetclock();
+		printf("SUB: Receive time=%.3f sec\n", tmend - tmstart);
 
 		fclose(outfp);
 
@@ -124,7 +118,7 @@ void	*thread_subscriber(void *info_p)
         PQfinish(conn);
 	***/
 
-	sleep(1);
+	sleep(5);
 
 	pthread_exit(NULL);
 

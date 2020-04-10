@@ -1,16 +1,7 @@
-#include <iostream>
-#include <leveldb/c.h>
-#include <stdio.h>
-#include <unistd.h>
-
-#include "xleveldb.h"
-#include "xmsq.h"
+#include "txcommon.h"
 
 
-using namespace std;
-
-
-void	*thread_exleveldb(void *info_p)
+void	*thread_levledb(void *info_p)
 {
 	leveldb_t *ldb = NULL;
 	leveldb_options_t *options = NULL;
@@ -71,8 +62,6 @@ void	*thread_exleveldb(void *info_p)
 		if (count % 10000 == 0)
 		{
 			printf("Level DB: %d\n", count);
-			if (count == 200000)
-				exit(-9);
 		}
 	}
 

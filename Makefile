@@ -9,8 +9,8 @@ INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
 
-SRCS	= main.cpp xdb.cpp xpub.cpp xsub.cpp \
-	  xparams.cpp xmsq.cpp xverify.cpp ex.cpp xleveldb.cpp
+SRCS	= main.cpp xpub.cpp xsub.cpp \
+	  xparams.cpp xmsq.cpp xverify.cpp ex.cpp xleveldb.cpp util.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 

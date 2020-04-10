@@ -1,19 +1,5 @@
-#include <zmq.hpp>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <time.h>
-#include <unistd.h>
-#include <libpq-fe.h>
+#include "txcommon.h"
 
-#include "zhelpers.hpp"
-#include "xdb.h"
-#include "xparams.h"
-#include "xmsq.h"
-#include "xverify.h"
-
-using namespace std;
 
 void	*thread_verify(void *info_p)
 {
@@ -32,7 +18,7 @@ void	*thread_verify(void *info_p)
 		char	message[4096] = {0};
 		char	signature[256] = {0};
 		char	endmark[100] = {0};
-		char	tmp[4096] = {0}, *tp = NULL;
+		char	tmp[4096] = {0};
 		const char *filter = "!@#$";	// s_sendmore()로 publisher에서 보내는 것만 수용함 
 
 
@@ -102,7 +88,7 @@ void	*thread_verify(void *info_p)
 			if (message[0] == 0 || signature[0] == 0)
 			{
 				fprintf(stderr, "ERROR: Verifier %d: Message length %d or Signature length %d error!\n",
-					thrid, strlen(message), strlen(signature));
+					thrid, (int)strlen(message), (int)strlen(signature));
 				continue;
 			}
 
@@ -111,6 +97,7 @@ void	*thread_verify(void *info_p)
 			//printf("ms[%s]\n", message);
 
 			int verify_check = verify_message(pubkey, signature, message, &params.AddrHelper);
+		//	int verify_check = 1;
 
 			fprintf(outfp, "Verifier %d: %8d: %s signature=%s\n",
 				thrid, count, verify_check ? "true" : "false", signature);

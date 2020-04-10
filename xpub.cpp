@@ -1,13 +1,5 @@
-#include <zmq.hpp>
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <libpq-fe.h>
-#include <unistd.h>
+#include "txcommon.h"
 
-#include "zhelpers.hpp"
-#include "xdb.h"
-#include "xparams.h"
 
 using namespace std;
 
@@ -18,17 +10,8 @@ void	*thread_publisher(void *info_p)
 	int	count = 0;
 	const char *filter = "!@#$";
 	const char ESC = '|';
+	double	tmstart = 0, tmend = 0;
 
-	/****
-        PGconn *conn = PQconnectdb("hostaddr=127.0.0.1 \
-                        user=postgres \
-                        password=postgres \
-                        dbname=testdb");
-
-        if (PQstatus(conn) == CONNECTION_BAD) {
-                printf("db connect failed\n");
-        }
-	***/
 
 	// params set
 	Params_type_t params = paramsget("params.dat");
@@ -36,7 +19,7 @@ void	*thread_publisher(void *info_p)
 	for (int loop = 1; loop <= 1; loop++)
 	{
 		char	bindstr[100] = {0}, data[4096] = {0}, tmp[1024] = {0};
-		char	*message = "Hdac Technology, Solution Dev Team, Test Text. 잘 가는지 검사하는 것임.";
+		char	*message = "Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
 		char 	*pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 
 		fprintf(stderr, "Publisher: %d START! sendport=%d\n\n", loop, sendport);
@@ -47,13 +30,14 @@ void	*thread_publisher(void *info_p)
 		sprintf(bindstr, "tcp://*:%d", sendport);
 		xpub.bind(bindstr);
 
-		int bufsize = 1 * 1024 * 1024;	// 4MB 버퍼 
+		int bufsize = 1 * 1024 * 1024;	// 1MB 버퍼 
 		xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
-		// 이걸 해야 패킷 손실이 없어짐..
+		// Avoiding message loss
 		int one = 1;
 		xpub.setsockopt(ZMQ_XPUB_NODROP, &one, sizeof(one));
 
+		// max send message length
 		int qsize = 10000;		// 10000 개
 		xpub.setsockopt(ZMQ_SNDHWM, &qsize, sizeof(qsize));
 
@@ -68,8 +52,9 @@ void	*thread_publisher(void *info_p)
 			&params.PrivHelper, &params.AddrHelper);
 
 		printf("Signature: %s\n\n", signature);
+		tmstart = xgetclock();
 
-		for (int ii = 0; ii < 100000; ii++)
+		for (int ii = 0; ii < 500000; ii++)
 		{
 			// send 260 bytes
 			count++;
@@ -103,6 +88,9 @@ void	*thread_publisher(void *info_p)
 
 		}
 
+		tmend = xgetclock();
+		printf("PUB: Send time=%.3f sec\n", tmend - tmstart);
+
 		free(signature);
 
 		sprintf(data, "%s CLOSE", filter);
@@ -120,6 +108,8 @@ void	*thread_publisher(void *info_p)
 	/***
         PQfinish(conn);
 	***/
+
+	sleep(5);
 
 	pthread_exit(NULL);
 
