@@ -59,7 +59,7 @@ void	*thread_levledb(void *info_p)
 		leveldb_free(err); err = NULL;
 
 		count++;
-		if (count % 10000 == 0)
+		if (count % 100000 == 0)
 		{
 			printf("Level DB: %d\n", count);
 		}

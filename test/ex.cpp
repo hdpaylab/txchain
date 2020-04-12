@@ -96,7 +96,7 @@ void	test_verify_message(void)
 	printf("verify-Message: %s\n", verify_check? "true" : "false" );
 }
 
-int	main2()
+int	main()
 {
 	test_create_stream_publish_tx();
 

@@ -18,7 +18,7 @@ void	*thread_verify(void *info_p)
 		char	message[4096] = {0};
 		char	signature[256] = {0};
 		char	endmark[100] = {0};
-		char	tmp[4096] = {0};
+		char	tmp[4096] = {0}, *buf = NULL;
 		const char *filter = "!@#$";	// s_sendmore()로 publisher에서 보내는 것만 수용함 
 
 
@@ -58,17 +58,18 @@ void	*thread_verify(void *info_p)
 			}
 
 			std::string data(msq_data.mtext);
+//continue;	// msg 수신만 하는 경우 
 
 			count++;
-			if (count % 2000 == 0)
+			if (count % 10000 == 0)
 			//	printf("Verifier %d: count=%d data=%s\n", thrid, count, data.c_str());
 				printf("Verifier %d: count=%d \n", thrid, count);
 
-			strcpy(tmp, data.c_str());
-			if (strlen(tmp) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
+			buf = strdup(data.c_str());	//strcpy(tmp, data.c_str());
+			if (strlen(buf) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
 			{
 				// "!@#$####### ESCpubkeyESCmessageESCsignature"
-				char	*pp = strchr(tmp, ESC); 
+				char	*pp = strchr(buf, ESC); 
 				if (pp)
 				{
 					char *mp = strchr(pp + 1, ESC);

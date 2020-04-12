@@ -86,15 +86,15 @@ void	*thread_subscriber(void *info_p)
 
 			count++;
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
-			if (count % 10000 == 0)
+			if (count % 100000 == 0)
 				printf("SUB: Receive %d\n", count);
 
 			msq_data.mtype = 1;
-			snprintf(msq_data.mtext, BUFF_SIZE, "%s", data.c_str());
+			strncpy(msq_data.mtext, data.c_str(), data.length());
 
 			// message queue send
 			if (msgsnd(msqid, 
-				&msq_data, strlen(msq_data.mtext), 0) == -1) {
+				&msq_data, data.length(), 0) == -1) {
 				fprintf(stderr, "ERROR: message queue send error - %d: %s\n",
 					count, data.c_str());
 			}

@@ -10,7 +10,7 @@ INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
 
 SRCS	= main.cpp xpub.cpp xsub.cpp \
-	  xparams.cpp xmsq.cpp xverify.cpp ex.cpp xleveldb.cpp util.cpp
+	  xparams.cpp xmsq.cpp xverify.cpp xleveldb.cpp util.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 
@@ -30,7 +30,7 @@ all: $(ALIBS) tx tx2
 
 $(ALIBS): 
 	cd $(CSDKDIR); make; cd ..
-	ln -f -s $(CSDKDIR)/lib/*.a .
+#	ln -f -s $(CSDKDIR)/lib/*.a .
 
 tx: $(OBJS)
 	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(ALIBS) $(SDKLIBS) $(LIBS)

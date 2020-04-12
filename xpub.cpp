@@ -69,7 +69,7 @@ void	*thread_publisher(void *info_p)
 //			strcpy(tmp, "123456789012345678901234567890");
 //			sprintf(data, "%s%6d==========%s%s%s%s%s%s%s%s", filter, count,
 //				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
-			if (count % 10000 == 0)
+			if (count % 100000 == 0)
 				printf("PUB: Send %d\n", count);
 
 			ret = s_send(xpub, data);

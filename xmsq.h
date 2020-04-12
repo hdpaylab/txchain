@@ -2,7 +2,7 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 
-#define BUFF_SIZE (4 * 1024 * 1024)
+#define BUFF_SIZE (1 * 1024 * 1024)
 
 typedef struct {
 	long    mtype;
