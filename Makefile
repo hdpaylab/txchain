@@ -42,3 +42,4 @@ clean:
 	cd $(CSDKDIR); make clean; cd ..
 	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a *.log
 	rm -rf testdb
+	cd test; make clean; cd ..
