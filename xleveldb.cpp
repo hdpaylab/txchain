@@ -1,7 +1,7 @@
 #include "txcommon.h"
 
 
-void	*thread_levledb(void *info_p)
+void	*thread_levledb_msgq(void *info_p)
 {
 	leveldb_t *ldb = NULL;
 	leveldb_options_t *options = NULL;

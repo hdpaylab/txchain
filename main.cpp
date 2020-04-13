@@ -75,7 +75,7 @@ int	main(int ac, char *av[])
 
 	// level db thread
 	ret = pthread_create(&thrid[ii], NULL,
-			thread_levledb, (void *)&sendport);
+			thread_levledb_msgq, (void *)&sendport);
 	if (ret < 0)
 	{
 		perror("thread create error : ");

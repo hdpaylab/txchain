@@ -21,13 +21,16 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: ex speed
+all: speed ex leveldbex
 
 ex: ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+
+leveldbex: leveldbex.cpp
+	$(CPP) $(CPPFLAGS) -o $@ leveldbex.cpp $(LIBS) $(SDKLIBS) 
 
 speed: speed.cpp ../util.cpp
 	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
 clean:
-	rm -f ex speed $(OBJS) *.o *.out *.ver *.log
+	rm -f ex leveldbex speed $(OBJS) *.o *.out *.ver *.log

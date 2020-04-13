@@ -31,6 +31,7 @@ int	main(int ac, char *av[])
 }
 
 const char *user_data = "123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 ";
+
 queue<string> myq;
 pthread_mutex_t mtx;
 int	pop_count = 0;
@@ -69,6 +70,9 @@ void	*thread_mutex_test(void *arg)
 	return arg;
 }
 
+//
+// pthread_mutex 테스트 코드
+//
 void	mutex_test()
 {
 	int	id[10] = {0};
@@ -121,7 +125,7 @@ void	mutex_test()
 
 	printf("\n=====PUSH=%d POP=%d\n\n", push_count, pop_count);
 
-	printf("pthread_mutex test ok: %.3f sec, count=%d / %.1f/sec\n",
+	printf("End pthread_mutex test ok: %.3f sec, count=%d / %.1f/sec\n",
 		tmend - tmstart, count, count / (tmend - tmstart));
 }
 

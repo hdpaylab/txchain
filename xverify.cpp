@@ -1,7 +1,7 @@
 #include "txcommon.h"
 
 
-void	*thread_verify(void *info_p)
+void	*thread_verify_msgq(void *info_p)
 {
 	int	thrid = *(int *)info_p;
 	int	count = 0;

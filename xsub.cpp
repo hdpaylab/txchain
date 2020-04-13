@@ -16,7 +16,7 @@ void	*thread_subscriber(void *info_p)
 	for (index = 0; index <= MAX_VERIFY; index++)
 	{
 		int	id = index + 1;
-	        ret = pthread_create(&thrid[index], NULL, thread_verify, (void *)&id);
+	        ret = pthread_create(&thrid[index], NULL, thread_verify_msgq, (void *)&id);
                 if (ret < 0) {
                         perror("thread create error : ");
                         return 0;
@@ -45,7 +45,7 @@ void	*thread_subscriber(void *info_p)
 		tp = strchr(tmp, ':');
 		assert(tp != NULL);
 		*tp = '_';
-		outfp = fopen(tmp, "w+b");
+		outfp = fopen(tmp, "w+b");	// 출력파일 *.out
 		assert(outfp != NULL);
 
 		sprintf(peerstr, "tcp://%s", peer);

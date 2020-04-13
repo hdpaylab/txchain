@@ -40,9 +40,9 @@ void	*thread_publisher(void *info_p);	// xpub.cpp
 
 void	*thread_subscriber(void *info_p);	// xsub.cpp
 
-void	*thread_verify(void *info_p);		// xverify.cpp
+void	*thread_verify_msgq(void *info_p);		// xverify.cpp
 
-void	*thread_levledb(void *info_p);	// xleveldb.cpp
+void	*thread_levledb_msgq(void *info_p);	// xleveldb.cpp
 
 double	xgetclock();				// util.cpp
 
