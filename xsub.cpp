@@ -15,9 +15,9 @@ void	*thread_subscriber(void *info_p)
 
 
 	// Verifier thread creation
-	for (index = 0; index <= _nthread; index++)
+	for (index = 0; index < _nthread; index++)
 	{
-		int	id = index + 1;
+		int	id = index;
 	        ret = pthread_create(&thrid[index], NULL, thread_verifier, (void *)&id);
                 if (ret < 0) {
                         perror("thread create error : ");
@@ -26,10 +26,12 @@ void	*thread_subscriber(void *info_p)
                 usleep(10 * 1000);
 
 	}
-	for (index = 0; index <= _nthread; index++)
+	for (index = 0; index < _nthread; index++)
 	{
 		pthread_detach(thrid[index]);
 	}
+
+	printf("XSUB: Verifier threads created.\n");
 
 	for (int ii = 0; ii < MAX_VECTOR_SIZE; ii++)
 	{
@@ -107,7 +109,12 @@ void	*thread_subscriber(void *info_p)
 			int idx = _push_count % MAX_VECTOR_SIZE;
 			while (_txv[idx].status != TXCHAIN_STATUS_EMPTY)
 			{
+#ifdef DEBUG_SLOW_MODE
+				printf("XSUB: Wait EMPTY...\n");
+				usleep(500 * 1000);
+#else
 				usleep(10);
+#endif
 			}
 
 			txdata_t tx;
@@ -118,8 +125,12 @@ void	*thread_subscriber(void *info_p)
 
 			_txv[idx] = tx;
 			_push_count++;
+#ifdef DEBUG_SLOW_MODE
+			usleep(100 * 1000);
+#else
 			if (idx == 0)
-				printf("Add[%d]: count=%d vsize=%ld\n", idx, _push_count, _txv.size());
+#endif
+				printf("Add[%d]: READY count=%d vsize=%ld\n", idx, _push_count, _txv.size());
 
 #endif	// TXCHAIN_VERIFY_MODEL_VECTOR
 

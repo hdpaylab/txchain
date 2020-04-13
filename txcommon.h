@@ -17,13 +17,16 @@
 #include "zhelpers.hpp"
 
 
+//#define DEBUG_SLOW_MODE			1	// for debugging
+
+
 //#define TXCHAIN_VERIFY_MODEL_MSGQ	1
 #define TXCHAIN_VERIFY_MODEL_VECTOR	2
 
 
 #define MAX_NODE	100
 
-#define MAX_VERIFIER	4
+#define MAX_VERIFIER	4		// thread °³¼ö 
 
 
 using namespace std;
@@ -37,44 +40,35 @@ typedef struct {
 }	tx_t;
 
 enum {
-	TXCHAIN_STATUS_EMPTY	= 0,
-	TXCHAIN_STATUS_READY	= 1,
-	TXCHAIN_STATUS_VERIFIED	= 2,
+	TXCHAIN_STATUS_EMPTY	= 0x00000000,
+	TXCHAIN_STATUS_READY	= 0x10000000,
+	TXCHAIN_STATUS_VERIFIED	= 0x20000000,
 };
 
 typedef struct {
-	int	txtype;
-	string	data;
-	int	verified;
-	int	status;		// see above TXCHAIN_STATUS_xxx
+	uint32_t	seq;		// TX sequence
+	uint32_t	verified;	// 0=fail 1=success -1=none (@TXCHAIN_STATUS_VERIFIED)
+	uint32_t	status;		// see above TXCHAIN_STATUS_xxx
+	string		data;
 }	txdata_t;
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Params_type_t paramsget(const string& Path);		// xparams.cpp
+Params_type_t paramsget(const string& Path);	// xparams.cpp
 
-void	*thread_publisher(void *info_p);		// xpub.cpp
+void	*thread_publisher(void *info_p);	// xpub.cpp
 
-void	*thread_subscriber(void *info_p);		// xsub.cpp
+void	*thread_subscriber(void *info_p);	// xsub.cpp
 
-void	*thread_verifier(void *info_p);			// xverify.cpp
+void	*thread_verifier(void *info_p);		// xverify.cpp
 
 void	*thread_levledb(void *info_p);		// xleveldb.cpp
 
-double	xgetclock();					// util.cpp
+double	xgetclock();				// util.cpp
 
 
-extern	int	_nthread;
-
-
-////////////////////////////////////////////////////////////////////////////////
-#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
-
-#define SUBSCRIBER_MSGQ_ID	1234
-#define VERIFIER_MSGQ_ID	1235
-
-#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
+extern	int	_nthread;	// current number of verifier threads
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +80,15 @@ extern	vector<txdata_t> _txv;
 extern	int	_push_count, _pop_count;
 
 #endif	// TXCHAIN_VERIFY_MODEL_VECTOR
+
+
+////////////////////////////////////////////////////////////////////////////////
+#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
+
+#define SUBSCRIBER_MSGQ_ID	1234
+#define VERIFIER_MSGQ_ID	1235
+
+#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
 
 #endif	// __COMMON_H
