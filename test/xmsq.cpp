@@ -18,7 +18,7 @@ int ai_msq_open(int key, int queue_size)
         if (buf.msg_qbytes < queue_size) {
             buf.msg_qbytes = queue_size;
             msgctl(msqid, IPC_SET, &buf);
-		}
+	}
     }
 
     return msqid;

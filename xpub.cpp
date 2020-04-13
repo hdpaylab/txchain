@@ -1,9 +1,9 @@
 #include "txcommon.h"
 
 
-using namespace std;
-
-
+//
+//
+//
 void	*thread_publisher(void *info_p)
 {
         int	sendport = *(int *)info_p;

@@ -1,12 +1,10 @@
 #include "txcommon.h"
 
 
-void	*thread_verify_msgq(void *info_p)
+void	*thread_verifier(void *info_p)
 {
 	int	thrid = *(int *)info_p;
 	int	count = 0;
-	int	rmsqid = -1;
-	int	smsqid = -1;
 
 	// params set
 	Params_type_t params = paramsget("params.dat");
@@ -21,17 +19,21 @@ void	*thread_verify_msgq(void *info_p)
 
 	printf("Verifier %d START!\n\n", thrid);
 
+#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
 	// message queue connect
-	rmsqid = msgget( (key_t)1234, IPC_CREAT | 0666);
+	int rmsqid = msgget( (key_t)SUBSCRIBER_MSGQ_ID, IPC_CREAT | 0666);
 	if (rmsqid == -1) {
-		perror("msgget(1234)");
+		perror("msgget(SUBSCRIBER_MSGQ_ID)");
+		exit(-1);
 	}
 
 	// message queue connect
-	smsqid = msgget( (key_t)1235, IPC_CREAT | 0666);
+	int smsqid = msgget( (key_t)VERIFIER_MSGQ_ID, IPC_CREAT | 0666);
 	if (smsqid == -1) {
-		perror("msgget(1235)");
+		perror("msgget(VERIFIER_MSGQ_ID)");
+		exit(-1);
 	}
+#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
 	sprintf(tmp, "Verifier %d.ver", thrid);
 	outfp = fopen(tmp, "w+b");
@@ -47,6 +49,9 @@ void	*thread_verify_msgq(void *info_p)
 		tx.message = NULL;
 		tx.signature = NULL;
 		tx.verified = -1;
+
+#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
+
 		data_t msq_data;
 
 		// message queue recv
@@ -55,7 +60,24 @@ void	*thread_verify_msgq(void *info_p)
 				thrid, count);
 		}
 
-		std::string data(msq_data.mtext);
+		string data(msq_data.mtext);
+
+#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
+
+#ifdef TXCHAIN_VERIFY_MODEL_VECTOR
+
+		int idx = (count * _nthread + thrid) % MAX_VECTOR_SIZE;
+
+		if (_txv[idx].status != TXCHAIN_STATUS_READY)
+		{
+			usleep(10);
+			continue;
+		}
+
+		string data = _txv[idx].data;
+
+#endif	// TXCHAIN_VERIFY_MODEL_VECTOR
+
 //continue;	// msg 수신만 하는 경우 
 
 		count++;
@@ -63,7 +85,7 @@ void	*thread_verify_msgq(void *info_p)
 		//	printf("Verifier %d: count=%d data=%s\n", thrid, count, data.c_str());
 			printf("Verifier %d: count=%d \n", thrid, count);
 
-		buf = strdup(data.c_str());
+		buf = (char *)data.c_str();
 		if (strlen(buf) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
 		{
 			//                 pp       mp        sp
@@ -93,7 +115,6 @@ void	*thread_verify_msgq(void *info_p)
 				thrid, tx.pubkey ? (int)strlen(tx.pubkey) : 0, 
 				tx.message ? (int)strlen(tx.message) : 0,
 				tx.signature ? (int)strlen(tx.signature) : 0);
-			free(buf);
 			continue;
 		}
 
@@ -107,15 +128,25 @@ void	*thread_verify_msgq(void *info_p)
 		fprintf(outfp, "Verifier %d: %8d: %s signature=%s\n",
 			thrid, count, tx.verified == 1 ? "true" : "false", tx.signature);
 
+#ifdef TXCHAIN_VERIFY_MODEL_VECTOR
+
+		_txv[idx].verified = tx.verified;
+		_txv[idx].status = TXCHAIN_STATUS_VERIFIED;	// 상태 업데이트
+
+#endif	// TXCHAIN_VERIFY_MODEL_VECTOR
+
+#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
+
 		// message queue send
 		if (msgsnd(smsqid,
 			&msq_data, strlen(msq_data.mtext), 0) == -1) {
 			fprintf(stderr, "ERROR: Verifier %d: message queue send error - %d: %s\n",
 				thrid, count, data.c_str());
 		}
-		fflush(outfp);
 
-		free(buf);
+#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
+
+		fflush(outfp);
 	}
 
 	fclose(outfp);

@@ -10,8 +10,15 @@
 #include "txcommon.h"
 
 
+int	_nthread = 4;
+	
+vector<txdata_t> _txv(MAX_VECTOR_SIZE);
+int	_push_count = 0, _pop_count = 0;
+
+
 int	maxnode = 1;		// 나중에 설정으로 뺄 것 
 int	sendport = 7000;
+
 int	npeer = 0;
 char	peers[MAX_NODE][40] = {0};
 
@@ -75,7 +82,7 @@ int	main(int ac, char *av[])
 
 	// level db thread
 	ret = pthread_create(&thrid[ii], NULL,
-			thread_levledb_msgq, (void *)&sendport);
+			thread_levledb, (void *)&sendport);
 	if (ret < 0)
 	{
 		perror("thread create error : ");

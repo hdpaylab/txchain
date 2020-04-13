@@ -1,6 +1,9 @@
 #include "txcommon.h"
 
 
+//
+// thread for VECTOR model
+//
 void	*thread_subscriber(void *info_p)
 {
 	char	*peer = (char *)info_p;
@@ -8,7 +11,6 @@ void	*thread_subscriber(void *info_p)
 	pthread_t thrid[4];
 	int	index = 0;
 	int	ret = 0;
-	int	msqid = -1;
 	double	tmstart = 0, tmend = 0;
 
 
@@ -16,7 +18,7 @@ void	*thread_subscriber(void *info_p)
 	for (index = 0; index <= MAX_VERIFY; index++)
 	{
 		int	id = index + 1;
-	        ret = pthread_create(&thrid[index], NULL, thread_verify_msgq, (void *)&id);
+	        ret = pthread_create(&thrid[index], NULL, thread_verifier, (void *)&id);
                 if (ret < 0) {
                         perror("thread create error : ");
                         return 0;
@@ -24,8 +26,15 @@ void	*thread_subscriber(void *info_p)
                 usleep(10 * 1000);
 
 	}
-	for (index = 0; index <= MAX_VERIFY; index++) {
+	for (index = 0; index <= MAX_VERIFY; index++)
+	{
 		pthread_detach(thrid[index]);
+	}
+
+	for (int ii = 0; ii < MAX_VECTOR_SIZE; ii++)
+	{
+		_txv[ii].verified = -1;
+		_txv[ii].status = TXCHAIN_STATUS_EMPTY;
 	}
 
 	while (1)
@@ -51,11 +60,16 @@ void	*thread_subscriber(void *info_p)
 		sprintf(peerstr, "tcp://%s", peer);
 		xsock.connect(peerstr);
 		
+#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
+
 		// message queue connect
- 		msqid = msgget( (key_t)1234, IPC_CREAT | 0666);
+ 		int msqid = msgget( (key_t)SUBSCRIBER_MSGQ_ID, IPC_CREAT | 0666);
 		if (msqid == -1) {
-			perror("msgget(1234)");
+			perror("msgget(SUBSCRIBER_MSGQ_ID)");
+			exit(-1);
 		}
+
+#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
 		xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 
@@ -74,8 +88,6 @@ void	*thread_subscriber(void *info_p)
 
 		while (1)
 		{
-			data_t msq_data;
-
 			std::string data = s_recv(xsock);
 
 			if (data == endmark)
@@ -89,6 +101,32 @@ void	*thread_subscriber(void *info_p)
 			if (count % 100000 == 0)
 				printf("SUB: Receive %d\n", count);
 
+#ifdef TXCHAIN_VERIFY_MODEL_VECTOR
+
+			// 아직 처리가 안되었으면 대기..
+			int idx = _push_count % MAX_VECTOR_SIZE;
+			while (_txv[idx].status != TXCHAIN_STATUS_EMPTY)
+			{
+				usleep(10);
+			}
+
+			txdata_t tx;
+
+			tx.data = data;
+			tx.verified = -1;
+			tx.status = TXCHAIN_STATUS_READY;
+
+			_txv[idx] = tx;
+			_push_count++;
+			if (idx == 0)
+				printf("Add[%d]: count=%d vsize=%ld\n", idx, _push_count, _txv.size());
+
+#endif	// TXCHAIN_VERIFY_MODEL_VECTOR
+
+#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
+
+			data_t msq_data;
+
 			msq_data.mtype = 1;
 			strncpy(msq_data.mtext, data.c_str(), data.length());
 
@@ -98,6 +136,8 @@ void	*thread_subscriber(void *info_p)
 				fprintf(stderr, "ERROR: message queue send error - %d: %s\n",
 					count, data.c_str());
 			}
+
+#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 		}
 
 		tmend = xgetclock();
@@ -115,14 +155,9 @@ void	*thread_subscriber(void *info_p)
 		break;
 	}
 
-	/***
-        PQfinish(conn);
-	***/
-
 	sleep(5);
 
 	pthread_exit(NULL);
 
 	return 0;
 }
-

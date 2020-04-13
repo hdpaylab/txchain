@@ -318,7 +318,7 @@ s_console (const char *format, ...)
 //  zmq_poll.
 
 static int s_interrupted = 0;
-inline static void s_signal_handler ()
+inline static void s_signal_handler (int sig_handler)
 {
     s_interrupted = 1;
 }
