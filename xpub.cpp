@@ -13,8 +13,8 @@ void	*thread_publisher(void *info_p)
 	double	tmstart = 0, tmend = 0;
 
 	tx_t	tx;
-	char	*message = "Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
-	char 	*pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
+	const char *message = "Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
+	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 
 	tx.message = strdup(message);
 	tx.pubkey = strdup(pubkey);

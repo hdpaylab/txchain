@@ -4,7 +4,7 @@
 double	xgetclock()
 {
 	double	ustime = 0;
-	struct timeval	localxtm = {0};
+	struct timeval	localxtm;
 
 	gettimeofday(&localxtm, NULL);
 
