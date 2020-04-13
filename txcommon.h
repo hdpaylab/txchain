@@ -46,10 +46,11 @@ enum {
 };
 
 typedef struct {
+	string		data;
 	uint32_t	seq;		// TX sequence
 	uint32_t	verified;	// 0=fail 1=success -1=none (@TXCHAIN_STATUS_VERIFIED)
+					// WARNING: DO NOT MOVE status position!
 	uint32_t	status;		// see above TXCHAIN_STATUS_xxx
-	string		data;
 }	txdata_t;
 
 

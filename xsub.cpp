@@ -128,7 +128,7 @@ void	*thread_subscriber(void *info_p)
 #ifdef DEBUG_SLOW_MODE
 			usleep(100 * 1000);
 #else
-			if (idx == 0)
+			if (_push_count % 100000 == 0)
 #endif
 				printf("Add[%d]: READY count=%d vsize=%ld\n", idx, _push_count, _txv.size());
 

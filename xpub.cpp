@@ -73,7 +73,8 @@ void	*thread_publisher(void *info_p)
 			count++;
 			memset(tmp, 0x00, sizeof(tmp));
 
-			sprintf(data, "%s%7d %c%s%c%s%c%s", filter, count, ESC, tx.pubkey, ESC, tx.message, ESC, tx.signature);
+			sprintf(data, "%s%7d %c%s%c%s%c%s", 
+				filter, count, ESC, tx.pubkey, ESC, tx.message, ESC, tx.signature);
 			bool ret = s_sendmore(xpub, data);
 
 			// send 260 bytes
