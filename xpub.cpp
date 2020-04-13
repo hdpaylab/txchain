@@ -51,6 +51,13 @@ void	*thread_publisher(void *info_p)
 			message,
 			&params.PrivHelper, &params.AddrHelper);
 
+		printf("xp:pubkey	: [%s]\n", pubkey);
+		printf("xp:message	: [%s]\n", message);
+		printf("xp:signature	: [%s]\n", signature);
+
+		int verify_check = verify_message(pubkey, signature, message, &params.AddrHelper);
+		printf("xp:verify_check=%d\n", verify_check);
+
 		printf("Signature: %s\n\n", signature);
 		tmstart = xgetclock();
 
@@ -59,16 +66,12 @@ void	*thread_publisher(void *info_p)
 			// send 260 bytes
 			count++;
 			memset(tmp, 0x00, sizeof(tmp));
-			strcpy(tmp, signature);
 
-			sprintf(data, "%s%7d %c%s%c%s%c%s", filter, count, ESC, pubkey, ESC, message, ESC, tmp);
+			sprintf(data, "%s%7d %c%s%c%s%c%s", filter, count, ESC, pubkey, ESC, message, ESC, signature);
 			bool ret = s_sendmore(xpub, data);
 
 			// send 260 bytes
 			count++;
-//			strcpy(tmp, "123456789012345678901234567890");
-//			sprintf(data, "%s%6d==========%s%s%s%s%s%s%s%s", filter, count,
-//				tmp, tmp, tmp, tmp, tmp, tmp, tmp, tmp);
 			if (count % 100000 == 0)
 				printf("PUB: Send %d\n", count);
 

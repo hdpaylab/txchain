@@ -62,25 +62,28 @@ void	*thread_verify(void *info_p)
 
 			count++;
 			if (count % 10000 == 0)
-			//	printf("Verifier %d: count=%d data=%s\n", thrid, count, data.c_str());
-				printf("Verifier %d: count=%d \n", thrid, count);
+				printf("Verifier %d: count=%d data=%s\n", thrid, count, data.c_str());
+			//	printf("Verifier %d: count=%d \n", thrid, count);
 
 			buf = strdup(data.c_str());	//strcpy(tmp, data.c_str());
 			if (strlen(buf) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
 			{
-				// "!@#$####### ESCpubkeyESCmessageESCsignature"
+				//                 pp       mp        sp
+				// "!@#$####### ESCpubkeyESCmessageESCsignatureESC"
 				char	*pp = strchr(buf, ESC); 
 				if (pp)
 				{
-					char *mp = strchr(pp + 1, ESC);
+					pp++;
+					char *mp = strchr(pp, ESC);
 					if (mp)
 					{
-						char *sp = strchr(mp + 1, ESC);
+						mp++;
+						char *sp = strchr(mp, ESC);
 						if (sp) {
-							snprintf(pubkey, strlen(pp) - strlen(mp), "%s", pp + 1);
-							snprintf(message, strlen(mp) - strlen(sp), "%s", mp + 1);
-							snprintf(signature, strlen(sp), "%s", sp);
-
+							sp++;
+							strncpy(pubkey, pp, mp - pp - 1);
+							strncpy(message, mp, sp - mp - 1);
+							strcpy(signature, sp);
 						}
 					}
 				}
@@ -93,13 +96,13 @@ void	*thread_verify(void *info_p)
 				continue;
 			}
 
-			printf("pubkey	: %s\n", pubkey);
-			printf("sign	: %s\n", signature);
-			printf("message	: %s\n", message);
+			printf("xv:pubkey	: [%s]\n", pubkey);
+			printf("xv:message	: [%s]\n", message);
+			printf("xv:signature	: [%s]\n", signature);
 
 			int verify_check = verify_message(pubkey, signature, message, &params.AddrHelper);
 		//	int verify_check = 1;
-			printf("VERITY	: %d\n", verify_check);
+			printf("xv:VERITY	: %d\n", verify_check);
 		sleep(1);
 
 			fprintf(outfp, "Verifier %d: %8d: %s signature=%s\n",
