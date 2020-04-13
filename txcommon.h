@@ -23,7 +23,7 @@
 
 #define MAX_NODE	100
 
-#define MAX_VERIFY	4
+#define MAX_VERIFIER	16
 
 
 using namespace std;

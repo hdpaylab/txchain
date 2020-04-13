@@ -10,7 +10,7 @@
 #include "txcommon.h"
 
 
-int	_nthread = 4;
+int	_nthread = MAX_VERIFIER;
 	
 vector<txdata_t> _txv(MAX_VECTOR_SIZE);
 int	_push_count = 0, _pop_count = 0;

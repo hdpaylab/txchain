@@ -15,7 +15,7 @@ void	*thread_subscriber(void *info_p)
 
 
 	// Verifier thread creation
-	for (index = 0; index <= MAX_VERIFY; index++)
+	for (index = 0; index <= _nthread; index++)
 	{
 		int	id = index + 1;
 	        ret = pthread_create(&thrid[index], NULL, thread_verifier, (void *)&id);
@@ -26,7 +26,7 @@ void	*thread_subscriber(void *info_p)
                 usleep(10 * 1000);
 
 	}
-	for (index = 0; index <= MAX_VERIFY; index++)
+	for (index = 0; index <= _nthread; index++)
 	{
 		pthread_detach(thrid[index]);
 	}
