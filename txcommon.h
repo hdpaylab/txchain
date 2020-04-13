@@ -26,6 +26,14 @@
 using namespace std;
 
 
+typedef struct {
+	char	*pubkey;
+	char	*message;
+	char	*signature;
+	int	verified;
+}	tx_t;
+
+
 Params_type_t paramsget(const string& Path);	// xparams.cpp
 
 void	*thread_publisher(void *info_p);	// xpub.cpp
