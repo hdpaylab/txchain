@@ -23,11 +23,11 @@ ALIBS	= \
 
 all: ex speed
 
-ex: 
+ex: ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
-speed: 
-	$(CPP) $(CPPFLAGS) -o $@ speed.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+speed: speed.cpp ../util.cpp
+	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
 clean:
 	rm -f ex speed $(OBJS) *.o *.out *.ver *.log

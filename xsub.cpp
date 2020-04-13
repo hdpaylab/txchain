@@ -101,7 +101,8 @@ void	*thread_subscriber(void *info_p)
 		}
 
 		tmend = xgetclock();
-		printf("SUB: Receive time=%.3f sec\n", tmend - tmstart);
+		printf("SUB: Receive time=%.3f / %.1f/sec\n",
+			tmend - tmstart, count / (tmend - tmstart));
 
 		fclose(outfp);
 
