@@ -12,3 +12,4 @@ double	xgetclock()
 
 	return ustime;
 }
+

@@ -15,7 +15,7 @@ void	*thread_subscriber(void *info_p)
 
 
 	// Verifier thread creation
-	for (index = 0; index < _nthread; index++)
+	for (index = 0; index < _nverifier; index++)
 	{
 		int	id = index;
 	        ret = pthread_create(&thrid[index], NULL, thread_verifier, (void *)&id);
@@ -26,7 +26,7 @@ void	*thread_subscriber(void *info_p)
                 usleep(10 * 1000);
 
 	}
-	for (index = 0; index < _nthread; index++)
+	for (index = 0; index < _nverifier; index++)
 	{
 		pthread_detach(thrid[index]);
 	}
@@ -109,7 +109,7 @@ void	*thread_subscriber(void *info_p)
 			int idx = _push_count % MAX_VECTOR_SIZE;
 			while (_txv[idx].status != TXCHAIN_STATUS_EMPTY)
 			{
-#ifdef DEBUG_SLOW_MODE
+#ifdef DEBUG
 				printf("XSUB: Wait EMPTY...\n");
 				usleep(500 * 1000);
 #else
@@ -125,7 +125,7 @@ void	*thread_subscriber(void *info_p)
 
 			_txv[idx] = tx;
 			_push_count++;
-#ifdef DEBUG_SLOW_MODE
+#ifdef DEBUG
 			usleep(100 * 1000);
 #else
 			if (_push_count % 100000 == 0)

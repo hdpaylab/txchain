@@ -66,14 +66,14 @@ void	*thread_verifier(void *info_p)
 
 #ifdef TXCHAIN_VERIFY_MODEL_VECTOR
 
-		int idx = (count * _nthread + thrid) % MAX_VECTOR_SIZE;
-#ifdef DEBUG_SLOW_MODE
-printf("thrid=%d idx=%d status=%X\n", thrid, idx, _txv[idx].status);
-usleep(100 * 1000);
+		int idx = (count * _nverifier + thrid) % MAX_VECTOR_SIZE;
+#ifdef DEBUG
+		printf("thrid=%d idx=%d status=%X\n", thrid, idx, _txv[idx].status);
+		usleep(100 * 1000);
 #endif
 		if (_txv[idx].status != TXCHAIN_STATUS_READY)
 		{
-#ifdef DEBUG_SLOW_MODE
+#ifdef DEBUG
 			printf("THR%d: idx=%d Not READY...\n", thrid, idx);
 			usleep(100 * 1000);
 #else

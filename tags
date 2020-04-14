@@ -4,32 +4,25 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-MAX_NODE	txcommon.h	24;"	d
-MAX_VECTOR_SIZE	txcommon.h	83;"	d
-MAX_VERIFY	txcommon.h	26;"	d
-SUBSCRIBER_MSGQ_ID	txcommon.h	74;"	d
-TXCHAIN_STATUS_EMPTY	txcommon.h	/^	TXCHAIN_STATUS_EMPTY	= 0,$/;"	e	enum:__anon2
-TXCHAIN_STATUS_READY	txcommon.h	/^	TXCHAIN_STATUS_READY	= 1,$/;"	e	enum:__anon2
-TXCHAIN_STATUS_VERIFIED	txcommon.h	/^	TXCHAIN_STATUS_VERIFIED	= 2,$/;"	e	enum:__anon2
-TXCHAIN_VERIFY_MODEL_VECTOR	txcommon.h	21;"	d
-VERIFIER_MSGQ_ID	txcommon.h	75;"	d
+BUFF_SIZE	xmsq.h	5;"	d
+MAX_NODE	txcommon.h	21;"	d
+MAX_VERIFY	txcommon.h	23;"	d
 __COMMON_H	txcommon.h	2;"	d
 __ZHELPERS_HPP_INCLUDED__	zhelpers.hpp	3;"	d
-_nthread	main.cpp	/^int	_nthread = 4;$/;"	v
-_pop_count	main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
-_push_count	main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
+ai_msq_open	xmsq.cpp	/^int ai_msq_open(int key, int queue_size)$/;"	f
 c99_snprintf	zhelpers.hpp	/^	inline int c99_snprintf(char *outBuf, size_t size, const char *format, ...)$/;"	f
 c99_vsnprintf	zhelpers.hpp	/^	inline int c99_vsnprintf(char *outBuf, size_t size, const char *format, va_list ap)$/;"	f
-data	txcommon.h	/^	string	data;$/;"	m	struct:__anon3
+data_t	xmsq.h	/^} data_t;$/;"	t	typeref:struct:__anon1
 int64_t	zhelpers.hpp	/^    typedef __int64 int64_t;$/;"	t
 load_config	main.cpp	/^void	load_config(int ac, char *av[])$/;"	f
+main	leveldbex.cpp	/^int main() {$/;"	f
 main	main.cpp	/^int	main(int ac, char *av[])$/;"	f
 maxnode	main.cpp	/^int	maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
-message	txcommon.h	/^	char	*message;$/;"	m	struct:__anon1
+mtext	xmsq.h	/^	char    mtext[BUFF_SIZE];$/;"	m	struct:__anon1
+mtype	xmsq.h	/^	long    mtype;$/;"	m	struct:__anon1
 npeer	main.cpp	/^int	npeer = 0;$/;"	v
 paramsget	xparams.cpp	/^Params_type_t paramsget(const string& Path)$/;"	f
 peers	main.cpp	/^char	peers[MAX_NODE][40] = {0};$/;"	v
-pubkey	txcommon.h	/^	char	*pubkey;$/;"	m	struct:__anon1
 random	zhelpers.hpp	37;"	d
 s_catch_signals	zhelpers.hpp	/^inline static void s_catch_signals ()$/;"	f
 s_clock	zhelpers.hpp	/^s_clock (void)$/;"	f
@@ -45,26 +38,19 @@ s_sendmore	zhelpers.hpp	/^s_sendmore (zmq::socket_t & socket, const std::string 
 s_sendmore	zhelpers.hpp	/^s_sendmore(void *socket, char *string) {$/;"	f
 s_set_id	zhelpers.hpp	/^s_set_id (zmq::socket_t & socket)$/;"	f
 s_set_id	zhelpers.hpp	/^s_set_id(zmq::socket_t & socket, intptr_t id)$/;"	f
-s_signal_handler	zhelpers.hpp	/^inline static void s_signal_handler (int sig_handler)$/;"	f
+s_signal_handler	zhelpers.hpp	/^inline static void s_signal_handler (int signal_value)$/;"	f
 s_sleep	zhelpers.hpp	/^s_sleep (int msecs)$/;"	f
 s_version	zhelpers.hpp	/^s_version (void)$/;"	f
 s_version_assert	zhelpers.hpp	/^s_version_assert (int want_major, int want_minor)$/;"	f
 sendport	main.cpp	/^int	sendport = 7000;$/;"	v
-signature	txcommon.h	/^	char	*signature;$/;"	m	struct:__anon1
 snprintf	zhelpers.hpp	44;"	d
 srandom	zhelpers.hpp	36;"	d
-status	txcommon.h	/^	int	status;		\/\/ see above TXCHAIN_STATUS_xxx$/;"	m	struct:__anon3
 thread_levledb	xleveldb.cpp	/^void	*thread_levledb(void *info_p)$/;"	f
 thread_publisher	xpub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
 thread_subscriber	xsub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
-thread_verifier	xverify.cpp	/^void	*thread_verifier(void *info_p)$/;"	f
-tx_t	txcommon.h	/^}	tx_t;$/;"	t	typeref:struct:__anon1
-txdata_t	txcommon.h	/^}	txdata_t;$/;"	t	typeref:struct:__anon3
-txtype	txcommon.h	/^	int	txtype;$/;"	m	struct:__anon3
+thread_verify	xverify.cpp	/^void	*thread_verify(void *info_p)$/;"	f
 uint	zhelpers.hpp	/^    typedef unsigned int  uint;$/;"	t
 ulong	zhelpers.hpp	/^    typedef unsigned long ulong;$/;"	t
-verified	txcommon.h	/^	int	verified;$/;"	m	struct:__anon1
-verified	txcommon.h	/^	int	verified;$/;"	m	struct:__anon3
 vsnprintf	zhelpers.hpp	45;"	d
 within	zhelpers.hpp	74;"	d
 xgetclock	util.cpp	/^double	xgetclock()$/;"	f

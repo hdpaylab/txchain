@@ -10,17 +10,18 @@
 #include "txcommon.h"
 
 
-int	_nthread = MAX_VERIFIER;
+int	_nverifier = MAX_VERIFIER;
 	
+
 vector<txdata_t> _txv(MAX_VECTOR_SIZE);
 int	_push_count = 0, _pop_count = 0;
 
 
-int	maxnode = 1;		// 나중에 설정으로 뺄 것 
-int	sendport = 7000;
+int	_maxnode = 1;		// 나중에 설정으로 뺄 것 
+int	_sendport = 7000;
 
-int	npeer = 0;
-char	peers[MAX_NODE][40] = {0};
+int	_npeer = 0;
+char	_peerlist[MAX_NODE + 1][40] = {0};
 
 
 void	load_config(int ac, char *av[]);
@@ -38,8 +39,8 @@ int	main(int ac, char *av[])
 
 
 	// 발신자 thread
-	printf("Create publisher sendport=%d\n", sendport);
-	ret = pthread_create(&thrid[0], NULL, thread_publisher, (void *)&sendport);
+	printf("Create publisher sendport=%d\n", _sendport);
+	ret = pthread_create(&thrid[0], NULL, thread_publisher, (void *)&_sendport);
 	if (ret < 0)
 	{
 		perror("thread create error : ");
@@ -49,9 +50,9 @@ int	main(int ac, char *av[])
 
 
 	// 수신자 
-	for (ii = 1; ii <= npeer; ii ++)
+	for (ii = 1; ii <= _npeer; ii ++)
 	{
-		char	*peer = peers[ii-1];
+		char	*peer = _peerlist[ii-1];
 
 		printf("Create subscriber [%d]=%s\n", ii - 1, peer);
 
@@ -63,14 +64,14 @@ int	main(int ac, char *av[])
 		}
 
 		// 다수의 노드로 테스트할 때는 자신이 자신의 프로세스에게 발송 요청을 하지 않음.
-		if (maxnode > 1 && atoi(tp+1) == sendport)
+		if (_maxnode > 1 && atoi(tp+1) == _sendport)
 		{
 			printf("Peer %s skipped.\n", peer);
 			printf("\n");
 			continue;
 		}
 
-		ret = pthread_create(&thrid[ii], NULL, thread_subscriber, (void *)peers[ii-1]);
+		ret = pthread_create(&thrid[ii], NULL, thread_subscriber, (void *)_peerlist[ii-1]);
 		if (ret < 0)
 		{
 			perror("thread create error : ");
@@ -82,7 +83,7 @@ int	main(int ac, char *av[])
 
 	// level db thread
 	ret = pthread_create(&thrid[ii], NULL,
-			thread_levledb, (void *)&sendport);
+			thread_levledb, (void *)&_sendport);
 	if (ret < 0)
 	{
 		perror("thread create error : ");
@@ -90,10 +91,10 @@ int	main(int ac, char *av[])
 	}
 	usleep(10 * 1000);
 
-	for (ii = 0; ii <= npeer; ii++) {
+	for (ii = 0; ii <= _npeer; ii++) {
 		pthread_detach(thrid[ii]);
 	}
-	// npeer+1 = leveldb thread
+	// _npeer+1 = leveldb thread
 	pthread_detach(thrid[ii]);
 
 	while (1)
@@ -114,40 +115,40 @@ void	load_config(int ac, char *av[])
 	// 최대 노드 개수 지정 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
-		maxnode = atoi(av[1]);
-		if (maxnode > 100)
-			maxnode = 100;	// 최대 node는 100개로..
+		_maxnode = atoi(av[1]);
+		if (_maxnode > 100)
+			_maxnode = 100;	// 최대 node는 100개로..
 		ac--, av++;
 	}
-	printf("Max node = %d\n", maxnode);
+	printf("Max node = %d\n", _maxnode);
 
 
 	// 발송 포트 지정 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
-		sendport = atoi(av[1]);
-		if (sendport > 65535)
+		_sendport = atoi(av[1]);
+		if (_sendport <= 10 || _sendport > 65535)
 		{
 			fprintf(stderr, "ERROR: port range error (1 ~ 65535)\n");
 			exit(-1);
 		}
 		ac--, av++;
 	}
-	printf("Send port = %d\n", sendport);
+	printf("Send port = %d\n", _sendport);
 
 
 	// 연결할 peer 지정 (테스트 때는 다이나믹하게 바뀌지 않고 고정으로..)
-	for (ii = 1; ii < ac && npeer < MAX_NODE; ii++)
+	for (ii = 1; ii < ac && _npeer < MAX_NODE; ii++)
 	{
-		if (npeer > maxnode)
+		if (_npeer > _maxnode)
 		{
-			fprintf(stderr, "WARNING: Number of peer %d > Max node %d\n", npeer, maxnode);
+			fprintf(stderr, "WARNING: Number of peer %d > Max node %d\n", _npeer, _maxnode);
 			continue;
 		}
 
-		strcpy(peers[npeer], av[ii]);
-		printf("peer[%d] = %s\n", npeer, peers[npeer]);
-		npeer++;
+		strcpy(_peerlist[_npeer], av[ii]);
+		printf("peer[%d] = %s\n", _npeer, _peerlist[_npeer]);
+		_npeer++;
 	}
 	printf("\n\n");
 }

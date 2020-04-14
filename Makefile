@@ -9,7 +9,7 @@ INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
 
-SRCS	= main.cpp xpub.cpp xsub.cpp \
+SRCS	= main.cpp xpub.cpp xsub.cpp xqueue.cpp \
 	  xparams.cpp xverify.cpp xleveldb.cpp util.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
@@ -26,7 +26,9 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: $(ALIBS) tx tx2
+all: lib tx tx2
+
+lib: $(ALIBS)
 
 $(ALIBS): 
 	cd $(CSDKDIR); make; cd ..
@@ -39,7 +41,10 @@ tx2: $(OBJS)
 	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(ALIBS) $(SDKLIBS) $(LIBS) 
 
 clean:
-	cd $(CSDKDIR); make clean; cd ..
 	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a *.log
 	rm -rf testdb
 	cd test; make clean; cd ..
+
+cleanall:
+	cd $(CSDKDIR); make clean; cd ..
+	make clean
