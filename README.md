@@ -5,17 +5,17 @@ ubuntu 에서 빌드 방법
 
 빌드 전에 설치해야 할 패키지
 
-sudo apt install -y autoconf libtool cmake g++ libssl-dev pkg-config
+sudo apt install  autoconf libtool cmake g++ libssl-dev pkg-config
 
-sudo apt install -y libboost-system-dev libboost-thread-dev
+sudo apt install  libboost-system-dev libboost-thread-dev
 
-sudo apt install libzmqpp-dev -y
+sudo apt install libzmqpp-dev 
 
-sudo apt install postgresql -y
+sudo apt install postgresql 
 
-sudo apt-get install libpq-dev -y
+sudo apt-get install libpq-dev 
 
-sudo apt install libleveldb-dev -y
+sudo apt install libleveldb-dev 
 
 
 직접 빌드해서 설치해야 할 개발용 라이브러리

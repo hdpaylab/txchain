@@ -1,0 +1,9 @@
+TXCHAIN HISTORY
+
+
+200413	tx 싱글 프로세스 상에서 작동 검증 완료 (vector 구조)
+	단점: vector 구조는 복잡한 아키텍쳐에 적용 어려움 => queue로 변경 (100만op/sec)
+
+200414	tx2 빌드를 위한 아키텍쳐 변경 (queue 구조로 변경)
+
+200417	tx 빌드를 위한 코드와, tx2 빌드를 위한 코드 분리 (Makefile 수정)

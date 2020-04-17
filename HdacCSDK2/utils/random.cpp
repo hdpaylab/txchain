@@ -132,7 +132,7 @@ static void GetOSRand(unsigned char *ent32)
 #endif
 }
 
-void GetRandBytes_org(unsigned char* buf, int num)
+void GetRandBytes(unsigned char* buf, int num)
 {
     if (RAND_bytes(buf, num) != 1) {
         RandFailure();
@@ -146,7 +146,7 @@ void memory_cleanse(void *ptr, size_t len)
     OPENSSL_cleanse(ptr, len);
 }
 
-void GetStrongRandBytes_org(unsigned char* out, int num)
+void GetStrongRandBytes(unsigned char* out, int num)
 {
     assert(num <= 32);
     CSHA512 hasher;
@@ -165,130 +165,4 @@ void GetStrongRandBytes_org(unsigned char* out, int num)
     hasher.Finalize(buf);
     memcpy(out, buf, num);
     memory_cleanse(buf, 64);
-}
-
-
-
-#define QRNG_DEVICE0	"/dev/qrng_u3_0"
-#define QRNG_DEVICE1	"/dev/qrng_u3_1"
-
-static	int	_QRNG_fd = -1;
-
-//
-// EYL QRNG support function
-// Two QRNG device support
-//
-void QRNG_RAND_bytes(unsigned char* out, int num)
-{
-    static time_t lasttime = 0;
-
-#ifndef WIN32
-    if (_QRNG_fd == -1)
-        _QRNG_fd = open(QRNG_DEVICE0, O_RDONLY);
-    if (_QRNG_fd == -1)
-        _QRNG_fd = open(QRNG_DEVICE1, O_RDONLY);
-#endif
-    if (time(NULL) - lasttime > 30)
-    {
-        // TODO : change into log
-        LogPrintf("%s: QRNG fd=%d\n", __func__, _QRNG_fd);
-        //std::cout << __func__ << ": QRNG fd=" << _QRNG_fd << std::endl;
-    }
-
-#ifndef WIN32
-    if (_QRNG_fd == -1)		// QRNG is not available
-    {
-#endif
-        GetRandBytes_org(out, num);
-        return;
-#ifndef WIN32
-    }
-#endif
-    if (time(NULL) - lasttime > 60) {
-        // TODO : change into log
-        //std::cout << __func__ << ": QRNG(Quantum Random Number Generator) endbaled and replaces RAND_bytes()." << std::endl;
-        LogPrintf("%s: QRNG(Quantum Random Number Generator) endbaled and replaces RAND_bytes().\n", __func__);
-    }
-    lasttime = time(NULL);
-
-#ifndef WIN32
-    int nread = read(_QRNG_fd, out, num);
-
-    // TODO : change into log
-    //std::cout << __func__ << ": QRNG read bytes=" << nread << std::endl;
-    LogPrintf("%s: QRNG read bytes=%d\n", __func__, nread);
-
-    if (nread != num)	// read failed
-    {
-#endif        
-        _QRNG_fd = -1;
-        GetRandBytes_org(out, num);
-#ifndef WIN32                
-    }
-#endif
-}
-
-
-void GetRandBytes(unsigned char* buf, int num)
-{
-    QRNG_RAND_bytes(buf, num);
-}
-
-
-//
-// EYL QRNG support function
-// Two QRNG device support
-//
-void QRNG_GetStrongRandBytes(unsigned char* out, int num)
-{
-    static time_t lasttime = 0;
-
-#ifndef WIN32
-    if (_QRNG_fd == -1)
-        _QRNG_fd = open(QRNG_DEVICE0, O_RDONLY);
-    if (_QRNG_fd == -1)
-        _QRNG_fd = open(QRNG_DEVICE1, O_RDONLY);
-#endif
-    // TODO : change into log
-    //std::cout << __func__ << ": QRNG fd=" << _QRNG_fd << std::endl;
-    LogPrintf("%s: QRNG fd=%d\n", __func__, _QRNG_fd);
-
-#ifndef WIN32
-    if (_QRNG_fd == -1)		// QRNG is not available
-    {
-#endif
-        GetStrongRandBytes_org(out, num);
-        return;
-#ifndef WIN32
-    }
-#endif
-    if (time(NULL) - lasttime > 3600) {
-        // TODO : change into log
-        LogPrintf("%s: QRNG(Quantum Random Number Generator) endbaled and replaces GetStrongRandBytes().\n", __func__);
-        //std::cout << __func__ << ": QRNG(Quantum Random Number Generator) endbaled and replaces GetStrongRandBytes()." << std::endl;
-    }
-
-    lasttime = time(NULL);
-
-#ifndef WIN32
-    int nread = read(_QRNG_fd, out, num);
-
-    // TODO : change into log
-    LogPrintf("%s: QRNG read=%d\n", __func__, nread);
-    //std::cout << __func__ << ": QRNG read=" << nread << std::endl;
-
-    if (nread != num)	// read failed
-    {
-#endif        
-        _QRNG_fd = -1;
-        GetStrongRandBytes_org(out, num);
-#ifndef WIN32        
-    }
-#endif
-}
-
-
-void GetStrongRandBytes(unsigned char* out, int num)
-{
-    QRNG_GetStrongRandBytes(out, num);
 }

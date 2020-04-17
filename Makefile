@@ -1,4 +1,4 @@
-CPP = g++
+CPP	= g++
 
 CSDKDIR	= HdacCSDK2
 
@@ -9,10 +9,15 @@ INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
 
-SRCS	= main.cpp xpub.cpp xsub.cpp xqueue.cpp \
-	  xparams.cpp xverify.cpp xleveldb.cpp util.cpp
+SRCS	= xmain.cpp xpub.cpp xsub.cpp \
+	  xverify.cpp xleveldb.cpp params.cpp util.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
+
+SRCS2	= main.cpp pub.cpp sub.cpp queue.cpp \
+	  verify.cpp leveldb.cpp params.cpp util.cpp
+
+OBJS2	= $(SRCS2:.cpp=.o)
 
 ALIBS	= \
 	$(CSDKDIR)/lib/libhelpers.a \
@@ -37,8 +42,8 @@ $(ALIBS):
 tx: $(OBJS)
 	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(ALIBS) $(SDKLIBS) $(LIBS)
 
-tx2: $(OBJS)
-	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(ALIBS) $(SDKLIBS) $(LIBS) 
+tx2: $(OBJS2)
+	$(CPP) $(CPPFLAGS) -o $@ $(OBJS2) $(ALIBS) $(SDKLIBS) $(LIBS) 
 
 clean:
 	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a *.log

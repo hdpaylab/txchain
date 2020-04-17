@@ -97,7 +97,6 @@ int	main(int ac, char *av[])
 	// _npeer+1 = leveldb thread
 	pthread_detach(thrid[ii]);
 
-	// 테스트용 코드이므로..
 	while (1)
 	{
 		sleep(1);
