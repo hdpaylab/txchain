@@ -14,7 +14,6 @@ int	_nverifier = MAX_VERIFIER;
 	
 
 vector<txdata_t> _txv(MAX_VECTOR_SIZE);
-int	_push_count = 0, _pop_count = 0;
 
 
 int	_maxnode = 1;		// 나중에 설정으로 뺄 것 

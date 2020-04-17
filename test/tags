@@ -4,28 +4,78 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-BUFF_SIZE	../xmsq.h	5;"	d
-MAX_NODE	../txcommon.h	21;"	d
-MAX_VERIFY	../txcommon.h	23;"	d
+BUFF_SIZE	xmsq.h	5;"	d
+MAX_NODE	../txcommon.h	28;"	d
+MAX_RECV_QUEUE_SIZE	../txcommon.h	33;"	d
+MAX_SEND_QUEUE_SIZE	../txcommon.h	32;"	d
+MAX_VECTOR_SIZE	../txcommon.h	103;"	d
+MAX_VERIFIER	../txcommon.h	30;"	d
+MAX_VERIFY_QUEUE_SIZE	../txcommon.h	34;"	d
+STATUS_EMPTY	speed.cpp	94;"	d	file:
+STATUS_PROCESSED	speed.cpp	96;"	d	file:
+STATUS_READY	speed.cpp	95;"	d	file:
+SUBSCRIBER_MSGQ_ID	../txcommon.h	114;"	d
+TXCHAIN_STATUS_EMPTY	../txcommon.h	/^	TXCHAIN_STATUS_EMPTY	= 0x00000000,$/;"	e	enum:__anon4
+TXCHAIN_STATUS_READY	../txcommon.h	/^	TXCHAIN_STATUS_READY	= 0x10000000,$/;"	e	enum:__anon4
+TXCHAIN_STATUS_VERIFIED	../txcommon.h	/^	TXCHAIN_STATUS_VERIFIED	= 0x20000000,$/;"	e	enum:__anon4
+TXCHAIN_VERIFY_MODEL_VECTOR	../txcommon.h	25;"	d
+VERIFIER_MSGQ_ID	../txcommon.h	115;"	d
 __COMMON_H	../txcommon.h	2;"	d
 __ZHELPERS_HPP_INCLUDED__	../zhelpers.hpp	3;"	d
-ai_msq_open	../xmsq.cpp	/^int ai_msq_open(int key, int queue_size)$/;"	f
+_maxnode	../main.cpp	/^int	_maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
+_maxnode	../xmain.cpp	/^int	_maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
+_npeer	../main.cpp	/^int	_npeer = 0;$/;"	v
+_npeer	../xmain.cpp	/^int	_npeer = 0;$/;"	v
+_nverifier	../main.cpp	/^int	_nverifier = MAX_VERIFIER;$/;"	v
+_nverifier	../xmain.cpp	/^int	_nverifier = MAX_VERIFIER;$/;"	v
+_peerlist	../main.cpp	/^char	_peerlist[MAX_NODE + 1][40] = {0};$/;"	v
+_peerlist	../xmain.cpp	/^char	_peerlist[MAX_NODE + 1][40] = {0};$/;"	v
+_pop_count	../main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
+_pop_count	../xmain.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
+_push_count	../main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
+_push_count	../xmain.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
+_recvmtx	../queue.cpp	/^pthread_mutex_t _recvmtx;	\/\/ for _recvq$/;"	v
+_recvq	../queue.cpp	/^queue<txdata_t>	_recvq;		\/\/ receive queue for subscriber$/;"	v
+_sendmtx	../queue.cpp	/^pthread_mutex_t _sendmtx;	\/\/ for _sendq$/;"	v
+_sendport	../main.cpp	/^int	_sendport = 7000;$/;"	v
+_sendport	../xmain.cpp	/^int	_sendport = 7000;$/;"	v
+_sendq	../queue.cpp	/^queue<txdata_t>	_sendq;		\/\/ send queue for publisher$/;"	v
+_vermtx	../queue.cpp	/^pthread_mutex_t _vermtx;	\/\/ for _verq$/;"	v
+_verq	../queue.cpp	/^queue<txdata_t>	_verq;		\/\/ receive queue for verifier$/;"	v
+ai_msq_open	xmsq.cpp	/^int ai_msq_open(int key, int queue_size)$/;"	f
 c99_snprintf	../zhelpers.hpp	/^	inline int c99_snprintf(char *outBuf, size_t size, const char *format, ...)$/;"	f
 c99_vsnprintf	../zhelpers.hpp	/^	inline int c99_vsnprintf(char *outBuf, size_t size, const char *format, va_list ap)$/;"	f
-data_t	../xmsq.h	/^} data_t;$/;"	t	typeref:struct:__anon1
+common_queue_pop	../queue.cpp	/^txdata_t common_queue_pop(const char *name, queue<txdata_t> myq, pthread_mutex_t *mtx)$/;"	f
+common_queue_push	../queue.cpp	/^int	common_queue_push(const char *name, queue<txdata_t> myq, txdata_t data, pthread_mutex_t *mtx, int max_queue_size)$/;"	f
+data	../txcommon.h	/^	string		data;$/;"	m	struct:__anon5
+data_t	xmsq.h	/^} data_t;$/;"	t	typeref:struct:__anon2
 int64_t	../zhelpers.hpp	/^    typedef __int64 int64_t;$/;"	t
-load_config	../main.cpp	/^void	load_config(int ac, char *av[])$/;"	f
-main	../leveldbex.cpp	/^int main() {$/;"	f
 main	../main.cpp	/^int	main(int ac, char *av[])$/;"	f
+main	../xmain.cpp	/^int	main(int ac, char *av[])$/;"	f
 main	ex.cpp	/^int	main()$/;"	f
-main	speed.cpp	/^main()$/;"	f
-maxnode	../main.cpp	/^int	maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
-mtext	../xmsq.h	/^	char    mtext[BUFF_SIZE];$/;"	m	struct:__anon1
-mtype	../xmsq.h	/^	long    mtype;$/;"	m	struct:__anon1
-npeer	../main.cpp	/^int	npeer = 0;$/;"	v
-paramsget	../xparams.cpp	/^Params_type_t paramsget(const string& Path)$/;"	f
-peers	../main.cpp	/^char	peers[MAX_NODE][40] = {0};$/;"	v
+main	leveldbex.cpp	/^int main() {$/;"	f
+main	speed.cpp	/^int	main(int ac, char *av[])$/;"	f
+memory_test	speed.cpp	/^void	memory_test()$/;"	f
+message	../txcommon.h	/^	char	*message;$/;"	m	struct:__anon3
+message	speed.cpp	/^	char	message[256];$/;"	m	struct:__anon1	file:
+mtext	xmsq.h	/^	char    mtext[BUFF_SIZE];$/;"	m	struct:__anon2
+mtx	speed.cpp	/^pthread_mutex_t mtx;$/;"	v
+mtype	xmsq.h	/^	long    mtype;$/;"	m	struct:__anon2
+mutex_test_queue	speed.cpp	/^void	mutex_test_queue()$/;"	f
+mutex_test_vector	speed.cpp	/^void	mutex_test_vector()$/;"	f
+myq	speed.cpp	/^queue<string> myq;$/;"	v
+mytxdata_t	speed.cpp	/^}	mytxdata_t;$/;"	t	typeref:struct:__anon1	file:
+nthread	speed.cpp	/^int	nthread = 4;$/;"	v
+paramsget	../params.cpp	/^Params_type_t paramsget(const string& Path)$/;"	f
+parse_command_line	../main.cpp	/^void	parse_command_line(int ac, char *av[])$/;"	f
+parse_command_line	../xmain.cpp	/^void	parse_command_line(int ac, char *av[])$/;"	f
+pop_count	speed.cpp	/^int	pop_count = 0;$/;"	v
+pubkey	../txcommon.h	/^	char	*pubkey;$/;"	m	struct:__anon3
+pubkey	speed.cpp	/^	char	pubkey[64];$/;"	m	struct:__anon1	file:
+push_count	speed.cpp	/^int	push_count = 0;$/;"	v
 random	../zhelpers.hpp	37;"	d
+recv_queue_pop	../queue.cpp	/^txdata_t recv_queue_pop()$/;"	f
+recv_queue_push	../queue.cpp	/^int	recv_queue_push(txdata_t data)$/;"	f
 s_catch_signals	../zhelpers.hpp	/^inline static void s_catch_signals ()$/;"	f
 s_clock	../zhelpers.hpp	/^s_clock (void)$/;"	f
 s_console	../zhelpers.hpp	/^s_console (const char *format, ...)$/;"	f
@@ -40,24 +90,46 @@ s_sendmore	../zhelpers.hpp	/^s_sendmore (zmq::socket_t & socket, const std::stri
 s_sendmore	../zhelpers.hpp	/^s_sendmore(void *socket, char *string) {$/;"	f
 s_set_id	../zhelpers.hpp	/^s_set_id (zmq::socket_t & socket)$/;"	f
 s_set_id	../zhelpers.hpp	/^s_set_id(zmq::socket_t & socket, intptr_t id)$/;"	f
-s_signal_handler	../zhelpers.hpp	/^inline static void s_signal_handler (int signal_value)$/;"	f
+s_signal_handler	../zhelpers.hpp	/^inline static void s_signal_handler (int sig_handler)$/;"	f
 s_sleep	../zhelpers.hpp	/^s_sleep (int msecs)$/;"	f
 s_version	../zhelpers.hpp	/^s_version (void)$/;"	f
 s_version_assert	../zhelpers.hpp	/^s_version_assert (int want_major, int want_minor)$/;"	f
-sendport	../main.cpp	/^int	sendport = 7000;$/;"	v
+send_queue_pop	../queue.cpp	/^txdata_t send_queue_pop()$/;"	f
+send_queue_push	../queue.cpp	/^int	send_queue_push(txdata_t data)$/;"	f
+seq	../txcommon.h	/^	uint32_t	seq;		\/\/ TX sequence$/;"	m	struct:__anon5
+sign	speed.cpp	/^	char	sign[128];$/;"	m	struct:__anon1	file:
+signature	../txcommon.h	/^	char	*signature;$/;"	m	struct:__anon3
 snprintf	../zhelpers.hpp	44;"	d
 srandom	../zhelpers.hpp	36;"	d
+status	../txcommon.h	/^	uint32_t	status;		\/\/ see above TXCHAIN_STATUS_xxx$/;"	m	struct:__anon5
+status	speed.cpp	/^	int	status;		\/\/ 1=ready 2=processed$/;"	m	struct:__anon1	file:
 test_create_asset_send_tx	ex.cpp	/^void	test_create_asset_send_tx(void)$/;"	f
 test_create_key_pairs	ex.cpp	/^void	test_create_key_pairs(void)$/;"	f
 test_create_stream_publish_tx	ex.cpp	/^void	test_create_stream_publish_tx(void)$/;"	f
+test_queue	speed.cpp	/^void	test_queue()$/;"	f
 test_sign_message	ex.cpp	/^void	test_sign_message(void)$/;"	f
 test_verify_message	ex.cpp	/^void	test_verify_message(void)$/;"	f
+thread_levledb	../leveldb.cpp	/^void	*thread_levledb(void *info_p)$/;"	f
 thread_levledb	../xleveldb.cpp	/^void	*thread_levledb(void *info_p)$/;"	f
+thread_mutex_test_queue	speed.cpp	/^void	*thread_mutex_test_queue(void *arg)$/;"	f
+thread_mutex_test_vector	speed.cpp	/^void	*thread_mutex_test_vector(void *arg)$/;"	f
+thread_publisher	../pub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
 thread_publisher	../xpub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
+thread_queue_recv	speed.cpp	/^void	*thread_queue_recv(void *arg)$/;"	f
+thread_queue_send	speed.cpp	/^void	*thread_queue_send(void *arg)$/;"	f
+thread_subscriber	../sub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
 thread_subscriber	../xsub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
-thread_verify	../xverify.cpp	/^void	*thread_verify(void *info_p)$/;"	f
+thread_verifier	../verify.cpp	/^void	*thread_verifier(void *info_p)$/;"	f
+thread_verifier	../xverify.cpp	/^void	*thread_verifier(void *info_p)$/;"	f
+tx_t	../txcommon.h	/^}	tx_t;$/;"	t	typeref:struct:__anon3
+txdata_t	../txcommon.h	/^}	txdata_t;$/;"	t	typeref:struct:__anon5
 uint	../zhelpers.hpp	/^    typedef unsigned int  uint;$/;"	t
 ulong	../zhelpers.hpp	/^    typedef unsigned long ulong;$/;"	t
+verified	../txcommon.h	/^	int	verified;$/;"	m	struct:__anon3
+verified	../txcommon.h	/^	uint32_t	verified;	\/\/ 0=fail 1=success -1=none (@TXCHAIN_STATUS_VERIFIED)$/;"	m	struct:__anon5
+verified	speed.cpp	/^	int	verified;$/;"	m	struct:__anon1	file:
+verify_queue_pop	../queue.cpp	/^txdata_t verify_queue_pop()$/;"	f
+verify_queue_push	../queue.cpp	/^int	verify_queue_push(txdata_t data)$/;"	f
 vsnprintf	../zhelpers.hpp	45;"	d
 within	../zhelpers.hpp	74;"	d
 xgetclock	../util.cpp	/^double	xgetclock()$/;"	f

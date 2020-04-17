@@ -16,6 +16,7 @@
 #include <queue>
 
 
+void	test_queue();
 void	mutex_test_vector();
 void	mutex_test_queue();
 void	memory_test();
@@ -30,7 +31,55 @@ int	main(int ac, char *av[])
 
 //	mutex_test_queue();
 
-	mutex_test_vector();
+//	mutex_test_vector();
+
+	test_queue();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//
+// Queue test
+//
+
+void	*thread_queue_send(void *arg)
+{
+	for (int ii = 0; ii < 1000000; ii++)
+	{
+		txdata_t tx;
+
+		tx.data = "잘 가는가? ABCDEF 123456 !@#$%^-----";
+		send_queue_push(tx);
+	}
+	return NULL;
+}
+
+
+void	*thread_queue_recv(void *arg)
+{
+	for (int ii = 0; ii < 1000000; ii++)
+	{
+		txdata_t tx = send_queue_pop();
+
+		if (ii % 10000 == 0)
+			printf("Queue test: count=%d size=%ld data=%s\n",
+				ii, _sendq.size(), tx.data.c_str());
+	}
+	return NULL;
+}
+
+
+void	test_queue()
+{
+	pthread_t tidsend, tidrecv;
+
+	int ret = pthread_create(&tidsend, NULL, thread_queue_send, NULL);
+
+	ret = pthread_create(&tidrecv, NULL, thread_queue_recv, NULL);
+
+	printf("Start queue test...\n\n");
+	pthread_join(tidsend, NULL);
+	pthread_join(tidrecv, NULL);
 }
 
 

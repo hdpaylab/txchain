@@ -93,8 +93,8 @@ txdata_t recv_queue_pop();
 int	verify_queue_push(txdata_t data);
 txdata_t verify_queue_pop();
 
-int	common_queue_push(const char *name, queue<txdata_t> myq, txdata_t data, pthread_mutex_t *mtx, int max_queue_size);
-txdata_t common_queue_pop(const char *name, queue<txdata_t> myq, pthread_mutex_t *mtx);
+int	common_queue_push(const char *name, queue<txdata_t>& myq, txdata_t data, pthread_mutex_t *mtx, int max_queue_size);
+txdata_t common_queue_pop(const char *name, queue<txdata_t>& myq, pthread_mutex_t *mtx);
 
 
 ////////////////////////////////////////////////////////////////////////////////
