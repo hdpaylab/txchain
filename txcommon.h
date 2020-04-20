@@ -21,6 +21,8 @@
 
 //#define DEBUG		1		// for debugging
 #define DEBUG_SLEEP	100
+#define MAX_TEST_NUM_TX	1000000		// tx count for test..
+
 
 
 //#define TXCHAIN_VERIFY_MODEL_MSGQ	1

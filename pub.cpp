@@ -6,7 +6,7 @@
 //
 void	*thread_send_test(void *info_p)
 {
-	int	loop = 1000000;			// 100¸¸ 
+	int	loop = MAX_TEST_NUM_TX;			// 100¸¸ 
 
 	const char *filter = ZMQ_FILTER;
 	const char ESC = TX_DELIM;
@@ -76,7 +76,6 @@ void	*thread_send_test(void *info_p)
 	txdata.verified = TXCHAIN_STATUS_EMPTY;
 	txdata.status = TXCHAIN_STATUS_EMPTY;
 
-	_sendq.push(txdata);
 	_sendq.push(txdata);
 
 	tmend = xgetclock();
@@ -156,7 +155,7 @@ void	*thread_publisher(void *info_p)
 
 	xpub.close();
 	
-	printf("PUB : ----- END!\n\n");
+	printf("PUB : ----- END! count=%d\n\n", count);
 
 	sleep(5);
 
