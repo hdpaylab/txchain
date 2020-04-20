@@ -8,6 +8,7 @@ void	*thread_levledb(void *info_p)
 	leveldb_writeoptions_t *woptions = NULL;
 	char	*err = NULL;
 	int	count = 0;
+	double	tmstart, tmend;
 
 #ifdef TXCHAIN_VERIFY_MODEL_MSGQ
 
@@ -34,6 +35,8 @@ void	*thread_levledb(void *info_p)
 
 	// reset error var 
 	leveldb_free(err); err = NULL;
+
+	tmstart = xgetclock();
 
 	while (1)
 	{
@@ -73,10 +76,16 @@ void	*thread_levledb(void *info_p)
 		sleepms(DEBUG_SLEEP);
 	//	if (count % 10 == 0)
 #else
-		if (count % 10000 == 0)
+		if (count % 100000 == 0)
 #endif
 			printf("LDB : Recv %7d veriq=%5ld\n", count, _veriq.size());
+		if (count >= MAX_TEST_NUM_TX)
+			break;
 	}
+
+	tmend = xgetclock();
+	printf("LDB : Recv time=%.3f / %.1f/sec\n",
+		tmend - tmstart, count / (tmend - tmstart));
 
 	// CLOSE 
 	leveldb_close(ldb);

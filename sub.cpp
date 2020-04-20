@@ -60,6 +60,7 @@ void	*thread_subscriber(void *info_p)
 
 		count++;
 		fprintf(outfp, "%7d: %s\n", count, txdata.data.c_str());
+		fflush(outfp);
 #ifdef DEBUG
 		sleepms(DEBUG_SLEEP);
 	//	if (count % 10 == 0)
@@ -75,14 +76,13 @@ void	*thread_subscriber(void *info_p)
 		_recvq.push(txdata);
 	}
 
-	fflush(outfp);
 	fclose(outfp);
 
 	tmend = xgetclock();
 	printf("SUB : Recv time=%.3f / %.1f/sec\n",
 		tmend - tmstart, count / (tmend - tmstart));
 
-	fprintf(stderr, "\nSubscriber END! peer=%s\n", peer);
+	fprintf(stderr, "\nSubscriber END! peer=%s count=%d\n", peer, count);
 
 	xsock.close();
 

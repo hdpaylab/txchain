@@ -19,7 +19,7 @@ void	*thread_verifier(void *info_p)
 
 	printf("Verifier %d START!\n", thrid);
 
-	sprintf(tmp, "Verifier %d.ver", thrid);	// out file
+	sprintf(tmp, "VER%02d.ver", thrid);	// out file
 	outfp = fopen(tmp, "w+b");
 	assert(outfp != NULL);
 
@@ -38,7 +38,7 @@ void	*thread_verifier(void *info_p)
 		txdata.verified = 0;
 
 		buf = (char *)data.c_str();
-	//	printf("VER%d: data=%s seq=%d status=%X\n", thrid, buf, txdata.seq, txdata.status);
+	//	printf("VER%02d: data=%s seq=%d status=%X\n", thrid, buf, txdata.seq, txdata.status);
 
 		if (strlen(buf) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
 		{
@@ -78,8 +78,9 @@ void	*thread_verifier(void *info_p)
 	//	printf("	signature	: [%s]\n", signature.c_str());
 	//	printf("	VERITY	: %d\n", txdata.verified);
 
-		fprintf(outfp, "Verifier %d: %7d: %s signature=%s\n",
+		fprintf(outfp, "VER%02d: %7d: %s signature=%s\n",
 			thrid, count, txdata.verified == 1 ? "true" : "false", signature.c_str());
+		fflush(outfp);
 
 		_veriq.push(txdata);
 #ifdef DEBUG
@@ -88,10 +89,9 @@ void	*thread_verifier(void *info_p)
 #else
 		if (count % 10000 == 0)
 #endif
-			printf("VER%d: Veri %7d veriq=%5ld\n", thrid, count, _veriq.size());
+			printf("VER%02d: Veri %7d veriq=%5ld\n", thrid, count, _veriq.size());
 	}
 
-	fflush(outfp);
 	fclose(outfp);
 
 	tmend = xgetclock();

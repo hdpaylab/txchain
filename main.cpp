@@ -36,7 +36,7 @@ int	main(int ac, char *av[])
 
 	_sendq.setmax(100000);
 	_recvq.setmax(100000);
-	_veriq.setmax(10000);
+	_veriq.setmax(100000);
 
 	create_main_threads();
 
