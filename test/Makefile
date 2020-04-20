@@ -21,7 +21,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed ex leveldbex serialize_ex
+all: speed ex ser1 leveldbex 
 
 ex: ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
@@ -32,8 +32,8 @@ leveldbex: leveldbex.cpp
 speed: speed.cpp ../util.cpp 
 	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
-serialize_ex: serialize_ex.cpp
-	$(CPP) $(CPPFLAGS) -o $@ serialize_ex.cpp $(LIBS) $(SDKLIBS) 
+ser1: ser1.cpp
+	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp $(LIBS) $(SDKLIBS) 
 
 clean:
-	rm -f ex leveldbex speed serialize_ex $(OBJS) *.o *.out *.ver *.log
+	rm -f ser1 ex leveldbex speed serialize_ex $(OBJS) *.o *.out *.ver *.log
