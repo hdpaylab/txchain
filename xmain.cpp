@@ -13,7 +13,6 @@
 int	_nverifier = MAX_VERIFIER;
 	
 
-vector<txdata_t> _txv(MAX_VECTOR_SIZE);
 int	_push_count = 0, _pop_count = 0;
 
 
@@ -22,6 +21,9 @@ int	_sendport = 7000;
 
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
+
+safe_queue<txdata_t>	_recvq;		// send queue for publisher
+safe_queue<txdata_t>	_veriq;		// send queue for publisher
 
 
 void	parse_command_line(int ac, char *av[]);
@@ -46,7 +48,7 @@ int	main(int ac, char *av[])
 		perror("thread create error : ");
 		return 0;
 	}
-	usleep(100 * 1000);
+	sleepms(100);
 
 
 	// ¼ö½ÅÀÚ 
@@ -77,7 +79,7 @@ int	main(int ac, char *av[])
 			perror("thread create error : ");
 			return 0;
 		}
-		usleep(10 * 1000);
+		sleepms(10);
 
 	}
 
@@ -89,7 +91,7 @@ int	main(int ac, char *av[])
 		perror("thread create error : ");
 		return 0;
 	}
-	usleep(10 * 1000);
+	sleepms(10);
 
 	for (ii = 0; ii <= _npeer; ii++) {
 		pthread_detach(thrid[ii]);

@@ -14,7 +14,7 @@ SRCS	= xmain.cpp xpub.cpp xsub.cpp \
 
 OBJS	= $(SRCS:.cpp=.o)
 
-SRCS2	= main.cpp pub.cpp sub.cpp queue.cpp \
+SRCS2	= main.cpp pub.cpp sub.cpp \
 	  verify.cpp leveldb.cpp params.cpp util.cpp
 
 OBJS2	= $(SRCS2:.cpp=.o)

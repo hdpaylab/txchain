@@ -14,12 +14,24 @@
 #include <pthread.h>
 #include "../txcommon.h"
 #include <queue>
+#include "safe_queue.h"
 
 
 void	test_queue();
 void	mutex_test_vector();
 void	mutex_test_queue();
 void	memory_test();
+
+typedef struct {
+	string data;
+	uint32_t	seq;		// TX sequence
+	uint32_t	valid;		// Valid TX mark
+	int		verified;	// 0=fail 1=success -1=none 
+					// WARNING: DO NOT MOVE status position!
+	uint32_t	status;		// see above TXCHAIN_STATUS_xxx
+} mydata_t;
+
+safe_queue<mydata_t>	_safeq;		// send queue for publisher
 
 
 int	main(int ac, char *av[])
@@ -44,12 +56,15 @@ int	main(int ac, char *av[])
 
 void	*thread_queue_send(void *arg)
 {
-	for (int ii = 0; ii < 1000000; ii++)
+	for (int ii = 0; ii < 10000000; ii++)
 	{
-		txdata_t tx;
+		mydata_t mydata;
 
-		tx.data = "잘 가는가? ABCDEF 123456 !@#$%^-----";
-		send_queue_push(tx);
+		string data = "H31jhfsdj12j3h214g2134h123kj4|Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789|000000afasfsadfksadfsakdjfsajKJHSAFKDJDLKASJDLAJDALDJLASJDA";
+
+		mydata.data = data;
+
+		_safeq.push(mydata);
 	}
 	return NULL;
 }
@@ -57,13 +72,12 @@ void	*thread_queue_send(void *arg)
 
 void	*thread_queue_recv(void *arg)
 {
-	for (int ii = 0; ii < 1000000; ii++)
+	for (int ii = 0; ii < 2500000; ii++)
 	{
-		txdata_t tx = send_queue_pop();
+		mydata_t mydata = _safeq.pop();
 
 		if (ii % 10000 == 0)
-			printf("Queue test: count=%d size=%ld data=%s\n",
-				ii, _sendq.size(), tx.data.c_str());
+			printf("Queue test: count=%d data=%s\n", ii, mydata.data.c_str());
 	}
 	return NULL;
 }
@@ -71,15 +85,21 @@ void	*thread_queue_recv(void *arg)
 
 void	test_queue()
 {
-	pthread_t tidsend, tidrecv;
+	pthread_t tidsend, tidrecv[4];
 
 	int ret = pthread_create(&tidsend, NULL, thread_queue_send, NULL);
 
-	ret = pthread_create(&tidrecv, NULL, thread_queue_recv, NULL);
+	ret = pthread_create(&tidrecv[0], NULL, thread_queue_recv, NULL);
+	ret = pthread_create(&tidrecv[1], NULL, thread_queue_recv, NULL);
+	ret = pthread_create(&tidrecv[2], NULL, thread_queue_recv, NULL);
+	ret = pthread_create(&tidrecv[3], NULL, thread_queue_recv, NULL);
 
 	printf("Start queue test...\n\n");
 	pthread_join(tidsend, NULL);
-	pthread_join(tidrecv, NULL);
+	pthread_join(tidrecv[0], NULL);
+	pthread_join(tidrecv[1], NULL);
+	pthread_join(tidrecv[2], NULL);
+	pthread_join(tidrecv[3], NULL);
 }
 
 

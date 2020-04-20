@@ -29,8 +29,8 @@ ex: ex.cpp
 leveldbex: leveldbex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ leveldbex.cpp $(LIBS) $(SDKLIBS) 
 
-speed: speed.cpp ../util.cpp ../queue.cpp
-	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp ../queue.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+speed: speed.cpp ../util.cpp 
+	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
 clean:
 	rm -f ex leveldbex speed $(OBJS) *.o *.out *.ver *.log

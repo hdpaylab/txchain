@@ -8,8 +8,8 @@ void	*thread_publisher(void *info_p)
 {
         int	sendport = *(int *)info_p;
 	int	count = 0;
-	const char *filter = "!@#$";
-	const char ESC = '|';
+	const char *filter = ZMQ_FILTER;
+	const char ESC = TX_DELIM;
 	double	tmstart = 0, tmend = 0;
 
 	tx_t	tx;
@@ -116,10 +116,6 @@ void	*thread_publisher(void *info_p)
 		xpub.close();
 	}
 	
-	/***
-        PQfinish(conn);
-	***/
-
 	sleep(5);
 
 	pthread_exit(NULL);

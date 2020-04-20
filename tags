@@ -4,609 +4,67 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-Add	HdacCSDK2/utils/tools.cpp	/^void mc_MapStringIndex::Add(const char* key, int value)$/;"	f	class:mc_MapStringIndex
-Add	HdacCSDK2/utils/tools.cpp	/^void mc_MapStringIndex::Add(const unsigned char* key, int size, int value)$/;"	f	class:mc_MapStringIndex
-Add	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Add(const void *lpKey,const void *lpValue)$/;"	f	class:mc_Buffer
-Add	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Add(const void *lpKeyValue)$/;"	f	class:mc_Buffer
-AddElement	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::AddElement()$/;"	f	class:mc_Script
-AllowedFollowOns	HdacCSDK2/entities/asset.cpp	/^int mc_EntityDetails::AllowedFollowOns()$/;"	f	class:mc_EntityDetails
-AmountFromValue	HdacCSDK2/keys/transactions.cpp	/^CAmount AmountFromValue(const Value& value)$/;"	f
-AnyoneCanWrite	HdacCSDK2/entities/asset.cpp	/^int mc_EntityDetails::AnyoneCanWrite()$/;"	f	class:mc_EntityDetails
-AssetRefDecode	HdacCSDK2/keys/transactions.cpp	/^bool AssetRefDecode(unsigned char *bin, const char* string, const size_t stringLen)$/;"	f
-BIP32Hash	HdacCSDK2/structs/hash.cpp	/^void BIP32Hash(const ChainCode &chainCode, unsigned int nChild, unsigned char header, const unsigned char data[32], unsigned char output[64])$/;"	f
-CBase58Data	HdacCSDK2/structs/base58.cpp	/^CBase58Data::CBase58Data(int32_t checksumValue) :$/;"	f	class:CBase58Data
-CBitcoinAddressVisitor	HdacCSDK2/keys/bitcoinaddress.cpp	/^    CBitcoinAddressVisitor(CBitcoinAddress* addrIn) : addr(addrIn) {}$/;"	f	class:__anon8::CBitcoinAddressVisitor
-CBitcoinAddressVisitor	HdacCSDK2/keys/bitcoinaddress.cpp	/^class CBitcoinAddressVisitor : public boost::static_visitor<bool>$/;"	c	namespace:__anon8	file:
-CConnectionFailed	HdacCSDK2/rpc/rpcclient.cpp	/^    explicit inline CConnectionFailed(const std::string& msg) :$/;"	f	class:CConnectionFailed
-CConnectionFailed	HdacCSDK2/rpc/rpcclient.cpp	/^class CConnectionFailed : public std::runtime_error$/;"	c	file:
-CHMAC_SHA256	HdacCSDK2/crypto/hmac_sha256.cpp	/^CHMAC_SHA256::CHMAC_SHA256(const unsigned char* key, size_t keylen)$/;"	f	class:CHMAC_SHA256
-CHMAC_SHA512	HdacCSDK2/crypto/hmac_sha512.cpp	/^CHMAC_SHA512::CHMAC_SHA512(const unsigned char* key, size_t keylen)$/;"	f	class:CHMAC_SHA512
-CMutableTransaction	HdacCSDK2/primitives/transaction.cpp	/^CMutableTransaction::CMutableTransaction() : nVersion(CTransaction::CURRENT_VERSION), nLockTime(0) {}$/;"	f	class:CMutableTransaction
-CMutableTransaction	HdacCSDK2/primitives/transaction.cpp	/^CMutableTransaction::CMutableTransaction(const CTransaction& tx) : nVersion(tx.nVersion), vin(tx.vin), vout(tx.vout), nLockTime(tx.nLockTime) {}$/;"	f	class:CMutableTransaction
-CRIPEMD160	HdacCSDK2/crypto/ripemd160.cpp	/^CRIPEMD160::CRIPEMD160() : bytes(0)$/;"	f	class:CRIPEMD160
-CSHA1	HdacCSDK2/crypto/sha1.cpp	/^CSHA1::CSHA1() : bytes(0)$/;"	f	class:CSHA1
-CSHA256	HdacCSDK2/crypto/sha256.cpp	/^CSHA256::CSHA256() : bytes(0)$/;"	f	class:CSHA256
-CSHA512	HdacCSDK2/crypto/sha512.cpp	/^CSHA512::CSHA512() : bytes(0)$/;"	f	class:CSHA512
-CScriptID	HdacCSDK2/script/standard.cpp	/^CScriptID::CScriptID(const CScript& in) : uint160(Hash160(in.begin(), in.end())) {}$/;"	f	class:CScriptID
-CScriptVisitor	HdacCSDK2/keys/multisig.cpp	/^    CScriptVisitor(CScript *scriptin) { script = scriptin; }$/;"	f	class:__anon9::CScriptVisitor
-CScriptVisitor	HdacCSDK2/keys/multisig.cpp	/^class CScriptVisitor : public boost::static_visitor<bool>$/;"	c	namespace:__anon9	file:
-CTransaction	HdacCSDK2/primitives/transaction.cpp	/^CTransaction::CTransaction() : hash(0), nVersion(CTransaction::CURRENT_VERSION), vin(), vout(), nLockTime(0) { }$/;"	f	class:CTransaction
-CTransaction	HdacCSDK2/primitives/transaction.cpp	/^CTransaction::CTransaction(const CMutableTransaction &tx) : nVersion(tx.nVersion), vin(tx.vin), vout(tx.vout), nLockTime(tx.nLockTime) {$/;"	f	class:CTransaction
-CTransactionSignatureSerializer	HdacCSDK2/primitives/interpreter.cpp	/^    CTransactionSignatureSerializer(const CTransaction &txToIn, const CScript &scriptCodeIn, unsigned int nInIn, int nHashTypeIn) :$/;"	f	class:__anon11::CTransactionSignatureSerializer
-CTransactionSignatureSerializer	HdacCSDK2/primitives/interpreter.cpp	/^class CTransactionSignatureSerializer {$/;"	c	namespace:__anon11	file:
-CTxIn	HdacCSDK2/primitives/transaction.cpp	/^CTxIn::CTxIn(COutPoint prevoutIn, CScript scriptSigIn, uint32_t nSequenceIn)$/;"	f	class:CTxIn
-CTxIn	HdacCSDK2/primitives/transaction.cpp	/^CTxIn::CTxIn(uint256 hashPrevTx, uint32_t nOut, CScript scriptSigIn, uint32_t nSequenceIn)$/;"	f	class:CTxIn
-CTxOut	HdacCSDK2/primitives/transaction.cpp	/^CTxOut::CTxOut(const CAmount& nValueIn, CScript scriptPubKeyIn)$/;"	f	class:CTxOut
-CalculateModifiedSize	HdacCSDK2/primitives/transaction.cpp	/^unsigned int CTransaction::CalculateModifiedSize(unsigned int nTxSize) const$/;"	f	class:CTransaction
-CallRPC	HdacCSDK2/rpc/rpcclient.cpp	/^Object RpcClient::CallRPC(const string& strMethod, const Array& params) const$/;"	f	class:RpcClient
-Ch	HdacCSDK2/crypto/sha256.cpp	/^uint32_t inline Ch(uint32_t x, uint32_t y, uint32_t z) { return z ^ (x & (y ^ z)); }$/;"	f	namespace:__anon6::sha256
-Ch	HdacCSDK2/crypto/sha512.cpp	/^uint64_t inline Ch(uint64_t x, uint64_t y, uint64_t z) { return z ^ (x & (y ^ z)); }$/;"	f	namespace:__anon7::sha512
-Check	HdacCSDK2/keys/key.cpp	/^bool CKey::Check(const unsigned char *vch) {$/;"	f	class:CKey
-CheckLowS	HdacCSDK2/keys/pubkey.cpp	/^\/* static *\/ bool CPubKey::CheckLowS(const std::vector<unsigned char>& vchSig) {$/;"	f	class:CPubKey
-Clear	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::Clear()$/;"	f	class:mc_Script
-Clear	HdacCSDK2/utils/tools.cpp	/^void mc_MapStringIndex::Clear()$/;"	f	class:mc_MapStringIndex
-Clear	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Clear()$/;"	f	class:mc_Buffer
-CompareTo	HdacCSDK2/structs/base58.cpp	/^int CBase58Data::CompareTo(const CBase58Data& b58) const$/;"	f	class:CBase58Data
-CompareTo	HdacCSDK2/structs/uint256.cpp	/^int base_uint<BITS>::CompareTo(const base_uint<BITS>& b) const$/;"	f	class:base_uint
-ComputePriority	HdacCSDK2/primitives/transaction.cpp	/^double CTransaction::ComputePriority(double dPriorityInputs, unsigned int nTxSize) const$/;"	f	class:CTransaction
-CopyFrom	HdacCSDK2/utils/utility.cpp	/^void mc_Buffer::CopyFrom(mc_Buffer *source)$/;"	f	class:mc_Buffer
-DELTA_EPOCH_IN_MICROSECS	HdacCSDK2/utils/utility.cpp	158;"	d	file:
-DELTA_EPOCH_IN_MICROSECS	HdacCSDK2/utils/utility.cpp	160;"	d	file:
-DateTimeStrFormat	HdacCSDK2/utils/utiltime.cpp	/^std::string DateTimeStrFormat(const char* pszFormat, int64_t nTime)$/;"	f
-DebugPrintClose	HdacCSDK2/utils/util.cpp	/^void DebugPrintClose()$/;"	f
-DebugPrintInit	HdacCSDK2/utils/util.cpp	/^static void DebugPrintInit()$/;"	f	file:
-DecodeBase58	HdacCSDK2/structs/base58.cpp	/^bool DecodeBase58(const char* psz, std::vector<unsigned char>& vch)$/;"	f
-DecodeBase58	HdacCSDK2/structs/base58.cpp	/^bool DecodeBase58(const std::string& str, std::vector<unsigned char>& vchRet)$/;"	f
-DecodeBase58Check	HdacCSDK2/structs/base58.cpp	/^bool DecodeBase58Check(const char* psz, std::vector<unsigned char>& vchRet, int32_t addressChecksumValue)$/;"	f
-DecodeBase58Check	HdacCSDK2/structs/base58.cpp	/^bool DecodeBase58Check(const std::string& str, std::vector<unsigned char>& vchRet, int32_t addressChecksumValue)$/;"	f
-DecodeBase64	HdacCSDK2/utils/base64.cpp	/^string DecodeBase64(const string& str)$/;"	f
-DecodeBase64	HdacCSDK2/utils/base64.cpp	/^vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid)$/;"	f
-DecodeHexTx	HdacCSDK2/primitives/transaction.cpp	/^bool DecodeHexTx(CTransaction& tx, const std::string& strHexTx)$/;"	f
-Decompress	HdacCSDK2/keys/pubkey.cpp	/^bool CPubKey::Decompress() {$/;"	f	class:CPubKey
-Derive	HdacCSDK2/keys/key.cpp	/^bool CKey::Derive(CKey& keyChild, ChainCode &ccChild, unsigned int nChild, const ChainCode& cc) const {$/;"	f	class:CKey
-Derive	HdacCSDK2/keys/pubkey.cpp	/^bool CPubKey::Derive(CPubKey& pubkeyChild, ChainCode &ccChild, unsigned int nChild, const ChainCode& cc) const {$/;"	f	class:CPubKey
-Destroy	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::Destroy()$/;"	f	class:mc_Script
-Destroy	HdacCSDK2/utils/tools.cpp	/^void mc_MapStringIndex::Destroy()$/;"	f	class:mc_MapStringIndex
-Destroy	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Destroy()$/;"	f	class:mc_Buffer
-ECCVerifyHandle	HdacCSDK2/keys/pubkey.cpp	/^ECCVerifyHandle::ECCVerifyHandle()$/;"	f	class:ECCVerifyHandle
-ECC_InitSanityCheck	HdacCSDK2/keys/key.cpp	/^bool ECC_InitSanityCheck() {$/;"	f
-ECC_Start	HdacCSDK2/keys/key.cpp	/^void ECC_Start() {$/;"	f
-ECC_Stop	HdacCSDK2/keys/key.cpp	/^void ECC_Stop() {$/;"	f
-EccAutoInitReleaseHandler	HdacCSDK2/keys/eccautoinitreleasehandler.cpp	/^EccAutoInitReleaseHandler::EccAutoInitReleaseHandler() {$/;"	f	class:EccAutoInitReleaseHandler
-ElementGrabberToPublishStreamTx	HdacCSDK2/test/test_module.cpp	/^	ElementGrabberToPublishStreamTx(const string &streamName) :$/;"	f	class:ElementGrabberToPublishStreamTx
-ElementGrabberToPublishStreamTx	HdacCSDK2/test/test_module.cpp	/^class ElementGrabberToPublishStreamTx {$/;"	c	file:
-ElementGrabberToSendAssetTx	HdacCSDK2/test/test_module.cpp	/^	ElementGrabberToSendAssetTx(const string &assetName) :$/;"	f	class:ElementGrabberToSendAssetTx
-ElementGrabberToSendAssetTx	HdacCSDK2/test/test_module.cpp	/^	ElementGrabberToSendAssetTx(const string &assetName, const string &walletAddr, const string &privateKey) :$/;"	f	class:ElementGrabberToSendAssetTx
-ElementGrabberToSendAssetTx	HdacCSDK2/test/test_module.cpp	/^class ElementGrabberToSendAssetTx {$/;"	c	file:
-EncodeBase58	HdacCSDK2/structs/base58.cpp	/^std::string EncodeBase58(const std::vector<unsigned char>& vch)$/;"	f
-EncodeBase58	HdacCSDK2/structs/base58.cpp	/^std::string EncodeBase58(const unsigned char* pbegin, const unsigned char* pend)$/;"	f
-EncodeBase58Check	HdacCSDK2/structs/base58.cpp	/^std::string EncodeBase58Check(const std::vector<unsigned char>& vchIn, int32_t addressChecksumValue)$/;"	f
-EncodeBase64	HdacCSDK2/utils/base64.cpp	/^string EncodeBase64(const string& str)$/;"	f
-EncodeBase64	HdacCSDK2/utils/base64.cpp	/^string EncodeBase64(const unsigned char* pch, size_t len)$/;"	f
-EncodeHexTx	HdacCSDK2/primitives/transaction.cpp	/^string EncodeHexTx(const CTransaction& tx)$/;"	f
-EqualTo	HdacCSDK2/structs/uint256.cpp	/^bool base_uint<BITS>::EqualTo(uint64_t b) const$/;"	f	class:base_uint
-ExtractDestinationScriptValid	HdacCSDK2/keys/transactions.cpp	/^bool ExtractDestinationScriptValid(const CScript& scriptPubKey, CTxDestination& addressRet)$/;"	f
-ExtractDestinations	HdacCSDK2/keys/standard.cpp	/^bool ExtractDestinations(const CScript& scriptPubKey, txnouttype& typeRet, vector<CTxDestination>& addressRet, int& nRequiredRet,vector<vector<unsigned char> >* lpvSolutionsRet)$/;"	f
-Finalize	HdacCSDK2/crypto/hmac_sha256.cpp	/^void CHMAC_SHA256::Finalize(unsigned char hash[OUTPUT_SIZE])$/;"	f	class:CHMAC_SHA256
-Finalize	HdacCSDK2/crypto/hmac_sha512.cpp	/^void CHMAC_SHA512::Finalize(unsigned char hash[OUTPUT_SIZE])$/;"	f	class:CHMAC_SHA512
-Finalize	HdacCSDK2/crypto/ripemd160.cpp	/^void CRIPEMD160::Finalize(unsigned char hash[OUTPUT_SIZE])$/;"	f	class:CRIPEMD160
-Finalize	HdacCSDK2/crypto/sha1.cpp	/^void CSHA1::Finalize(unsigned char hash[OUTPUT_SIZE])$/;"	f	class:CSHA1
-Finalize	HdacCSDK2/crypto/sha256.cpp	/^void CSHA256::Finalize(unsigned char hash[OUTPUT_SIZE])$/;"	f	class:CSHA256
-Finalize	HdacCSDK2/crypto/sha512.cpp	/^void CSHA512::Finalize(unsigned char hash[OUTPUT_SIZE])$/;"	f	class:CSHA512
-FindFollowOnsInScript	HdacCSDK2/script/utilparse.cpp	/^bool FindFollowOnsInScript(const CScript& script1,mc_Buffer *amounts,mc_Script *lpScript)$/;"	f
-Get	HdacCSDK2/keys/bitcoinaddress.cpp	/^CTxDestination CBitcoinAddress::Get() const$/;"	f	class:CBitcoinAddress
-Get	HdacCSDK2/utils/tools.cpp	/^int mc_MapStringIndex::Get(const char* key)$/;"	f	class:mc_MapStringIndex
-Get	HdacCSDK2/utils/tools.cpp	/^int mc_MapStringIndex::Get(const unsigned char* key,int size)$/;"	f	class:mc_MapStringIndex
-GetApproval	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetApproval(uint32_t *approval,uint32_t *timestamp)$/;"	f	class:mc_Script
-GetAssetDetails	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetAssetDetails(char* name,int* multiple,unsigned char* script,int *script_size)$/;"	f	class:mc_Script
-GetAssetGenesis	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetAssetGenesis(int64_t *quantity)$/;"	f	class:mc_Script
-GetAssetMultiple	HdacCSDK2/entities/asset.cpp	/^int mc_EntityDetails::GetAssetMultiple()$/;"	f	class:mc_EntityDetails
-GetAssetQuantities	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetAssetQuantities(mc_Buffer *amounts,uint32_t script_type)$/;"	f	class:mc_Script
-GetBlockSignature	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetBlockSignature(unsigned char* sig,int *sig_size,uint32_t* hash_type,unsigned char* key,int *key_size)$/;"	f	class:mc_Script
-GetCachedScript	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetCachedScript(int offset, int *next_offset, int* vin, unsigned char** script, int *script_size)$/;"	f	class:mc_Script
-GetCompact	HdacCSDK2/structs/uint256.cpp	/^uint32_t uint256::GetCompact(bool fNegative) const$/;"	f	class:uint256
-GetCount	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::GetCount()$/;"	f	class:mc_Buffer
-GetData	HdacCSDK2/script/hdacscript.cpp	/^const unsigned char*  mc_Script::GetData(int element, size_t* bytes)$/;"	f	class:mc_Script
-GetElement	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetElement()$/;"	f	class:mc_Script
-GetEntity	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetEntity(unsigned char *short_txid)$/;"	f	class:mc_Script
-GetEntityType	HdacCSDK2/entities/asset.cpp	/^uint32_t mc_EntityDetails::GetEntityType()$/;"	f	class:mc_EntityDetails
-GetFullRef	HdacCSDK2/entities/asset.cpp	/^const unsigned char* mc_EntityDetails::GetFullRef()$/;"	f	class:mc_EntityDetails
-GetFullRef	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetFullRef(unsigned char *ref,uint32_t *script_type)$/;"	f	class:mc_Script
-GetGeneralDetails	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetGeneralDetails(unsigned char* script,int *script_size)$/;"	f	class:mc_Script
-GetHash	HdacCSDK2/primitives/transaction.cpp	/^uint256 CMutableTransaction::GetHash() const$/;"	f	class:CMutableTransaction
-GetHash	HdacCSDK2/primitives/transaction.cpp	/^uint256 CTxOut::GetHash() const$/;"	f	class:CTxOut
-GetHash	HdacCSDK2/structs/uint256.cpp	/^uint64_t uint256::GetHash(const uint256& salt) const$/;"	f	class:uint256
-GetHex	HdacCSDK2/structs/uint256.cpp	/^std::string base_uint<BITS>::GetHex() const$/;"	f	class:base_uint
-GetItemKey	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetItemKey(unsigned char *key,int *key_size)$/;"	f	class:mc_Script
-GetKey	HdacCSDK2/keys/bitcoinsecret.cpp	/^CKey CBitcoinSecret::GetKey()$/;"	f	class:CBitcoinSecret
-GetKeyID	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::GetKeyID(CKeyID& keyID) const$/;"	f	class:CBitcoinAddress
-GetName	HdacCSDK2/entities/asset.cpp	/^const char* mc_EntityDetails::GetName()$/;"	f	class:mc_EntityDetails
-GetNewEntityType	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetNewEntityType(uint32_t *type)$/;"	f	class:mc_Script
-GetNewEntityType	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetNewEntityType(uint32_t *type,int *update,unsigned char* script,int *script_size)$/;"	f	class:mc_Script
-GetNumElements	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetNumElements()$/;"	f	class:mc_Script
-GetOSRand	HdacCSDK2/utils/random.cpp	/^static void GetOSRand(unsigned char *ent32)$/;"	f	file:
-GetOpName	HdacCSDK2/script/script.cpp	/^const char* GetOpName(opcodetype opcode)$/;"	f
-GetParam	HdacCSDK2/entities/asset.cpp	/^const void* mc_EntityDetails::GetParam(const char *param,size_t* bytes)$/;"	f	class:mc_EntityDetails
-GetParamValue	HdacCSDK2/script/hdacscript.cpp	/^size_t mc_Script::GetParamValue(const unsigned char *ptr,size_t total,size_t offset,size_t* param_value_start,size_t *bytes)$/;"	f	class:mc_Script
-GetPerformanceCounter	HdacCSDK2/utils/random.cpp	/^static inline int64_t GetPerformanceCounter()$/;"	f	file:
-GetPermission	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::GetPermission(uint32_t *type,uint32_t *from,uint32_t *to,uint32_t *timestamp)$/;"	f	class:mc_Script
-GetPrivKey	HdacCSDK2/keys/key.cpp	/^CPrivKey CKey::GetPrivKey() const {$/;"	f	class:CKey
-GetPubKey	HdacCSDK2/keys/key.cpp	/^CPubKey CKey::GetPubKey() const {$/;"	f	class:CKey
-GetQuantity	HdacCSDK2/entities/asset.cpp	/^uint64_t mc_EntityDetails::GetQuantity()$/;"	f	class:mc_EntityDetails
-GetRandBytes	HdacCSDK2/utils/random.cpp	/^void GetRandBytes(unsigned char* buf, int num)$/;"	f
-GetRef	HdacCSDK2/entities/asset.cpp	/^const unsigned char* mc_EntityDetails::GetRef()$/;"	f	class:mc_EntityDetails
-GetRow	HdacCSDK2/utils/utility.cpp	/^unsigned char *mc_Buffer::GetRow(int RowID)$/;"	f	class:mc_Buffer
-GetScript	HdacCSDK2/entities/asset.cpp	/^const unsigned char* mc_EntityDetails::GetScript()$/;"	f	class:mc_EntityDetails
-GetScriptForDestination	HdacCSDK2/keys/multisig.cpp	/^CScript GetScriptForDestination(const CTxDestination& dest)$/;"	f
-GetScriptForMultisig	HdacCSDK2/keys/multisig.cpp	/^CScript GetScriptForMultisig(int nRequired, const std::vector<CPubKey>& keys)$/;"	f
-GetScriptForPubKey	HdacCSDK2/keys/transactions.cpp	/^CScript GetScriptForPubKey(const CPubKey& key)$/;"	f
-GetScriptID	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::GetScriptID(CScriptID& scriptID) const$/;"	f	class:CBitcoinAddress
-GetShortRef	HdacCSDK2/entities/asset.cpp	/^const unsigned char* mc_EntityDetails::GetShortRef()$/;"	f	class:mc_EntityDetails
-GetSigOpCount	HdacCSDK2/script/script.cpp	/^unsigned int CScript::GetSigOpCount(bool fAccurate) const$/;"	f	class:CScript
-GetSigOpCount	HdacCSDK2/script/script.cpp	/^unsigned int CScript::GetSigOpCount(const CScript& scriptSig) const$/;"	f	class:CScript
-GetSpecialParam	HdacCSDK2/entities/asset.cpp	/^const void* mc_EntityDetails::GetSpecialParam(uint32_t param,size_t* bytes)$/;"	f	class:mc_EntityDetails
-GetStrongRandBytes	HdacCSDK2/utils/random.cpp	/^void GetStrongRandBytes(unsigned char* out, int num)$/;"	f
-GetSystemPageSize	HdacCSDK2/utils/allocators.cpp	/^static inline size_t GetSystemPageSize()$/;"	f	file:
-GetTime	HdacCSDK2/utils/utiltime.cpp	/^int64_t GetTime()$/;"	f
-GetTimeMicros	HdacCSDK2/utils/utiltime.cpp	/^int64_t GetTimeMicros()$/;"	f
-GetTimeMillis	HdacCSDK2/utils/utiltime.cpp	/^int64_t GetTimeMillis()$/;"	f
-GetTxID	HdacCSDK2/entities/asset.cpp	/^const unsigned char* mc_EntityDetails::GetTxID()$/;"	f	class:mc_EntityDetails
-GetValueOut	HdacCSDK2/primitives/transaction.cpp	/^CAmount CTransaction::GetValueOut() const$/;"	f	class:CTransaction
-HTTPPost	HdacCSDK2/rpc/rpcprotocol.cpp	/^string HTTPPost(const string& strMsg, const map<string,string>& mapRequestHeaders)$/;"	f
-HasSmallIntegerInTheBeginning	HdacCSDK2/script/script.cpp	/^bool CScript::HasSmallIntegerInTheBeginning() const$/;"	f	class:CScript
-HashFinal	HdacCSDK2/structs/uint256.cpp	/^static void inline HashFinal(uint32_t& a, uint32_t& b, uint32_t& c)$/;"	f	file:
-HashMix	HdacCSDK2/structs/uint256.cpp	/^static void inline HashMix(uint32_t& a, uint32_t& b, uint32_t& c)$/;"	f	file:
-HexDigit	HdacCSDK2/utils/utilstrencodings.cpp	/^signed char HexDigit(char c)$/;"	f
-Init	HdacCSDK2/utils/tools.cpp	/^void mc_MapStringIndex::Init()$/;"	f	class:mc_MapStringIndex
-Initialize	HdacCSDK2/crypto/ripemd160.cpp	/^void inline Initialize(uint32_t* s)$/;"	f	namespace:__anon4::ripemd160
-Initialize	HdacCSDK2/crypto/sha1.cpp	/^void inline Initialize(uint32_t* s)$/;"	f	namespace:__anon5::sha1
-Initialize	HdacCSDK2/crypto/sha256.cpp	/^void inline Initialize(uint32_t* s)$/;"	f	namespace:__anon6::sha256
-Initialize	HdacCSDK2/crypto/sha512.cpp	/^void inline Initialize(uint64_t* s)$/;"	f	namespace:__anon7::sha512
-Initialize	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Initialize(int KeySize,int RowSize,uint32_t Mode)$/;"	f	class:mc_Buffer
-IsDirtyOpReturnScript	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::IsDirtyOpReturnScript()$/;"	f	class:mc_Script
-IsFollowOn	HdacCSDK2/entities/asset.cpp	/^int mc_EntityDetails::IsFollowOn()$/;"	f	class:mc_EntityDetails
-IsFullyValid	HdacCSDK2/keys/pubkey.cpp	/^bool CPubKey::IsFullyValid() const {$/;"	f	class:CPubKey
-IsHex	HdacCSDK2/utils/utilstrencodings.cpp	/^bool IsHex(const string& str)$/;"	f
-IsOpReturnScript	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::IsOpReturnScript()$/;"	f	class:mc_Script
-IsPayToScriptHash	HdacCSDK2/script/script.cpp	/^bool CScript::IsPayToScriptHash() const$/;"	f	class:CScript
-IsPushOnly	HdacCSDK2/script/script.cpp	/^bool CScript::IsPushOnly() const$/;"	f	class:CScript
-IsScript	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::IsScript() const$/;"	f	class:CBitcoinAddress
-IsStandardNullData	HdacCSDK2/keys/standard.cpp	/^bool IsStandardNullData(const CScript& scriptPubKey,bool standard_check)$/;"	f
-IsUnconfirmedGenesis	HdacCSDK2/entities/asset.cpp	/^int mc_EntityDetails::IsUnconfirmedGenesis()$/;"	f	class:mc_EntityDetails
-IsValid	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::IsValid() const$/;"	f	class:CBitcoinAddress
-IsValid	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::IsValid(const std::vector<unsigned char>& pubkeyPrefix,$/;"	f	class:CBitcoinAddress
-IsValid	HdacCSDK2/keys/bitcoinsecret.cpp	/^bool CBitcoinSecret::IsValid() const$/;"	f	class:CBitcoinSecret
-JSONRPCRequest	HdacCSDK2/rpc/rpcprotocol.cpp	/^string JSONRPCRequest(const string& strMethod, const Array& params, const Value& id, const string& chainName)$/;"	f
-KeysHelperWithFileAll	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^KeysHelperWithFileAll::KeysHelperWithFileAll(const string &Path) {$/;"	f	class:KeysHelperWithFileAll
-KeysHelperWithFileMulti	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^KeysHelperWithFileMulti::KeysHelperWithFileMulti(const string &Path) {$/;"	f	class:KeysHelperWithFileMulti
-KeysHelperWithRpc	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^KeysHelperWithRpc::KeysHelperWithRpc(const RpcClient &client) {$/;"	f	class:KeysHelperWithRpc
-Load	HdacCSDK2/keys/key.cpp	/^bool CKey::Load(CPrivKey &privkey, CPubKey &vchPubKey, bool fSkipCheck=false) {$/;"	f	class:CKey
-Lock	HdacCSDK2/utils/allocators.cpp	/^bool MemoryPageLocker::Lock(const void* addr, size_t len)$/;"	f	class:MemoryPageLocker
-LockedPageManager	HdacCSDK2/utils/allocators.cpp	/^LockedPageManager::LockedPageManager() : LockedPageManagerBase<MemoryPageLocker>(GetSystemPageSize())$/;"	f	class:LockedPageManager
-LogAcceptCategory	HdacCSDK2/utils/util.cpp	/^bool LogAcceptCategory(const char* category)$/;"	f
-LogPrintStr	HdacCSDK2/utils/util.cpp	/^int LogPrintStr(const std::string &str)$/;"	f
-MAX_NODE	txcommon.h	28;"	d
-MAX_OP_RETURN_RELAY	HdacCSDK2/keys/standard.cpp	/^static unsigned int MAX_OP_RETURN_RELAY = 40;$/;"	v	file:
-MAX_RECV_QUEUE_SIZE	txcommon.h	33;"	d
-MAX_SCRIPT_ELEMENT_SIZE	HdacCSDK2/keys/standard.cpp	/^static unsigned int MAX_SCRIPT_ELEMENT_SIZE=520;                                       \/\/ script.h$/;"	v	file:
-MAX_SEND_QUEUE_SIZE	txcommon.h	32;"	d
-MAX_VECTOR_SIZE	txcommon.h	103;"	d
-MAX_VERIFIER	txcommon.h	30;"	d
-MAX_VERIFY_QUEUE_SIZE	txcommon.h	34;"	d
-MC_AST_ASSET_REF_TYPE_OFFSET	HdacCSDK2/entities/asset.cpp	7;"	d	file:
-MC_AST_ASSET_REF_TYPE_OFFSET	HdacCSDK2/keys/hs_keys.cpp	69;"	d	file:
-MC_AST_ASSET_REF_TYPE_SIZE	HdacCSDK2/entities/asset.cpp	8;"	d	file:
-MC_AST_ASSET_REF_TYPE_SIZE	HdacCSDK2/keys/hs_keys.cpp	70;"	d	file:
-MC_AST_ASSET_SCRIPT_TYPE_OFFSET	HdacCSDK2/entities/asset.cpp	9;"	d	file:
-MC_AST_ASSET_SCRIPT_TYPE_SIZE	HdacCSDK2/entities/asset.cpp	10;"	d	file:
-MC_DCT_BUF_ALLOC_ITEMS	HdacCSDK2/utils/utility.cpp	14;"	d	file:
-MC_DCT_LIST_ALLOC_MAX_SIZE	HdacCSDK2/utils/utility.cpp	16;"	d	file:
-MC_DCT_LIST_ALLOC_MIN_SIZE	HdacCSDK2/utils/utility.cpp	15;"	d	file:
-MC_DCT_SCRIPT_ALLOC_BUFFER_CHUNK	HdacCSDK2/script/hdacscript.cpp	34;"	d	file:
-MC_DCT_SCRIPT_ALLOC_INDEX_CHUNK	HdacCSDK2/script/hdacscript.cpp	35;"	d	file:
-MC_DCT_SCRIPT_FREE_DATA_IDENTIFIER	HdacCSDK2/script/hdacscript.cpp	16;"	d	file:
-MC_DCT_SCRIPT_HDAC_APPROVE_PREFIX	HdacCSDK2/script/hdacscript.cpp	23;"	d	file:
-MC_DCT_SCRIPT_HDAC_ASSET_DETAILS_PREFIX	HdacCSDK2/script/hdacscript.cpp	30;"	d	file:
-MC_DCT_SCRIPT_HDAC_ASSET_FOLLOWON_PREFIX	HdacCSDK2/script/hdacscript.cpp	31;"	d	file:
-MC_DCT_SCRIPT_HDAC_ASSET_GENESIS_PREFIX	HdacCSDK2/script/hdacscript.cpp	28;"	d	file:
-MC_DCT_SCRIPT_HDAC_ASSET_QUANTITY_PREFIX	HdacCSDK2/script/hdacscript.cpp	29;"	d	file:
-MC_DCT_SCRIPT_HDAC_BLOCK_SIGNATURE_PREFIX	HdacCSDK2/script/hdacscript.cpp	27;"	d	file:
-MC_DCT_SCRIPT_HDAC_CASHED_SCRIPT_PREFIX	HdacCSDK2/script/hdacscript.cpp	21;"	d	file:
-MC_DCT_SCRIPT_HDAC_ENTITY_PREFIX	HdacCSDK2/script/hdacscript.cpp	20;"	d	file:
-MC_DCT_SCRIPT_HDAC_GENERAL_DETAILS_PREFIX	HdacCSDK2/script/hdacscript.cpp	32;"	d	file:
-MC_DCT_SCRIPT_HDAC_IDENTIFIER	HdacCSDK2/script/hdacscript.cpp	17;"	d	file:
-MC_DCT_SCRIPT_HDAC_KEY_PREFIX	HdacCSDK2/script/hdacscript.cpp	22;"	d	file:
-MC_DCT_SCRIPT_HDAC_NEW_ENTITY_PREFIX	HdacCSDK2/script/hdacscript.cpp	24;"	d	file:
-MC_DCT_SCRIPT_HDAC_PERMISSIONS_PREFIX	HdacCSDK2/script/hdacscript.cpp	26;"	d	file:
-MC_DCT_SCRIPT_HDAC_UPDATE_ENTITY_PREFIX	HdacCSDK2/script/hdacscript.cpp	25;"	d	file:
-MC_DCT_SCRIPT_IDENTIFIER_LEN	HdacCSDK2/script/hdacscript.cpp	18;"	d	file:
-MC_DCT_SCRIPT_OP_16	HdacCSDK2/script/hdacscript.cpp	12;"	d	file:
-MC_DCT_SCRIPT_OP_DROP	HdacCSDK2/script/hdacscript.cpp	14;"	d	file:
-MC_DCT_SCRIPT_OP_PUSHDATA1	HdacCSDK2/script/hdacscript.cpp	9;"	d	file:
-MC_DCT_SCRIPT_OP_PUSHDATA2	HdacCSDK2/script/hdacscript.cpp	10;"	d	file:
-MC_DCT_SCRIPT_OP_PUSHDATA4	HdacCSDK2/script/hdacscript.cpp	11;"	d	file:
-MC_DCT_SCRIPT_OP_RETURN	HdacCSDK2/script/hdacscript.cpp	13;"	d	file:
-MC_DCT_SCRIPT_TYPE_DIRTY_OP_RETURN	HdacCSDK2/script/hdacscript.cpp	40;"	d	file:
-MC_DCT_SCRIPT_TYPE_OP_DROP	HdacCSDK2/script/hdacscript.cpp	39;"	d	file:
-MC_DCT_SCRIPT_TYPE_OP_RETURN	HdacCSDK2/script/hdacscript.cpp	38;"	d	file:
-MC_DCT_SCRIPT_TYPE_REGULAR	HdacCSDK2/script/hdacscript.cpp	37;"	d	file:
-Maj	HdacCSDK2/crypto/sha256.cpp	/^uint32_t inline Maj(uint32_t x, uint32_t y, uint32_t z) { return (x & y) | (z & (x | y)); }$/;"	f	namespace:__anon6::sha256
-Maj	HdacCSDK2/crypto/sha512.cpp	/^uint64_t inline Maj(uint64_t x, uint64_t y, uint64_t z) { return (x & y) | (z & (x | y)); }$/;"	f	namespace:__anon7::sha512
-MakeNewKey	HdacCSDK2/keys/key.cpp	/^void CKey::MakeNewKey(bool fCompressedIn) {$/;"	f	class:CKey
-MurmurHash3	HdacCSDK2/structs/hash.cpp	/^unsigned int MurmurHash3(unsigned int nHashSeed, const std::vector<unsigned char>& vDataToHash)$/;"	f
-NOMINMAX	HdacCSDK2/utils/allocators.cpp	10;"	d	file:
-NextParam	HdacCSDK2/entities/asset.cpp	/^int32_t mc_EntityDetails::NextParam(uint32_t offset,uint32_t* param_value_start,size_t *bytes)$/;"	f	class:mc_EntityDetails
-POST_READ_SIZE	HdacCSDK2/rpc/rpcprotocol.cpp	/^const size_t POST_READ_SIZE = 256 * 1024;$/;"	v
-ParseAddresses	HdacCSDK2/keys/transactions.cpp	/^vector<CTxDestination> ParseAddresses(string param, bool allow_scripthash, const IWalletAddrHelper &helper)$/;"	f
-ParseAssetKey	HdacCSDK2/keys/transactions.cpp	/^int ParseAssetKey(const char* asset_key,unsigned char *txid,unsigned char *asset_ref,char *name,int *multiple,int *type,int entity_type)$/;"	f
-ParseEntityIdentifier	HdacCSDK2/keys/transactions.cpp	/^void ParseEntityIdentifier(Value entity_identifier,mc_EntityDetails *entity,uint32_t entity_type)$/;"	f
-ParseHex	HdacCSDK2/utils/utilstrencodings.cpp	/^vector<unsigned char> ParseHex(const char* psz)$/;"	f
-ParseHex	HdacCSDK2/utils/utilstrencodings.cpp	/^vector<unsigned char> ParseHex(const char* psz,bool &fIsHex)$/;"	f
-ParseHex	HdacCSDK2/utils/utilstrencodings.cpp	/^vector<unsigned char> ParseHex(const string& str)$/;"	f
-ParseRawMetadata	HdacCSDK2/keys/rawmetadata.cpp	/^CScript ParseRawMetadata(Value param,uint32_t allowed_objects,mc_EntityDetails *given_entity,mc_EntityDetails *found_entity)$/;"	f
-PrivateKeyHelperConstant	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^        PrivateKeyHelperConstant(const char* privateKeyPrefix, const char* addrChecksum) :$/;"	f	struct:PrivateKeyHelperConstant
-PrivateKeyHelperConstant	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^struct PrivateKeyHelperConstant : public IPrivateKeyHelper {$/;"	s	file:
-PutRow	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::PutRow(int RowID,const void *lpKey,const void *lpValue)$/;"	f	class:mc_Buffer
-R11	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R11(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f1(b, c, d), x, 0, r); }$/;"	f	namespace:__anon4::ripemd160
-R12	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R12(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f5(b, c, d), x, 0x50A28BE6ul, r); }$/;"	f	namespace:__anon4::ripemd160
-R21	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R21(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f2(b, c, d), x, 0x5A827999ul, r); }$/;"	f	namespace:__anon4::ripemd160
-R22	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R22(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f4(b, c, d), x, 0x5C4DD124ul, r); }$/;"	f	namespace:__anon4::ripemd160
-R31	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R31(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f3(b, c, d), x, 0x6ED9EBA1ul, r); }$/;"	f	namespace:__anon4::ripemd160
-R32	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R32(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f3(b, c, d), x, 0x6D703EF3ul, r); }$/;"	f	namespace:__anon4::ripemd160
-R41	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R41(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f4(b, c, d), x, 0x8F1BBCDCul, r); }$/;"	f	namespace:__anon4::ripemd160
-R42	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R42(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f2(b, c, d), x, 0x7A6D76E9ul, r); }$/;"	f	namespace:__anon4::ripemd160
-R51	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R51(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f5(b, c, d), x, 0xA953FD4Eul, r); }$/;"	f	namespace:__anon4::ripemd160
-R52	HdacCSDK2/crypto/ripemd160.cpp	/^void inline R52(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t x, int r) { Round(a, b, c, d, e, f1(b, c, d), x, 0, r); }$/;"	f	namespace:__anon4::ripemd160
-ROTL32	HdacCSDK2/structs/hash.cpp	/^inline uint32_t ROTL32(uint32_t x, int8_t r)$/;"	f
-RandAddSeed	HdacCSDK2/utils/random.cpp	/^void RandAddSeed()$/;"	f
-RandAddSeedPerfmon	HdacCSDK2/utils/random.cpp	/^static void RandAddSeedPerfmon()$/;"	f	file:
-RandFailure	HdacCSDK2/utils/random.cpp	/^static void RandFailure()$/;"	f	file:
-ReadHTTPHeaders	HdacCSDK2/rpc/rpcprotocol.cpp	/^int ReadHTTPHeaders(std::basic_istream<char>& stream, map<string, string>& mapHeadersRet)$/;"	f
-ReadHTTPMessage	HdacCSDK2/rpc/rpcprotocol.cpp	/^int ReadHTTPMessage(std::basic_istream<char>& stream, map<string, string>& mapHeadersRet, string& strMessageRet,$/;"	f
-ReadHTTPStatus	HdacCSDK2/rpc/rpcprotocol.cpp	/^int ReadHTTPStatus(std::basic_istream<char>& stream, int &proto)$/;"	f
-Realloc	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Realloc(int Rows)$/;"	f	class:mc_Buffer
-RecoverCompact	HdacCSDK2/keys/pubkey.cpp	/^bool CPubKey::RecoverCompact(const uint256 &hash, const std::vector<unsigned char>& vchSig) {$/;"	f	class:CPubKey
-Remove	HdacCSDK2/utils/tools.cpp	/^void mc_MapStringIndex::Remove(const char* key,int size)$/;"	f	class:mc_MapStringIndex
-RemoveOpDrops	HdacCSDK2/script/script.cpp	/^CScript CScript::RemoveOpDrops() const$/;"	f	class:CScript
-Reset	HdacCSDK2/crypto/ripemd160.cpp	/^CRIPEMD160& CRIPEMD160::Reset()$/;"	f	class:CRIPEMD160
-Reset	HdacCSDK2/crypto/sha1.cpp	/^CSHA1& CSHA1::Reset()$/;"	f	class:CSHA1
-Reset	HdacCSDK2/crypto/sha256.cpp	/^CSHA256& CSHA256::Reset()$/;"	f	class:CSHA256
-Reset	HdacCSDK2/crypto/sha512.cpp	/^CSHA512& CSHA512::Reset()$/;"	f	class:CSHA512
-Resize	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::Resize(size_t bytes,int elements)$/;"	f	class:mc_Script
-Round	HdacCSDK2/crypto/ripemd160.cpp	/^void inline Round(uint32_t& a, uint32_t b, uint32_t& c, uint32_t d, uint32_t e, uint32_t f, uint32_t x, uint32_t k, int r)$/;"	f	namespace:__anon4::ripemd160
-Round	HdacCSDK2/crypto/sha1.cpp	/^void inline Round(uint32_t a, uint32_t& b, uint32_t c, uint32_t d, uint32_t& e, uint32_t f, uint32_t k, uint32_t w)$/;"	f	namespace:__anon5::sha1
-Round	HdacCSDK2/crypto/sha256.cpp	/^void inline Round(uint32_t a, uint32_t b, uint32_t c, uint32_t& d, uint32_t e, uint32_t f, uint32_t g, uint32_t& h, uint32_t k, uint32_t w)$/;"	f	namespace:__anon6::sha256
-Round	HdacCSDK2/crypto/sha512.cpp	/^void inline Round(uint64_t a, uint64_t b, uint64_t c, uint64_t& d, uint64_t e, uint64_t f, uint64_t g, uint64_t& h, uint64_t k, uint64_t w)$/;"	f	namespace:__anon7::sha512
-SUBSCRIBER_MSGQ_ID	txcommon.h	114;"	d
-SamplePrivateKeyHelper	HdacCSDK2/test/helpers.cpp	/^    SamplePrivateKeyHelper() { }$/;"	f	class:SamplePrivateKeyHelper
-SamplePrivateKeyHelper	HdacCSDK2/test/helpers.cpp	/^class SamplePrivateKeyHelper : public IPrivateKeyHelper {$/;"	c	file:
-SamplePrivateKeyHelper	HdacCSDK2/test/keys.cpp	/^    SamplePrivateKeyHelper() { }$/;"	f	class:SamplePrivateKeyHelper
-SamplePrivateKeyHelper	HdacCSDK2/test/keys.cpp	/^class SamplePrivateKeyHelper : public IPrivateKeyHelper {$/;"	c	file:
-SampleWalletAddrHelper	HdacCSDK2/keys/hs_keys.cpp	/^    SampleWalletAddrHelper() { }$/;"	f	class:SampleWalletAddrHelper
-SampleWalletAddrHelper	HdacCSDK2/keys/hs_keys.cpp	/^class SampleWalletAddrHelper : public IWalletAddrHelper {$/;"	c	file:
-SampleWalletAddrHelper	HdacCSDK2/test/helpers.cpp	/^    SampleWalletAddrHelper() { }$/;"	f	class:SampleWalletAddrHelper
-SampleWalletAddrHelper	HdacCSDK2/test/helpers.cpp	/^class SampleWalletAddrHelper : public IWalletAddrHelper {$/;"	c	file:
-SampleWalletAddrHelper	HdacCSDK2/test/keys.cpp	/^    SampleWalletAddrHelper() { }$/;"	f	class:SampleWalletAddrHelper
-SampleWalletAddrHelper	HdacCSDK2/test/keys.cpp	/^class SampleWalletAddrHelper : public IWalletAddrHelper {$/;"	c	file:
-Seek	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Seek(void *lpKey)$/;"	f	class:mc_Buffer
-Serialize	HdacCSDK2/primitives/interpreter.cpp	/^    void Serialize(S &s, int nType, int nVersion) const {$/;"	f	class:__anon11::CTransactionSignatureSerializer
-SerializeInput	HdacCSDK2/primitives/interpreter.cpp	/^    void SerializeInput(S &s, unsigned int nInput, int nType, int nVersion) const {$/;"	f	class:__anon11::CTransactionSignatureSerializer
-SerializeOutput	HdacCSDK2/primitives/interpreter.cpp	/^    void SerializeOutput(S &s, unsigned int nOutput, int nType, int nVersion) const {$/;"	f	class:__anon11::CTransactionSignatureSerializer
-SerializeScriptCode	HdacCSDK2/primitives/interpreter.cpp	/^    void SerializeScriptCode(S &s, int nType, int nVersion) const {$/;"	f	class:__anon11::CTransactionSignatureSerializer
-Set	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::Set(const CKeyID &id,const std::vector<unsigned char>& vchV)$/;"	f	class:CBitcoinAddress
-Set	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::Set(const CKeyID& id)$/;"	f	class:CBitcoinAddress
-Set	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::Set(const CScriptID& id)$/;"	f	class:CBitcoinAddress
-Set	HdacCSDK2/keys/bitcoinaddress.cpp	/^bool CBitcoinAddress::Set(const CTxDestination& dest)$/;"	f	class:CBitcoinAddress
-SetApproval	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetApproval(uint32_t approval,uint32_t timestamp)$/;"	f	class:mc_Script
-SetAssetDetails	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetAssetDetails(const char*name,int multiple,const unsigned char* script,int script_size)$/;"	f	class:mc_Script
-SetAssetGenesis	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetAssetGenesis(int64_t quantity)$/;"	f	class:mc_Script
-SetAssetQuantities	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetAssetQuantities(mc_Buffer *amounts,uint32_t script_type)$/;"	f	class:mc_Script
-SetBlockSignature	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetBlockSignature(const unsigned char* sig,int sig_size,uint32_t hash_type,const unsigned char* key,int key_size)$/;"	f	class:mc_Script
-SetCachedScript	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetCachedScript(int offset, int *next_offset, int vin, unsigned char* script, int script_size)$/;"	f	class:mc_Script
-SetCompact	HdacCSDK2/structs/uint256.cpp	/^uint256& uint256::SetCompact(uint32_t nCompact, bool* pfNegative, bool* pfOverflow)$/;"	f	class:uint256
-SetCount	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::SetCount(int count)$/;"	f	class:mc_Buffer
-SetData	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetData(const unsigned char* src, const size_t bytes)$/;"	f	class:mc_Script
-SetData	HdacCSDK2/structs/base58.cpp	/^void CBase58Data::SetData(const std::vector<unsigned char>& vchVersionIn, const unsigned char* pbegin, const unsigned char* pend)$/;"	f	class:CBase58Data
-SetData	HdacCSDK2/structs/base58.cpp	/^void CBase58Data::SetData(const std::vector<unsigned char>& vchVersionIn, const void* pdata, size_t nSize)$/;"	f	class:CBase58Data
-SetElement	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetElement(int element)$/;"	f	class:mc_Script
-SetEntity	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetEntity(const unsigned char *short_txid)$/;"	f	class:mc_Script
-SetGeneralDetails	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetGeneralDetails(const unsigned char* script,int script_size)$/;"	f	class:mc_Script
-SetHex	HdacCSDK2/structs/uint256.cpp	/^void base_uint<BITS>::SetHex(const char* psz)$/;"	f	class:base_uint
-SetHex	HdacCSDK2/structs/uint256.cpp	/^void base_uint<BITS>::SetHex(const std::string& str)$/;"	f	class:base_uint
-SetItemKey	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetItemKey(const unsigned char* key,int key_size)$/;"	f	class:mc_Script
-SetKey	HdacCSDK2/keys/bitcoinsecret.cpp	/^void CBitcoinSecret::SetKey(const CKey& vchSecret)$/;"	f	class:CBitcoinSecret
-SetNewEntityType	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetNewEntityType(const uint32_t type)$/;"	f	class:mc_Script
-SetNewEntityType	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetNewEntityType(const uint32_t type,const int update,const unsigned char* script,int script_size)$/;"	f	class:mc_Script
-SetParamValue	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetParamValue(const char *param_name,const size_t param_name_size,const unsigned char* param_value,const size_t param_value_size)$/;"	f	class:mc_Script
-SetPermission	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetPermission(uint32_t type,uint32_t from,uint32_t to,uint32_t timestamp)$/;"	f	class:mc_Script
-SetPrivKey	HdacCSDK2/keys/key.cpp	/^bool CKey::SetPrivKey(const CPrivKey &privkey, bool fCompressedIn) {$/;"	f	class:CKey
-SetScript	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetScript(const unsigned char* src,const size_t bytes,int type)$/;"	f	class:mc_Script
-SetSpecialParamValue	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::SetSpecialParamValue(unsigned char param, const unsigned char* param_value, const size_t param_value_size)$/;"	f	class:mc_Script
-SetString	HdacCSDK2/keys/bitcoinsecret.cpp	/^bool CBitcoinSecret::SetString(const char* pszSecret)$/;"	f	class:CBitcoinSecret
-SetString	HdacCSDK2/keys/bitcoinsecret.cpp	/^bool CBitcoinSecret::SetString(const std::string& strSecret)$/;"	f	class:CBitcoinSecret
-SetString	HdacCSDK2/structs/base58.cpp	/^bool CBase58Data::SetString(const char* psz, unsigned int nVersionBytes)$/;"	f	class:CBase58Data
-SetString	HdacCSDK2/structs/base58.cpp	/^bool CBase58Data::SetString(const std::string& str, unsigned int pubkeyAddressSize)$/;"	f	class:CBase58Data
-ShowResultWithRPC	HdacCSDK2/test/rpc.cpp	/^void ShowResultWithRPC(const string &method, const Array &params)$/;"	f
-Sigma0	HdacCSDK2/crypto/sha256.cpp	/^uint32_t inline Sigma0(uint32_t x) { return (x >> 2 | x << 30) ^ (x >> 13 | x << 19) ^ (x >> 22 | x << 10); }$/;"	f	namespace:__anon6::sha256
-Sigma0	HdacCSDK2/crypto/sha512.cpp	/^uint64_t inline Sigma0(uint64_t x) { return (x >> 28 | x << 36) ^ (x >> 34 | x << 30) ^ (x >> 39 | x << 25); }$/;"	f	namespace:__anon7::sha512
-Sigma1	HdacCSDK2/crypto/sha256.cpp	/^uint32_t inline Sigma1(uint32_t x) { return (x >> 6 | x << 26) ^ (x >> 11 | x << 21) ^ (x >> 25 | x << 7); }$/;"	f	namespace:__anon6::sha256
-Sigma1	HdacCSDK2/crypto/sha512.cpp	/^uint64_t inline Sigma1(uint64_t x) { return (x >> 14 | x << 50) ^ (x >> 18 | x << 46) ^ (x >> 41 | x << 23); }$/;"	f	namespace:__anon7::sha512
-Sign	HdacCSDK2/keys/key.cpp	/^bool CKey::Sign(const uint256 &hash, std::vector<unsigned char>& vchSig, uint32_t test_case) const {$/;"	f	class:CKey
-SignCompact	HdacCSDK2/keys/key.cpp	/^bool CKey::SignCompact(const uint256 &hash, std::vector<unsigned char>& vchSig) const {$/;"	f	class:CKey
-SignMessage	HdacCSDK2/keys/hs_keys.cpp	/^string SignMessage(const string &strAddress, const string &strMessage,$/;"	f
-SignatureHash	HdacCSDK2/primitives/interpreter.cpp	/^uint256 SignatureHash(const CScript& scriptCode, const CTransaction& txTo, unsigned int nIn, int nHashType)$/;"	f
-Sort	HdacCSDK2/utils/utility.cpp	/^int mc_Buffer::Sort()$/;"	f	class:mc_Buffer
-TXCHAIN_STATUS_EMPTY	txcommon.h	/^	TXCHAIN_STATUS_EMPTY	= 0x00000000,$/;"	e	enum:__anon2
-TXCHAIN_STATUS_READY	txcommon.h	/^	TXCHAIN_STATUS_READY	= 0x10000000,$/;"	e	enum:__anon2
-TXCHAIN_STATUS_VERIFIED	txcommon.h	/^	TXCHAIN_STATUS_VERIFIED	= 0x20000000,$/;"	e	enum:__anon2
-TXCHAIN_VERIFY_MODEL_VECTOR	txcommon.h	25;"	d
-TemplateSolver	HdacCSDK2/keys/standard.cpp	/^bool TemplateSolver(const CScript& scriptPubKey, txnouttype& typeRet, std::vector<std::vector<unsigned char> >& vSolutionsRet)$/;"	f
-ToString	HdacCSDK2/primitives/transaction.cpp	/^std::string COutPoint::ToString() const$/;"	f	class:COutPoint
-ToString	HdacCSDK2/primitives/transaction.cpp	/^std::string CTransaction::ToString() const$/;"	f	class:CTransaction
-ToString	HdacCSDK2/primitives/transaction.cpp	/^std::string CTxIn::ToString() const$/;"	f	class:CTxIn
-ToString	HdacCSDK2/primitives/transaction.cpp	/^std::string CTxOut::ToString() const$/;"	f	class:CTxOut
-ToString	HdacCSDK2/script/script.cpp	/^std::string CScript::ToString() const$/;"	f	class:CScript
-ToString	HdacCSDK2/structs/base58.cpp	/^std::string CBase58Data::ToString() const$/;"	f	class:CBase58Data
-ToString	HdacCSDK2/structs/uint256.cpp	/^std::string base_uint<BITS>::ToString() const$/;"	f	class:base_uint
-Transform	HdacCSDK2/crypto/ripemd160.cpp	/^void Transform(uint32_t* s, const unsigned char* chunk)$/;"	f	namespace:__anon4::ripemd160
-Transform	HdacCSDK2/crypto/sha1.cpp	/^void Transform(uint32_t* s, const unsigned char* chunk)$/;"	f	namespace:__anon5::sha1
-Transform	HdacCSDK2/crypto/sha256.cpp	/^void Transform(uint32_t* s, const unsigned char* chunk)$/;"	f	namespace:__anon6::sha256
-Transform	HdacCSDK2/crypto/sha512.cpp	/^void Transform(uint64_t* s, const unsigned char* chunk)$/;"	f	namespace:__anon7::sha512
-Unlock	HdacCSDK2/utils/allocators.cpp	/^bool MemoryPageLocker::Unlock(const void* addr, size_t len)$/;"	f	class:MemoryPageLocker
-UpdateHash	HdacCSDK2/primitives/transaction.cpp	/^void CTransaction::UpdateHash() const$/;"	f	class:CTransaction
-UpgradeProtocolVersion	HdacCSDK2/entities/asset.cpp	/^int mc_EntityDetails::UpgradeProtocolVersion()$/;"	f	class:mc_EntityDetails
-UpgradeStartBlock	HdacCSDK2/entities/asset.cpp	/^uint32_t mc_EntityDetails::UpgradeStartBlock()$/;"	f	class:mc_EntityDetails
-VERIFIER_MSGQ_ID	txcommon.h	115;"	d
-ValueString	HdacCSDK2/primitives/analyzetx.cpp	/^inline std::string ValueString(const std::vector<unsigned char>& vch)$/;"	f
-ValueString	HdacCSDK2/script/script.cpp	/^inline std::string ValueString(const std::vector<unsigned char>& vch)$/;"	f	namespace:__anon12
-VectorToAddress	HdacCSDK2/keys/standard.cpp	/^CTxDestination VectorToAddress(vector<unsigned char>& vch)$/;"	f
-Verify	HdacCSDK2/keys/pubkey.cpp	/^bool CPubKey::Verify(const uint256 &hash, const std::vector<unsigned char>& vchSig) const {$/;"	f	class:CPubKey
-VerifyMessage	HdacCSDK2/keys/hs_keys.cpp	/^bool VerifyMessage(const string &strAddress, const string &strSign, const string &strMessage, const IWalletAddrHelper &addrHelper)$/;"	f
-VerifyPubKey	HdacCSDK2/keys/key.cpp	/^bool CKey::VerifyPubKey(const CPubKey& pubkey) const {$/;"	f	class:CKey
-WIN32_LEAN_AND_MEAN	HdacCSDK2/utils/allocators.cpp	8;"	d	file:
-WalletAddrHelperConstant	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^        WalletAddrHelperConstant(const char* pubkeyAddrPrefix, const char* scriptAddrPrefix, const char* addrChecksum) :$/;"	f	struct:WalletAddrHelperConstant
-WalletAddrHelperConstant	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^struct WalletAddrHelperConstant : public IWalletAddrHelper {$/;"	s	file:
-Write	HdacCSDK2/crypto/ripemd160.cpp	/^CRIPEMD160& CRIPEMD160::Write(const unsigned char* data, size_t len)$/;"	f	class:CRIPEMD160
-Write	HdacCSDK2/crypto/sha1.cpp	/^CSHA1& CSHA1::Write(const unsigned char* data, size_t len)$/;"	f	class:CSHA1
-Write	HdacCSDK2/crypto/sha256.cpp	/^CSHA256& CSHA256::Write(const unsigned char* data, size_t len)$/;"	f	class:CSHA256
-Write	HdacCSDK2/crypto/sha512.cpp	/^CSHA512& CSHA512::Write(const unsigned char* data, size_t len)$/;"	f	class:CSHA512
-Zero	HdacCSDK2/entities/asset.cpp	/^void mc_EntityDetails::Zero()$/;"	f	class:mc_EntityDetails
-Zero	HdacCSDK2/entities/asset.cpp	/^void mc_EntityLedgerRow::Zero()$/;"	f	class:mc_EntityLedgerRow
-Zero	HdacCSDK2/script/hdacscript.cpp	/^int mc_Script::Zero()$/;"	f	class:mc_Script
-Zero	HdacCSDK2/utils/utility.cpp	/^void mc_Buffer::Zero()$/;"	f	class:mc_Buffer
-_WIN32_WINNT	HdacCSDK2/utils/allocators.cpp	5;"	d	file:
-_WIN32_WINNT	HdacCSDK2/utils/allocators.cpp	7;"	d	file:
+DEBUG	txcommon.h	21;"	d
+DEBUG_SLEEP	txcommon.h	22;"	d
+MAX_NODE	txcommon.h	29;"	d
+MAX_RECV_QUEUE_SIZE	txcommon.h	34;"	d
+MAX_SEND_QUEUE_SIZE	txcommon.h	33;"	d
+MAX_SEQ	txcommon.h	38;"	d
+MAX_VERIFIER	txcommon.h	31;"	d
+MAX_VERIFY_QUEUE_SIZE	txcommon.h	35;"	d
+SUBSCRIBER_MSGQ_ID	txcommon.h	111;"	d
+TXCHAIN_STATUS_EMPTY	txcommon.h	/^	TXCHAIN_STATUS_EMPTY		= 0x00000000,$/;"	e	enum:__anon2
+TXCHAIN_STATUS_READY	txcommon.h	/^	TXCHAIN_STATUS_READY		= 0x00010000,$/;"	e	enum:__anon2
+TXCHAIN_STATUS_RECV	txcommon.h	/^	TXCHAIN_STATUS_RECV		= 0x00020000,$/;"	e	enum:__anon2
+TXCHAIN_STATUS_VERI	txcommon.h	/^	TXCHAIN_STATUS_VERI		= 0x00040000,$/;"	e	enum:__anon2
+TXCHAIN_STATUS_VERI_REQ	txcommon.h	/^	TXCHAIN_STATUS_VERI_REQ		= 0x00080000,$/;"	e	enum:__anon2
+TXCHAIN_STATUS_VERI_RESULT	txcommon.h	/^	TXCHAIN_STATUS_VERI_RESULT	= 0x00100000,$/;"	e	enum:__anon2
+TXCHAIN_VERIFY_MODEL_QUEUE	txcommon.h	26;"	d
+TX_DELIM	txcommon.h	41;"	d
+VERIFIER_MSGQ_ID	txcommon.h	112;"	d
+ZMQ_FILTER	txcommon.h	40;"	d
 __COMMON_H	txcommon.h	2;"	d
 __ZHELPERS_HPP_INCLUDED__	zhelpers.hpp	3;"	d
-_addrChecksumValue	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^        int32_t _addrChecksumValue;$/;"	m	struct:PrivateKeyHelperConstant	file:
-_addrChecksumValue	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^        int32_t _addrChecksumValue;$/;"	m	struct:WalletAddrHelperConstant	file:
-_client	HdacCSDK2/test/test_module.cpp	/^	RpcClient _client;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_client	HdacCSDK2/test/test_module.cpp	/^	RpcClient _client;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_createTxid	HdacCSDK2/test/test_module.cpp	/^	string _createTxid;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_helper	HdacCSDK2/test/test_module.cpp	/^	KeysHelperWithRpc _helper;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_helper	HdacCSDK2/test/test_module.cpp	/^	KeysHelperWithRpc _helper;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_instance	HdacCSDK2/utils/allocators.cpp	/^LockedPageManager* LockedPageManager::_instance = NULL;$/;"	m	class:LockedPageManager	file:
-_issueTxid	HdacCSDK2/test/test_module.cpp	/^	string _issueTxid;$/;"	m	class:ElementGrabberToSendAssetTx	file:
 _maxnode	main.cpp	/^int	_maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
 _maxnode	xmain.cpp	/^int	_maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
-_multiple	HdacCSDK2/test/test_module.cpp	/^	int _multiple;$/;"	m	class:ElementGrabberToSendAssetTx	file:
+_mtx_initialized	queue.cpp	/^int	_mtx_initialized = 0;$/;"	v
 _npeer	main.cpp	/^int	_npeer = 0;$/;"	v
 _npeer	xmain.cpp	/^int	_npeer = 0;$/;"	v
 _nverifier	main.cpp	/^int	_nverifier = MAX_VERIFIER;$/;"	v
 _nverifier	xmain.cpp	/^int	_nverifier = MAX_VERIFIER;$/;"	v
 _peerlist	main.cpp	/^char	_peerlist[MAX_NODE + 1][40] = {0};$/;"	v
 _peerlist	xmain.cpp	/^char	_peerlist[MAX_NODE + 1][40] = {0};$/;"	v
-_pop_count	main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
+_pop_count	queue.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
 _pop_count	xmain.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
-_privateKey	HdacCSDK2/test/test_module.cpp	/^	string _privateKey;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_privateKey	HdacCSDK2/test/test_module.cpp	/^	string _privateKey;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_privatekeyPrefix	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^        vector<unsigned char> _privatekeyPrefix;$/;"	m	struct:PrivateKeyHelperConstant	file:
-_pubKeyAddrPrefix	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^        vector<unsigned char> _pubKeyAddrPrefix;$/;"	m	struct:WalletAddrHelperConstant	file:
-_push_count	main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
+_push_count	queue.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
 _push_count	xmain.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
 _recvmtx	queue.cpp	/^pthread_mutex_t _recvmtx;	\/\/ for _recvq$/;"	v
 _recvq	queue.cpp	/^queue<txdata_t>	_recvq;		\/\/ receive queue for subscriber$/;"	v
-_scriptAddrPrefix	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^        vector<unsigned char> _scriptAddrPrefix;$/;"	m	struct:WalletAddrHelperConstant	file:
 _sendmtx	queue.cpp	/^pthread_mutex_t _sendmtx;	\/\/ for _sendq$/;"	v
 _sendport	main.cpp	/^int	_sendport = 7000;$/;"	v
 _sendport	xmain.cpp	/^int	_sendport = 7000;$/;"	v
 _sendq	queue.cpp	/^queue<txdata_t>	_sendq;		\/\/ send queue for publisher$/;"	v
-_unspentQty	HdacCSDK2/test/test_module.cpp	/^	double _unspentQty;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_unspentRedeemScript	HdacCSDK2/test/test_module.cpp	/^	string _unspentRedeemScript;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_unspentScriptPubKey	HdacCSDK2/test/test_module.cpp	/^	string _unspentScriptPubKey;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_unspentScriptPubKey	HdacCSDK2/test/test_module.cpp	/^	string _unspentScriptPubKey;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_unspentTxid	HdacCSDK2/test/test_module.cpp	/^	string _unspentTxid;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_unspentTxid	HdacCSDK2/test/test_module.cpp	/^	string _unspentTxid;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_unspentVoutIdx	HdacCSDK2/test/test_module.cpp	/^	int32_t _unspentVoutIdx;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_unspentVoutIdx	HdacCSDK2/test/test_module.cpp	/^	int32_t _unspentVoutIdx;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-_vermtx	queue.cpp	/^pthread_mutex_t _vermtx;	\/\/ for _verq$/;"	v
-_verq	queue.cpp	/^queue<txdata_t>	_verq;		\/\/ receive queue for verifier$/;"	v
-_walletAddr	HdacCSDK2/test/test_module.cpp	/^	string _walletAddr;$/;"	m	class:ElementGrabberToPublishStreamTx	file:
-_walletAddr	HdacCSDK2/test/test_module.cpp	/^	string _walletAddr;$/;"	m	class:ElementGrabberToSendAssetTx	file:
-addr	HdacCSDK2/keys/bitcoinaddress.cpp	/^    CBitcoinAddress* addr;$/;"	m	class:__anon8::CBitcoinAddressVisitor	file:
-addrChecksumValue	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^int32_t KeysHelperWithFileAll::PrivateKeyHelper::addrChecksumValue() const  {$/;"	f	class:KeysHelperWithFileAll::PrivateKeyHelper
-addrChecksumValue	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^int32_t KeysHelperWithFileAll::WalletAddrHelper::addrChecksumValue() const  {$/;"	f	class:KeysHelperWithFileAll::WalletAddrHelper
-addrChecksumValue	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^int32_t KeysHelperWithFileMulti::PrivateKeyHelper::addrChecksumValue() const  {$/;"	f	class:KeysHelperWithFileMulti::PrivateKeyHelper
-addrChecksumValue	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^int32_t KeysHelperWithFileMulti::WalletAddrHelper::addrChecksumValue() const  {$/;"	f	class:KeysHelperWithFileMulti::WalletAddrHelper
-addrChecksumValue	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^int32_t KeysHelperWithRpc::PrivateKeyHelper::addrChecksumValue() const  {$/;"	f	class:KeysHelperWithRpc::PrivateKeyHelper
-addrChecksumValue	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^int32_t KeysHelperWithRpc::WalletAddrHelper::addrChecksumValue() const {$/;"	f	class:KeysHelperWithRpc::WalletAddrHelper
-addrHelper	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const IWalletAddrHelper &KeysHelperWithFileAll::addrHelper() const {$/;"	f	class:KeysHelperWithFileAll
-addrHelper	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const IWalletAddrHelper &KeysHelperWithFileMulti::addrHelper() const {$/;"	f	class:KeysHelperWithFileMulti
-addrHelper	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^const IWalletAddrHelper &KeysHelperWithRpc::addrHelper() const {$/;"	f	class:KeysHelperWithRpc
-analyzeDetail	HdacCSDK2/primitives/analyzetx.cpp	/^std::string analyzeDetail(const std::vector<unsigned char>& vch)$/;"	f
-analyzeScript	HdacCSDK2/primitives/analyzetx.cpp	/^std::string analyzeScript(const CScript& script, function<string(const vector<unsigned char>&, bool)> convertAddr = nullptr)$/;"	f
-analyzeTx	HdacCSDK2/primitives/analyzetx.cpp	/^Object analyzeTx(const string& txHex, function<string(const vector<unsigned char>&, bool)> convertAddr)$/;"	f
-analyzeVin	HdacCSDK2/primitives/analyzetx.cpp	/^Object analyzeVin(const CTxIn& vin)$/;"	f
-analyzeVout	HdacCSDK2/primitives/analyzetx.cpp	/^Object analyzeVout(const CTxOut& vout, function<string(const vector<unsigned char>&, bool)> convertAddr = nullptr)$/;"	f
-appendAssetSend	HdacCSDK2/keys/hs_keys.cpp	/^void appendAssetSend(int64_t quantity, unsigned char initializedBuf[MC_AST_ASSET_FULLREF_BUF_SIZE], CScript &destinedScript)$/;"	f
-appendStreamIdentifier	HdacCSDK2/keys/hs_keys.cpp	/^void appendStreamIdentifier(const string& createTxid, CScript& scriptOpReturn)$/;"	f
-appendStreamItemKey	HdacCSDK2/keys/hs_keys.cpp	/^void appendStreamItemKey(const string& streamKey, CScript& scriptOpReturn)$/;"	f
-appendStreamItemValue	HdacCSDK2/keys/hs_keys.cpp	/^void appendStreamItemValue(const string& streamValue, CScript& scriptOpReturn)$/;"	f
-base_uint	HdacCSDK2/structs/uint256.cpp	/^base_uint<BITS>::base_uint(const std::string& str)$/;"	f	class:base_uint
-base_uint	HdacCSDK2/structs/uint256.cpp	/^base_uint<BITS>::base_uint(const std::vector<unsigned char>& vch)$/;"	f	class:base_uint
-bits	HdacCSDK2/structs/uint256.cpp	/^unsigned int base_uint<BITS>::bits() const$/;"	f	class:base_uint
-blockChainParams	HdacCSDK2/rpc/hs_rpc.cpp	/^Object blockChainParams(const RpcClient& client)$/;"	f
+_verimtx	queue.cpp	/^pthread_mutex_t _verimtx;	\/\/ for _veriq$/;"	v
+_veriq	queue.cpp	/^queue<txdata_t>	_veriq;		\/\/ receive queue for verifier$/;"	v
 c99_snprintf	zhelpers.hpp	/^	inline int c99_snprintf(char *outBuf, size_t size, const char *format, ...)$/;"	f
 c99_vsnprintf	zhelpers.hpp	/^	inline int c99_vsnprintf(char *outBuf, size_t size, const char *format, va_list ap)$/;"	f
-checkMultisigAddr	HdacCSDK2/test/test_module.cpp	/^void checkMultisigAddr()$/;"	f
-chooseAsset	HdacCSDK2/test/test_module.cpp	/^	void chooseAsset(const string& assetName) {$/;"	f	class:ElementGrabberToSendAssetTx	file:
-chooseStream	HdacCSDK2/test/test_module.cpp	/^	void chooseStream(const string& streamName) {$/;"	f	class:ElementGrabberToPublishStreamTx	file:
-chooseUnspent	HdacCSDK2/test/test_module.cpp	/^	void chooseUnspent() {$/;"	f	class:ElementGrabberToPublishStreamTx	file:
-chooseUnspent	HdacCSDK2/test/test_module.cpp	/^	void chooseUnspent(const string& assetName) {$/;"	f	class:ElementGrabberToSendAssetTx	file:
-common_queue_pop	queue.cpp	/^txdata_t common_queue_pop(const char *name, queue<txdata_t> myq, pthread_mutex_t *mtx)$/;"	f
-common_queue_push	queue.cpp	/^int	common_queue_push(const char *name, queue<txdata_t> myq, txdata_t data, pthread_mutex_t *mtx, int max_queue_size)$/;"	f
-compareHashValue	HdacCSDK2/structs/hashes.cpp	/^void compareHashValue(unsigned char hash[CSHA256::OUTPUT_SIZE], const string& correct)$/;"	f
-convertAddrDefault	HdacCSDK2/test/test_module.cpp	/^std::function<string(const std::vector<unsigned char>& vch, bool isScriptHash)> convertAddrDefault(const KeysHelperWithRpc& helper)$/;"	f
-createAssetSendTx	HdacCSDK2/keys/hs_keys.cpp	/^string createAssetSendTx(const string& toAddr, double quantity,$/;"	f
-createKeyPairs	HdacCSDK2/keys/hs_keys.cpp	/^KeyPairs createKeyPairs(const IPrivateKeyHelper &privateHelper, const IWalletAddrHelper &addrHelper)$/;"	f
-createMultisigInfo	HdacCSDK2/keys/multisig.cpp	/^void createMultisigInfo(const vector<string>& pubkeys, int required, const IWalletAddrHelper& addrHelper, MultisigAddrInfo& info)$/;"	f
-createMultisigRedeemScript	HdacCSDK2/keys/multisig.cpp	/^CScript createMultisigRedeemScript(int nRequired, const vector<string>& keys,$/;"	f
-createStreamPublishTx	HdacCSDK2/keys/hs_keys.cpp	/^string createStreamPublishTx(const string& streamKey, const string& streamValue,$/;"	f
-create_asset_send_tx	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^char *create_asset_send_tx(const char *toAddr, double quantity, const char *issueTxid, int multiple,$/;"	f
-create_asset_send_tx_shp	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^char *create_asset_send_tx_shp(const char *toAddr, double quantity, const char *issueTxid, int multiple,$/;"	f
-create_key_pairs	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^keypairs_type_t *create_key_pairs(const struct PrivateKeyHelpInfo *privatehelper,$/;"	f
-create_key_pairs_shp	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^void create_key_pairs_shp(const PrivateKeyHelpInfo * privatehelper, const WalletAddrHelpInfo * addrhelper, keypairs_type_t * out)$/;"	f
-create_stream_publish_tx	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^char * create_stream_publish_tx(const char* streamKey, const char* streamItem, const char* createTxid,$/;"	f
-create_stream_publish_tx_shp	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^char * create_stream_publish_tx_shp(const char* streamKey, const char* streamItem, const char* createTxid,$/;"	f
+common_queue_pop	queue.cpp	/^txdata_t common_queue_pop(const char *name, queue<txdata_t>& myq, pthread_mutex_t *mtx)$/;"	f
+common_queue_push	queue.cpp	/^int	common_queue_push(const char *name, queue<txdata_t>& myq, txdata_t data, pthread_mutex_t *mtx, int max_queue_size)$/;"	f
+create_main_threads	main.cpp	/^void	create_main_threads()$/;"	f
+create_subscriber_threads	main.cpp	/^void	create_subscriber_threads()$/;"	f
+create_verifier_threads	main.cpp	/^void	create_verifier_threads(int nverifiers)$/;"	f
 data	txcommon.h	/^	string		data;$/;"	m	struct:__anon3
-debugPrintInitFlag	HdacCSDK2/utils/util.cpp	/^static boost::once_flag debugPrintInitFlag = BOOST_ONCE_INIT;$/;"	v	file:
-displayHashValue	HdacCSDK2/structs/hashes.cpp	/^void displayHashValue(unsigned char hash[CSHA256::OUTPUT_SIZE])$/;"	f
-ec_privkey_export_der	HdacCSDK2/keys/key.cpp	/^static int ec_privkey_export_der(const secp256k1_context *ctx, unsigned char *privkey, size_t *privkeylen, const unsigned char *key32, int compressed) {$/;"	f	file:
-ec_privkey_import_der	HdacCSDK2/keys/key.cpp	/^static int ec_privkey_import_der(const secp256k1_context* ctx, unsigned char *out32, const unsigned char *privkey, size_t privkeylen) {$/;"	f	file:
-ecdsa_signature_parse_der_lax	HdacCSDK2/keys/pubkey.cpp	/^static int ecdsa_signature_parse_der_lax(const secp256k1_context* ctx, secp256k1_ecdsa_signature* sig, const unsigned char *input, size_t inputlen) {$/;"	f	file:
-error	HdacCSDK2/rpc/rpccaller.cpp	/^int error(const Object& reply, string &strResult) {$/;"	f
-f1	HdacCSDK2/crypto/ripemd160.cpp	/^uint32_t inline f1(uint32_t x, uint32_t y, uint32_t z) { return x ^ y ^ z; }$/;"	f	namespace:__anon4::ripemd160
-f1	HdacCSDK2/crypto/sha1.cpp	/^uint32_t inline f1(uint32_t b, uint32_t c, uint32_t d) { return d ^ (b & (c ^ d)); }$/;"	f	namespace:__anon5::sha1
-f2	HdacCSDK2/crypto/ripemd160.cpp	/^uint32_t inline f2(uint32_t x, uint32_t y, uint32_t z) { return (x & y) | (~x & z); }$/;"	f	namespace:__anon4::ripemd160
-f2	HdacCSDK2/crypto/sha1.cpp	/^uint32_t inline f2(uint32_t b, uint32_t c, uint32_t d) { return b ^ c ^ d; }$/;"	f	namespace:__anon5::sha1
-f3	HdacCSDK2/crypto/ripemd160.cpp	/^uint32_t inline f3(uint32_t x, uint32_t y, uint32_t z) { return (x | ~y) ^ z; }$/;"	f	namespace:__anon4::ripemd160
-f3	HdacCSDK2/crypto/sha1.cpp	/^uint32_t inline f3(uint32_t b, uint32_t c, uint32_t d) { return (b & c) | (d & (b | c)); }$/;"	f	namespace:__anon5::sha1
-f4	HdacCSDK2/crypto/ripemd160.cpp	/^uint32_t inline f4(uint32_t x, uint32_t y, uint32_t z) { return (x & z) | (y & ~z); }$/;"	f	namespace:__anon4::ripemd160
-f5	HdacCSDK2/crypto/ripemd160.cpp	/^uint32_t inline f5(uint32_t x, uint32_t y, uint32_t z) { return x ^ (y | ~z); }$/;"	f	namespace:__anon4::ripemd160
-fAnyoneCanPay	HdacCSDK2/primitives/interpreter.cpp	/^    const bool fAnyoneCanPay;  \/\/! whether the hashtype has the SIGHASH_ANYONECANPAY flag set$/;"	m	class:__anon11::CTransactionSignatureSerializer	file:
-fHashNone	HdacCSDK2/primitives/interpreter.cpp	/^    const bool fHashNone;      \/\/! whether the hashtype is SIGHASH_NONE$/;"	m	class:__anon11::CTransactionSignatureSerializer	file:
-fHashSingle	HdacCSDK2/primitives/interpreter.cpp	/^    const bool fHashSingle;    \/\/! whether the hashtype is SIGHASH_SINGLE$/;"	m	class:__anon11::CTransactionSignatureSerializer	file:
-fLogTimeMillis	HdacCSDK2/utils/util.cpp	/^bool fLogTimeMillis = true;$/;"	v
-fLogTimestamps	HdacCSDK2/utils/util.cpp	/^bool fLogTimestamps = true;$/;"	v
-fPrintToDebugLog	HdacCSDK2/utils/util.cpp	/^bool fPrintToDebugLog = true;$/;"	v
-fReopenDebugLog	HdacCSDK2/utils/util.cpp	/^bool fReopenDebugLog = false;$/;"	v
-file_param_value_get	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^char *file_param_value_get(char *text, const char *key)$/;"	f
-fileout	HdacCSDK2/utils/util.cpp	/^static FILE* fileout = NULL;$/;"	v	file:
-findItemsFromRpcResult	HdacCSDK2/rpc/rpcresult.cpp	/^vector<string> findItemsFromRpcResult(const string& rpcResult, const vector<string>& keys) {$/;"	f
-getdouble	HdacCSDK2/structs/uint256.cpp	/^double base_uint<BITS>::getdouble() const$/;"	f	class:base_uint
-getinfo	HdacCSDK2/rpc/hs_rpc.cpp	/^Object getinfo(const RpcClient& client)$/;"	f
-gettimeofday	HdacCSDK2/utils/utility.cpp	/^int gettimeofday(struct timeval *tv, struct timezone *tz)$/;"	f
-hashFromFile	HdacCSDK2/structs/hs_structs.cpp	/^vector<unsigned char> hashFromFile(const string& filename)$/;"	f
-importaddress	HdacCSDK2/rpc/hs_rpc.cpp	/^Object importaddress(const RpcClient& client, const string &address, bool rescan)$/;"	f
-importaddress	HdacCSDK2/rpc/hs_rpc.cpp	/^Object importaddress(const RpcClient& client, const vector<string>& addresses, bool rescan)$/;"	f
-initAssetMetadataBuffer	HdacCSDK2/keys/hs_keys.cpp	/^void initAssetMetadataBuffer(const string& issueTxid, unsigned char buf[MC_AST_ASSET_FULLREF_BUF_SIZE])$/;"	f
-initEcc	HdacCSDK2/keys/eccautoinitreleasehandler.cpp	/^void EccAutoInitReleaseHandler::initEcc()$/;"	f	class:EccAutoInitReleaseHandler
-init_flag	HdacCSDK2/utils/allocators.cpp	/^boost::once_flag LockedPageManager::init_flag = BOOST_ONCE_INIT;$/;"	m	class:LockedPageManager	file:
-instance	HdacCSDK2/utils/profiler.cpp	/^Profiler & Profiler::instance()$/;"	f	class:Profiler
 int64_t	zhelpers.hpp	/^    typedef __int64 int64_t;$/;"	t
-isSpeciaMeta	HdacCSDK2/primitives/analyzetx.cpp	/^bool isSpeciaMeta(const std::vector<unsigned char>& vch)$/;"	f
-k1	HdacCSDK2/crypto/sha1.cpp	/^const uint32_t k1 = 0x5A827999ul;$/;"	m	namespace:__anon5::sha1	file:
-k2	HdacCSDK2/crypto/sha1.cpp	/^const uint32_t k2 = 0x6ED9EBA1ul;$/;"	m	namespace:__anon5::sha1	file:
-k3	HdacCSDK2/crypto/sha1.cpp	/^const uint32_t k3 = 0x8F1BBCDCul;$/;"	m	namespace:__anon5::sha1	file:
-k4	HdacCSDK2/crypto/sha1.cpp	/^const uint32_t k4 = 0xCA62C1D6ul;$/;"	m	namespace:__anon5::sha1	file:
-keyFromPrivateKey	HdacCSDK2/keys/transactions.cpp	/^CKey keyFromPrivateKey(const string& privateKey, const IPrivateKeyHelper& helper)$/;"	f
-keyslib	HdacCSDK2/keys/keyslib.cpp	/^keyslib::keyslib()$/;"	f	class:keyslib
-left	HdacCSDK2/crypto/sha1.cpp	/^uint32_t inline left(uint32_t x) { return (x << 1) | (x >> 31); }$/;"	f	namespace:__anon5::sha1
-listassets	HdacCSDK2/rpc/hs_rpc.cpp	/^Object listassets(const RpcClient& client, const string &name)$/;"	f
-listassets	HdacCSDK2/rpc/hs_rpc.cpp	/^Object listassets(const RpcClient& client, const vector<string> &assetNames)$/;"	f
-listlockunspent	HdacCSDK2/rpc/hs_rpc.cpp	/^Object listlockunspent(const RpcClient& client)$/;"	f
-liststreams	HdacCSDK2/rpc/hs_rpc.cpp	/^Object liststreams(const RpcClient& client, const string &streamName)$/;"	f
-liststreams	HdacCSDK2/rpc/hs_rpc.cpp	/^Object liststreams(const RpcClient& client, const vector<string> &streamNames)$/;"	f
-listunspent	HdacCSDK2/rpc/hs_rpc.cpp	/^Object listunspent(const RpcClient& client, const string& address)$/;"	f
-listunspent	HdacCSDK2/rpc/hs_rpc.cpp	/^Object listunspent(const RpcClient& client, const vector<string>& addresses)$/;"	f
-listunspent	HdacCSDK2/rpc/hs_rpc.cpp	/^Object listunspent(const RpcClient& client, int minConf, int maxConf, const vector<string>& addresses)$/;"	f
-load_config	main.cpp	/^void	load_config(int ac, char *av[])$/;"	f
-load_config	xmain.cpp	/^void	load_config(int ac, char *av[])$/;"	f
-lockunspent	HdacCSDK2/rpc/hs_rpc.cpp	/^Object lockunspent(const RpcClient& client, bool unlock, string txid, int vout)$/;"	f
-ltrim	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^std::string ltrim(std::string s,const std::string& drop = TRIM_SPACE)$/;"	f
-main	HdacCSDK2/test/helpers.cpp	/^int main()$/;"	f
-main	HdacCSDK2/test/keys.cpp	/^int main()$/;"	f
-main	HdacCSDK2/test/perfTxGen.cpp	/^int main()$/;"	f
-main	HdacCSDK2/test/primitives.cpp	/^int main()$/;"	f
-main	HdacCSDK2/test/rpc.cpp	/^int main()$/;"	f
-main	HdacCSDK2/test/test.cpp	/^int main()$/;"	f
-main	HdacCSDK2/test/test_module.cpp	/^int main()$/;"	f
-main	HdacCSDK2/test/test_verify.cpp	/^int main(void)$/;"	f
 main	main.cpp	/^int	main(int ac, char *av[])$/;"	f
 main	xmain.cpp	/^int	main(int ac, char *av[])$/;"	f
-mapFromFileReadAll	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^map<string, string> mapFromFileReadAll(const string& Path) $/;"	f
-mapFromFileReadMulti	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^map<string, string> mapFromFileReadMulti(const string& Path, $/;"	f
-mapFromRpcResult	HdacCSDK2/rpc/rpcresult.cpp	/^map<string, string> mapFromRpcResult(const string& rpcResult, const vector<string>& keys) {$/;"	f
-mc_AllocSize	HdacCSDK2/utils/utility.cpp	/^int mc_AllocSize(int items,int chunk_size,int item_size)$/;"	f
-mc_Delete	HdacCSDK2/utils/utility.cpp	/^void mc_Delete(void *ptr)$/;"	f
-mc_FindNamedParamInDetailsScript	HdacCSDK2/script/hdacscript.cpp	/^uint32_t mc_FindNamedParamInDetailsScript(const unsigned char *ptr,uint32_t total,const char *param,size_t *bytes)$/;"	f
-mc_FindSpecialParamInDetailsScript	HdacCSDK2/script/hdacscript.cpp	/^uint32_t mc_FindSpecialParamInDetailsScript(const unsigned char *ptr,uint32_t total,uint32_t param,size_t *bytes)$/;"	f
-mc_GetABQuantity	HdacCSDK2/entities/asset.cpp	/^int64_t mc_GetABQuantity(void *ptr)$/;"	f
-mc_GetABRefType	HdacCSDK2/entities/asset.cpp	/^uint32_t mc_GetABRefType(void *ptr)$/;"	f
-mc_GetABScriptType	HdacCSDK2/entities/asset.cpp	/^uint32_t mc_GetABScriptType(void *ptr)$/;"	f
-mc_GetLE	HdacCSDK2/utils/utility.cpp	/^int64_t mc_GetLE(void *src,int size)$/;"	f
-mc_GetParamFromDetailsScript	HdacCSDK2/script/hdacscript.cpp	/^uint32_t mc_GetParamFromDetailsScript(const unsigned char *ptr,uint32_t total,uint32_t offset,uint32_t* param_value_start,size_t *bytes)$/;"	f
-mc_GetParamFromDetailsScript	HdacCSDK2/script/hdacscript.cpp	/^uint32_t mc_GetParamFromDetailsScript(const unsigned char *ptr,uint32_t total,uint32_t offset,uint32_t* param_value_start,size_t *bytes,int *err)$/;"	f
-mc_GetPushDataElement	HdacCSDK2/script/hdacscript.cpp	/^int mc_GetPushDataElement(unsigned char *src,int size,int *op_drop_offset,int *op_drop_size)$/;"	f
-mc_GetVarInt	HdacCSDK2/utils/utility.cpp	/^int64_t mc_GetVarInt(const unsigned char *buf,int max_size,int64_t default_value,int* shift)$/;"	f
-mc_InitABufferDefault	HdacCSDK2/entities/asset.cpp	/^void mc_InitABufferDefault(mc_Buffer *buf)$/;"	f
-mc_New	HdacCSDK2/utils/utility.cpp	/^void *mc_New(int Size)$/;"	f
-mc_ParseOpDropOpReturnScript	HdacCSDK2/script/hdacscript.cpp	/^const unsigned char *mc_ParseOpDropOpReturnScript(const unsigned char *src,int size,int *op_drop_offset,int *op_drop_size,int op_drop_count,int *op_return_offset,int *op_return_size)$/;"	f
-mc_PutLE	HdacCSDK2/utils/utility.cpp	/^void mc_PutLE(void *dest,void *src,int dest_size)$/;"	f
-mc_PutVarInt	HdacCSDK2/utils/utility.cpp	/^int mc_PutVarInt(unsigned char *buf,int max_size,int64_t value)$/;"	f
-mc_SetABQuantity	HdacCSDK2/entities/asset.cpp	/^void mc_SetABQuantity(void *ptr,int64_t quantity)$/;"	f
-mc_SetABRefType	HdacCSDK2/entities/asset.cpp	/^void mc_SetABRefType(void *ptr,uint32_t type)$/;"	f
-mc_SetABScriptType	HdacCSDK2/entities/asset.cpp	/^void mc_SetABScriptType(void *ptr,uint32_t type)$/;"	f
-mc_StringCompareCaseInsensitive	HdacCSDK2/utils/utility.cpp	/^int mc_StringCompareCaseInsensitive(const char *str1,const char *str2, int len)$/;"	f
-mc_TimeNowAsUInt	HdacCSDK2/utils/utility.cpp	/^unsigned int mc_TimeNowAsUInt()$/;"	f
-mc_VarIntSize	HdacCSDK2/utils/utility.cpp	/^int mc_VarIntSize(unsigned char byte)$/;"	f
-mc_VerifyDetailsScript	HdacCSDK2/script/hdacscript.cpp	/^int mc_VerifyDetailsScript(const unsigned char *script,uint32_t script_size)$/;"	f
-memory_cleanse	HdacCSDK2/utils/random.cpp	/^void memory_cleanse(void *ptr, size_t len)$/;"	f
 message	txcommon.h	/^	char	*message;$/;"	m	struct:__anon1
-mutexDebugLog	HdacCSDK2/utils/util.cpp	/^static boost::mutex* mutexDebugLog = NULL;$/;"	v	file:
-nIn	HdacCSDK2/primitives/interpreter.cpp	/^    const unsigned int nIn;    \/\/! input index of txTo being signed$/;"	m	class:__anon11::CTransactionSignatureSerializer	file:
-nMockTime	HdacCSDK2/utils/utiltime.cpp	/^static int64_t nMockTime = 0;  \/\/! For unit testing$/;"	v	file:
-obtainHash	HdacCSDK2/structs/hashes.cpp	/^void obtainHash(const string& input, function<void(unsigned char hash[CSHA256::OUTPUT_SIZE])> callback)$/;"	f
-obtainHash	HdacCSDK2/structs/hs_structs.cpp	/^vector<unsigned char> obtainHash(const string& input)$/;"	f
-operator ()	HdacCSDK2/keys/bitcoinaddress.cpp	/^    bool operator()(const CKeyID& id) const { return addr->Set(id); }$/;"	f	class:__anon8::CBitcoinAddressVisitor
-operator ()	HdacCSDK2/keys/bitcoinaddress.cpp	/^    bool operator()(const CNoDestination& no) const { return false; }$/;"	f	class:__anon8::CBitcoinAddressVisitor
-operator ()	HdacCSDK2/keys/bitcoinaddress.cpp	/^    bool operator()(const CScriptID& id) const { return addr->Set(id); }$/;"	f	class:__anon8::CBitcoinAddressVisitor
-operator ()	HdacCSDK2/keys/multisig.cpp	/^    bool operator()(const CKeyID &keyID) const {$/;"	f	class:__anon9::CScriptVisitor
-operator ()	HdacCSDK2/keys/multisig.cpp	/^    bool operator()(const CNoDestination &dest) const {$/;"	f	class:__anon9::CScriptVisitor
-operator ()	HdacCSDK2/keys/multisig.cpp	/^    bool operator()(const CScriptID &scriptID) const {$/;"	f	class:__anon9::CScriptVisitor
-operator *=	HdacCSDK2/structs/uint256.cpp	/^base_uint<BITS>& base_uint<BITS>::operator*=(const base_uint& b)$/;"	f	class:base_uint
-operator *=	HdacCSDK2/structs/uint256.cpp	/^base_uint<BITS>& base_uint<BITS>::operator*=(uint32_t b32)$/;"	f	class:base_uint
-operator /=	HdacCSDK2/structs/uint256.cpp	/^base_uint<BITS>& base_uint<BITS>::operator\/=(const base_uint& b)$/;"	f	class:base_uint
-operator <<=	HdacCSDK2/structs/uint256.cpp	/^base_uint<BITS>& base_uint<BITS>::operator<<=(unsigned int shift)$/;"	f	class:base_uint
-operator =	HdacCSDK2/primitives/transaction.cpp	/^CTransaction& CTransaction::operator=(const CTransaction &tx) {$/;"	f	class:CTransaction
-operator >>=	HdacCSDK2/structs/uint256.cpp	/^base_uint<BITS>& base_uint<BITS>::operator>>=(unsigned int shift)$/;"	f	class:base_uint
-p_util_hexdigit	HdacCSDK2/utils/utilstrencodings.cpp	/^const signed char p_util_hexdigit[256] =$/;"	v
 paramsget	params.cpp	/^Params_type_t paramsget(const string& Path)$/;"	f
-parseHexToInt32Le	HdacCSDK2/utils/utilstrencodings.cpp	/^int32_t parseHexToInt32Le(const string& hexString)$/;"	f
-printResult	HdacCSDK2/utils/profiler.cpp	/^void Profiler::printResult()$/;"	f	class:Profiler
-privHelper	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const IPrivateKeyHelper &KeysHelperWithFileAll::privHelper() const {$/;"	f	class:KeysHelperWithFileAll
-privHelper	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const IPrivateKeyHelper &KeysHelperWithFileMulti::privHelper() const {$/;"	f	class:KeysHelperWithFileMulti
-privHelper	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^const IPrivateKeyHelper &KeysHelperWithRpc::privHelper() const {$/;"	f	class:KeysHelperWithRpc
-privkeyPrefix	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const std::vector<unsigned char> KeysHelperWithFileAll::PrivateKeyHelper::privkeyPrefix() const  {$/;"	f	class:KeysHelperWithFileAll::PrivateKeyHelper
-privkeyPrefix	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const std::vector<unsigned char> KeysHelperWithFileMulti::PrivateKeyHelper::privkeyPrefix() const  {$/;"	f	class:KeysHelperWithFileMulti::PrivateKeyHelper
-privkeyPrefix	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^const std::vector<unsigned char> KeysHelperWithRpc::PrivateKeyHelper::privkeyPrefix() const {$/;"	f	class:KeysHelperWithRpc::PrivateKeyHelper
-pszBase58	HdacCSDK2/structs/base58.cpp	/^static const char* pszBase58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";$/;"	v	file:
+parse_command_line	main.cpp	/^void	parse_command_line(int ac, char *av[])$/;"	f
+parse_command_line	xmain.cpp	/^void	parse_command_line(int ac, char *av[])$/;"	f
 pubkey	txcommon.h	/^	char	*pubkey;$/;"	m	struct:__anon1
-pubkeyAddrPrefix	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const std::vector<unsigned char> KeysHelperWithFileAll::WalletAddrHelper::pubkeyAddrPrefix() const  {$/;"	f	class:KeysHelperWithFileAll::WalletAddrHelper
-pubkeyAddrPrefix	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const std::vector<unsigned char> KeysHelperWithFileMulti::WalletAddrHelper::pubkeyAddrPrefix() const  {$/;"	f	class:KeysHelperWithFileMulti::WalletAddrHelper
-pubkeyAddrPrefix	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^const std::vector<unsigned char> KeysHelperWithRpc::WalletAddrHelper::pubkeyAddrPrefix() const  {$/;"	f	class:KeysHelperWithRpc::WalletAddrHelper
 random	zhelpers.hpp	37;"	d
-recv_queue_pop	queue.cpp	/^txdata_t recv_queue_pop()$/;"	f
-recv_queue_push	queue.cpp	/^int	recv_queue_push(txdata_t data)$/;"	f
-refcount	HdacCSDK2/keys/pubkey.cpp	/^\/* static *\/ int ECCVerifyHandle::refcount = 0;$/;"	m	class:ECCVerifyHandle	file:
-result	HdacCSDK2/rpc/rpccaller.cpp	/^int result(const Object& reply, string &strResult)$/;"	f
-resultWithRPC	HdacCSDK2/test/rpc.cpp	/^string resultWithRPC(const string &method, const Array &params = Array())$/;"	f
-resumeBlock	HdacCSDK2/utils/profiler.cpp	/^void Profiler::resumeBlock(const string & blockName)$/;"	f	class:Profiler
-ripemd160	HdacCSDK2/crypto/ripemd160.cpp	/^namespace ripemd160$/;"	n	namespace:__anon4	file:
-rol	HdacCSDK2/crypto/ripemd160.cpp	/^uint32_t inline rol(uint32_t x, int i) { return (x << i) | (x >> (32 - i)); }$/;"	f	namespace:__anon4::ripemd160
-roundint64	HdacCSDK2/keys/transactions.cpp	/^static inline int64_t roundint64(double d)$/;"	f	file:
-rpcResult	HdacCSDK2/rpc/hs_rpc.cpp	/^bool rpcResult(const Object& reply, string &resultStr)$/;"	f
-rtrim	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^std::string rtrim(std::string s,const std::string& drop = TRIM_SPACE)$/;"	f
+recvq_pop	queue.cpp	/^txdata_t recvq_pop()$/;"	f
+recvq_push	queue.cpp	/^int	recvq_push(txdata_t data)$/;"	f
 s_catch_signals	zhelpers.hpp	/^inline static void s_catch_signals ()$/;"	f
 s_clock	zhelpers.hpp	/^s_clock (void)$/;"	f
 s_console	zhelpers.hpp	/^s_console (const char *format, ...)$/;"	f
@@ -625,105 +83,31 @@ s_signal_handler	zhelpers.hpp	/^inline static void s_signal_handler (int sig_han
 s_sleep	zhelpers.hpp	/^s_sleep (int msecs)$/;"	f
 s_version	zhelpers.hpp	/^s_version (void)$/;"	f
 s_version_assert	zhelpers.hpp	/^s_version_assert (int want_major, int want_minor)$/;"	f
-script	HdacCSDK2/keys/multisig.cpp	/^    CScript *script;$/;"	m	class:__anon9::CScriptVisitor	file:
-scriptAddrPrefix	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const std::vector<unsigned char> KeysHelperWithFileAll::WalletAddrHelper::scriptAddrPrefix() const  {$/;"	f	class:KeysHelperWithFileAll::WalletAddrHelper
-scriptAddrPrefix	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^const std::vector<unsigned char> KeysHelperWithFileMulti::WalletAddrHelper::scriptAddrPrefix() const  {$/;"	f	class:KeysHelperWithFileMulti::WalletAddrHelper
-scriptAddrPrefix	HdacCSDK2/helpers/KeysHelperWithRpc.cpp	/^const std::vector<unsigned char> KeysHelperWithRpc::WalletAddrHelper::scriptAddrPrefix() const  {$/;"	f	class:KeysHelperWithRpc::WalletAddrHelper
-scriptCode	HdacCSDK2/primitives/interpreter.cpp	/^    const CScript &scriptCode; \/\/! output script being consumed$/;"	m	class:__anon11::CTransactionSignatureSerializer	file:
-secp256k1_context_sign	HdacCSDK2/keys/key.cpp	/^static secp256k1_context* secp256k1_context_sign = NULL;$/;"	v	file:
-secp256k1_context_verify	HdacCSDK2/keys/pubkey.cpp	/^secp256k1_context* secp256k1_context_verify = NULL;$/;"	m	namespace:__anon10	file:
-send_queue_pop	queue.cpp	/^txdata_t send_queue_pop()$/;"	f
-send_queue_push	queue.cpp	/^int	send_queue_push(txdata_t data)$/;"	f
-sendrawtx	HdacCSDK2/rpc/hs_rpc.cpp	/^Object sendrawtx(const RpcClient& client, const string& rawTx)$/;"	f
+sendq_pop	queue.cpp	/^txdata_t sendq_pop()$/;"	f
+sendq_push	queue.cpp	/^int	sendq_push(txdata_t data)$/;"	f
 seq	txcommon.h	/^	uint32_t	seq;		\/\/ TX sequence$/;"	m	struct:__anon3
-sha1	HdacCSDK2/crypto/sha1.cpp	/^namespace sha1$/;"	n	namespace:__anon5	file:
-sha256	HdacCSDK2/crypto/sha256.cpp	/^namespace sha256$/;"	n	namespace:__anon6	file:
-sha512	HdacCSDK2/crypto/sha512.cpp	/^namespace sha512$/;"	n	namespace:__anon7	file:
-sigma0	HdacCSDK2/crypto/sha256.cpp	/^uint32_t inline sigma0(uint32_t x) { return (x >> 7 | x << 25) ^ (x >> 18 | x << 14) ^ (x >> 3); }$/;"	f	namespace:__anon6::sha256
-sigma0	HdacCSDK2/crypto/sha512.cpp	/^uint64_t inline sigma0(uint64_t x) { return (x >> 1 | x << 63) ^ (x >> 8 | x << 56) ^ (x >> 7); }$/;"	f	namespace:__anon7::sha512
-sigma1	HdacCSDK2/crypto/sha256.cpp	/^uint32_t inline sigma1(uint32_t x) { return (x >> 17 | x << 15) ^ (x >> 19 | x << 13) ^ (x >> 10); }$/;"	f	namespace:__anon6::sha256
-sigma1	HdacCSDK2/crypto/sha512.cpp	/^uint64_t inline sigma1(uint64_t x) { return (x >> 19 | x << 45) ^ (x >> 61 | x << 3) ^ (x >> 6); }$/;"	f	namespace:__anon7::sha512
-sign	HdacCSDK2/keys/transactions.cpp	/^bool sign(const CKey &privateKey, uint256 hash, int nHashType, CScript& scriptSigRet)$/;"	f
-sign	HdacCSDK2/keys/transactions.cpp	/^bool sign(const string &privateKey, uint256 hash, int nHashType, const IPrivateKeyHelper& helper, CScript& scriptSigRet)$/;"	f
-signN	HdacCSDK2/keys/transactions.cpp	/^bool signN(const vector<valtype>& multisigdata, const string& privateKey, uint256 hash, int nHashType, const IPrivateKeyHelper& helper, CScript& scriptRet)$/;"	f
-sign_message	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^char *sign_message(const char *strAddress, const char *strMessage,$/;"	f
-sign_message_shp	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^char *sign_message_shp(const char *strAddress, const char *strMessage,$/;"	f
 signature	txcommon.h	/^	char	*signature;$/;"	m	struct:__anon1
-signmessage	HdacCSDK2/rpc/hs_rpc.cpp	/^Object signmessage(const RpcClient& client, const string &strPrivateKey,$/;"	f
+sleepms	txcommon.h	37;"	d
 snprintf	zhelpers.hpp	44;"	d
-solver	HdacCSDK2/keys/transactions.cpp	/^bool solver(const string& privateKey, const IPrivateKeyHelper& helper, const CScript& scriptPubKey, uint256 hash, int nHashType,$/;"	f
 srandom	zhelpers.hpp	36;"	d
 status	txcommon.h	/^	uint32_t	status;		\/\/ see above TXCHAIN_STATUS_xxx$/;"	m	struct:__anon3
-strMessageMagic	HdacCSDK2/keys/hs_keys.cpp	/^const string strMessageMagic = "Hdac Signed Message:\\n"; \/\/ for verify message$/;"	v
-string_trim	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^char *string_trim(char *str)$/;"	f
-string_trim_left	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^char *string_trim_left(char *str)$/;"	f
-string_trim_right	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^char *string_trim_right(char *str)$/;"	f
-suspendBlock	HdacCSDK2/utils/profiler.cpp	/^void Profiler::suspendBlock(const string & blockName)$/;"	f	class:Profiler
-testAnalyzeFromMultisig	HdacCSDK2/test/test_module.cpp	/^void testAnalyzeFromMultisig()$/;"	f
-testAnalyzeFromMultisigCompleted	HdacCSDK2/test/test_module.cpp	/^void testAnalyzeFromMultisigCompleted()$/;"	f
-testAnalyzeMultisig	HdacCSDK2/test/test_module.cpp	/^void testAnalyzeMultisig()$/;"	f
-testAnalyzeTx	HdacCSDK2/test/primitives.cpp	/^void testAnalyzeTx()$/;"	f
-testAnalyzeTx	HdacCSDK2/test/test_module.cpp	/^void testAnalyzeTx(const string& txStr)$/;"	f
-testCalcSHA256	HdacCSDK2/test/test_module.cpp	/^void testCalcSHA256()$/;"	f
-testCreateKeyPairs	HdacCSDK2/test/test_module.cpp	/^void testCreateKeyPairs()$/;"	f
-testCreateRawTxAssetFrom	HdacCSDK2/test/helpers.cpp	/^void testCreateRawTxAssetFrom()$/;"	f
-testCreateRawTxAssetFrom	HdacCSDK2/test/keys.cpp	/^void testCreateRawTxAssetFrom()$/;"	f
-testCreateRawTxPublishFromMultisig	HdacCSDK2/test/helpers.cpp	/^void testCreateRawTxPublishFromMultisig()$/;"	f
-testCreateRawTxPublishFromMultisig	HdacCSDK2/test/keys.cpp	/^void testCreateRawTxPublishFromMultisig()$/;"	f
-testCreateRawTxPublishFromSingle	HdacCSDK2/test/helpers.cpp	/^void testCreateRawTxPublishFromSingle()$/;"	f
-testCreateRawTxPublishFromSingle	HdacCSDK2/test/keys.cpp	/^void testCreateRawTxPublishFromSingle()$/;"	f
-testHashFromFile	HdacCSDK2/test/test_module.cpp	/^void testHashFromFile()$/;"	f
-testImporAddress	HdacCSDK2/test/rpc.cpp	/^void testImporAddress()$/;"	f
-testLocalSigntoLocalVerify	HdacCSDK2/test/test_verify.cpp	/^void testLocalSigntoLocalVerify(void)$/;"	f
-testLocalSigntoRpcVerify	HdacCSDK2/test/test_verify.cpp	/^void testLocalSigntoRpcVerify(void)$/;"	f
-testMultisigScript	HdacCSDK2/test/helpers.cpp	/^void testMultisigScript()$/;"	f
-testMultisigScript	HdacCSDK2/test/keys.cpp	/^void testMultisigScript()$/;"	f
-testPerfTxGen	HdacCSDK2/test/perfTxGen.cpp	/^void testPerfTxGen()$/;"	f
-testPubkeyToAddr	HdacCSDK2/test/helpers.cpp	/^void testPubkeyToAddr()$/;"	f
-testPubkeyToAddr	HdacCSDK2/test/keys.cpp	/^void testPubkeyToAddr()$/;"	f
-testPubkeyToAddrAfterGettingParams	HdacCSDK2/test/test_module.cpp	/^void testPubkeyToAddrAfterGettingParams()$/;"	f
-testRawTransaction	HdacCSDK2/test/rpc.cpp	/^void testRawTransaction()$/;"	f
-testRawTransactionForAssetSend	HdacCSDK2/test/test_module.cpp	/^string testRawTransactionForAssetSend()$/;"	f
-testRawTransactionForAssetSendFromMultiSigAddr	HdacCSDK2/test/test_module.cpp	/^string testRawTransactionForAssetSendFromMultiSigAddr()$/;"	f
-testRawTransactionForAssetSendToMultiSigAddr	HdacCSDK2/test/test_module.cpp	/^string testRawTransactionForAssetSendToMultiSigAddr()$/;"	f
-testRawTransactionForStreamPublish	HdacCSDK2/test/test_module.cpp	/^void testRawTransactionForStreamPublish()$/;"	f
-testRpcSigntoLocalVerify	HdacCSDK2/test/test_verify.cpp	/^void testRpcSigntoLocalVerify(void)$/;"	f
-testRpcSigntoRpcVerify	HdacCSDK2/test/test_verify.cpp	/^void testRpcSigntoRpcVerify(void)$/;"	f
-test_create_asset_send_tx	HdacCSDK2/test/test.cpp	/^void test_create_asset_send_tx(void)$/;"	f
-test_create_key_pairs	HdacCSDK2/test/test.cpp	/^void test_create_key_pairs(void)$/;"	f
-test_create_stream_publish_tx	HdacCSDK2/test/test.cpp	/^void test_create_stream_publish_tx(void)$/;"	f
-test_sign_message	HdacCSDK2/test/test.cpp	/^void test_sign_message(void)$/;"	f
-test_verify_message	HdacCSDK2/test/test.cpp	/^void test_verify_message(void)$/;"	f
-testgetinfo	HdacCSDK2/test/test_module.cpp	/^void testgetinfo()$/;"	f
-testgetinfo	HdacCSDK2/test/test_verify.cpp	/^void testgetinfo(void)$/;"	f
 thread_levledb	leveldb.cpp	/^void	*thread_levledb(void *info_p)$/;"	f
 thread_levledb	xleveldb.cpp	/^void	*thread_levledb(void *info_p)$/;"	f
 thread_publisher	pub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
 thread_publisher	xpub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
+thread_send_test	pub.cpp	/^void	*thread_send_test(void *info_p)$/;"	f
 thread_subscriber	sub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
 thread_subscriber	xsub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
 thread_verifier	verify.cpp	/^void	*thread_verifier(void *info_p)$/;"	f
 thread_verifier	xverify.cpp	/^void	*thread_verifier(void *info_p)$/;"	f
-timezone	HdacCSDK2/utils/utility.cpp	/^struct timezone$/;"	s	file:
-trim	HdacCSDK2/helpers/KeysHelperWithFile.cpp	/^std::string trim(std::string& s,const std::string& drop = TRIM_SPACE)$/;"	f
-txTo	HdacCSDK2/primitives/interpreter.cpp	/^    const CTransaction &txTo;  \/\/! reference to the spending transaction (the one being serialized)$/;"	m	class:__anon11::CTransactionSignatureSerializer	file:
 tx_t	txcommon.h	/^}	tx_t;$/;"	t	typeref:struct:__anon1
 txdata_t	txcommon.h	/^}	txdata_t;$/;"	t	typeref:struct:__anon3
-tz_dsttime	HdacCSDK2/utils/utility.cpp	/^	int  tz_dsttime;     \/* type of dst correction *\/$/;"	m	struct:timezone	file:
-tz_minuteswest	HdacCSDK2/utils/utility.cpp	/^	int  tz_minuteswest; \/* minutes W of Greenwich *\/$/;"	m	struct:timezone	file:
 uint	zhelpers.hpp	/^    typedef unsigned int  uint;$/;"	t
 ulong	zhelpers.hpp	/^    typedef unsigned long ulong;$/;"	t
-valtype	HdacCSDK2/keys/transactions.cpp	/^typedef vector<unsigned char> valtype;$/;"	t	file:
+verified	txcommon.h	/^	int		verified;	\/\/ 0=fail 1=success -1=none $/;"	m	struct:__anon3
 verified	txcommon.h	/^	int	verified;$/;"	m	struct:__anon1
-verified	txcommon.h	/^	uint32_t	verified;	\/\/ 0=fail 1=success -1=none (@TXCHAIN_STATUS_VERIFIED)$/;"	m	struct:__anon3
-verify_message	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^int verify_message(const char *strAddress, const char *strSign, const char *strMessage, struct WalletAddrHelpInfo *addrhelper)$/;"	f
-verify_message_shp	HdacCSDK2/keys/hs_keys_wrapper.cpp	/^int verify_message_shp(const char *strAddress, const char *strSign,$/;"	f
-verify_queue_pop	queue.cpp	/^txdata_t verify_queue_pop()$/;"	f
-verify_queue_push	queue.cpp	/^int	verify_queue_push(txdata_t data)$/;"	f
-verifymessage	HdacCSDK2/rpc/hs_rpc.cpp	/^Object verifymessage(const RpcClient& client, const string &strAddress,$/;"	f
+veriq_pop	queue.cpp	/^txdata_t veriq_pop()$/;"	f
+veriq_push	queue.cpp	/^int	veriq_push(txdata_t data)$/;"	f
 vsnprintf	zhelpers.hpp	45;"	d
-walletAddrFromPubKey	HdacCSDK2/keys/hs_keys.cpp	/^string walletAddrFromPubKey(const string& pubkeyStr, const IWalletAddrHelper& addrHelpler)$/;"	f
 within	zhelpers.hpp	74;"	d
 xgetclock	util.cpp	/^double	xgetclock()$/;"	f
-~ECCVerifyHandle	HdacCSDK2/keys/pubkey.cpp	/^ECCVerifyHandle::~ECCVerifyHandle()$/;"	f	class:ECCVerifyHandle
-~EccAutoInitReleaseHandler	HdacCSDK2/keys/eccautoinitreleasehandler.cpp	/^EccAutoInitReleaseHandler::~EccAutoInitReleaseHandler() {$/;"	f	class:EccAutoInitReleaseHandler

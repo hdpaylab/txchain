@@ -37,33 +37,29 @@ void	*thread_levledb(void *info_p)
 
 	while (1)
 	{
+		string data;
+
+#ifdef TXCHAIN_VERIFY_MODEL_QUEUE
+
+		txdata_t txdata;
+
+		txdata = _veriq.pop();
+		data = txdata.data;
+
+#endif // TXCHAIN_VERIFY_MODEL_QUEUE
 
 #ifdef TXCHAIN_VERIFY_MODEL_MSGQ
 
 		// message queue recv
 		if (msgrcv(rmsqid, &msq_data, BUFF_SIZE, 1, 0) == -1) {
 			fprintf(stderr, "ERROR: message queue recv error\n");
-			usleep(100);
+			sleepms(1);
 			continue;
 		}
 
-		string data(msq_data.mtext);
+		data = msq_data.mtext;
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
-
-#ifdef TXCHAIN_VERIFY_MODEL_VECTOR
-
-		int idx = count % MAX_VECTOR_SIZE;
-
-		if (_txv[idx].status != TXCHAIN_STATUS_VERIFIED)
-		{
-			usleep(10);
-			continue;
-		}
-
-		string data = _txv[idx].data;
-
-#endif	// TXCHAIN_VERIFY_MODEL_VECTOR
 
 		// WRITE 
 		woptions = leveldb_writeoptions_create();
@@ -71,19 +67,11 @@ void	*thread_levledb(void *info_p)
 
 		if (err != NULL) {
 			fprintf(stderr, "ERROR: Level DB write failed!\n");
-			usleep(100);
+			sleepms(1);
 			continue;
 		}
 
 		leveldb_free(err); err = NULL;
-
-#ifdef TXCHAIN_VERIFY_MODEL_VECTOR
-
-		_txv[idx].data.clear();
-		_txv[idx].verified = -1;
-		_txv[idx].status = TXCHAIN_STATUS_EMPTY;
-
-#endif	// TXCHAIN_VERIFY_MODEL_VECTOR
 
 		count++;
 		if (count % 100000 == 0)

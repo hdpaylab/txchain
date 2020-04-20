@@ -10,11 +10,11 @@ void	*thread_verifier(void *info_p)
 	Params_type_t params = paramsget("params.dat");
 
 	FILE	*outfp = NULL;
-	char	ESC = '|';
+	char	ESC = TX_DELIM;
 	tx_t	tx;
 	char	endmark[100] = {0};
 	char	tmp[4096] = {0}, *buf = NULL;
-	const char *filter = "!@#$";	// s_sendmore()로 publisher에서 보내는 것만 수용함 
+	const char *filter = ZMQ_FILTER;	// s_sendmore()로 publisher에서 보내는 것만 수용함 
 
 
 	printf("Verifier %d START!\n\n", thrid);
@@ -50,6 +50,17 @@ void	*thread_verifier(void *info_p)
 		tx.signature = NULL;
 		tx.verified = -1;
 
+		string data;
+
+#ifdef TXCHAIN_VERIFY_MODEL_QUEUE
+
+		txdata_t txdata;
+
+		txdata = _recvq.pop();
+		data = txdata.data;
+
+#endif // TXCHAIN_VERIFY_MODEL_QUEUE
+
 #ifdef TXCHAIN_VERIFY_MODEL_MSGQ
 
 		data_t msq_data;
@@ -60,31 +71,9 @@ void	*thread_verifier(void *info_p)
 				thrid, count);
 		}
 
-		string data(msq_data.mtext);
+		data = msq_data.mtext;
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
-
-#ifdef TXCHAIN_VERIFY_MODEL_VECTOR
-
-		int idx = (count * _nverifier + thrid) % MAX_VECTOR_SIZE;
-#ifdef DEBUG
-		printf("thrid=%d idx=%d status=%X\n", thrid, idx, _txv[idx].status);
-		usleep(100 * 1000);
-#endif
-		if (_txv[idx].status != TXCHAIN_STATUS_READY)
-		{
-#ifdef DEBUG
-			printf("THR%d: idx=%d Not READY...\n", thrid, idx);
-			usleep(100 * 1000);
-#else
-			usleep(10);
-#endif
-			continue;
-		}
-
-		string data = _txv[idx].data;
-
-#endif	// TXCHAIN_VERIFY_MODEL_VECTOR
 
 //continue;	// msg 수신만 하는 경우 
 
@@ -136,12 +125,12 @@ void	*thread_verifier(void *info_p)
 		fprintf(outfp, "Verifier %d: %8d: %s signature=%s\n",
 			thrid, count, tx.verified == 1 ? "true" : "false", tx.signature);
 
-#ifdef TXCHAIN_VERIFY_MODEL_VECTOR
+#ifdef TXCHAIN_VERIFY_MODEL_QUEUE
 
-		_txv[idx].verified = tx.verified;
-		_txv[idx].status = TXCHAIN_STATUS_VERIFIED;	// 상태 업데이트
+		txdata.data = data;
+		_veriq.push(txdata);
 
-#endif	// TXCHAIN_VERIFY_MODEL_VECTOR
+#endif // TXCHAIN_VERIFY_MODEL_QUEUE
 
 #ifdef TXCHAIN_VERIFY_MODEL_MSGQ
 
