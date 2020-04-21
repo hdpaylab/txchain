@@ -2,7 +2,7 @@ CPP = g++
 
 CSDKDIR	= ../HdacCSDK2
 
-SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_thread -lpthread
+SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_serialization -lboost_thread -lpthread
 LIBS	= -lzmq -lpq -lleveldb
 
 INCLUDE	= -I/usr/include/postgresql -I.. -I../HdacCSDK2/include
@@ -21,7 +21,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed ex ser1 leveldbex 
+all: speed ex ser1 ser2 leveldbex 
 
 ex: ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
@@ -35,5 +35,8 @@ speed: speed.cpp ../util.cpp
 ser1: ser1.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp $(LIBS) $(SDKLIBS) 
 
+ser2: ser2.cpp
+	$(CPP) $(CPPFLAGS) -o $@ ser2.cpp $(LIBS) $(SDKLIBS) 
+
 clean:
-	rm -f ser1 ex leveldbex speed serialize_ex $(OBJS) *.o *.out *.ver *.log
+	rm -f ex leveldbex speed serialize_ex $(OBJS) *.o *.out *.ver *.log
