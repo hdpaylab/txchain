@@ -146,7 +146,7 @@ void	test_cpp(seriz_test_t& tx)
 {
 	seriz_test_t	tx2;
 	char	*bp = NULL;
-	int	len = 0, len2 = 0;
+	int	len = 0;
 
 	printf("--------------------------------------------------------------------------------\n");
 	printf("SERIALIZATION C++ test\n\n");
@@ -194,7 +194,7 @@ void	test_cpp(seriz_test_t& tx)
 	printf("\n\n");
 
 	xsz >> tx2.str1;
-	printf("len2=%d str1=%s\n", len2, tx2.str1.c_str());
+	printf("str1=%s\n", tx2.str1.c_str());
 	xsz >> tx2.i8;
 	printf("INT8:	%d==0x%02X\n", tx2.i8, tx2.i8 & 0x00FF);
 	xsz >> tx2.i16;
@@ -219,5 +219,5 @@ void	test_cpp(seriz_test_t& tx)
 	printf("DOUBLE:	%lg==0x%016lX\n", tx2.dd, *(uint64_t *)&tx2.dd);
 
 	xsz >> tx2.str2;
-	printf("len2=%d str2=%s\n", len2, tx2.str2.c_str());
+	printf("str2=%s\n", tx2.str2.c_str());
 }
