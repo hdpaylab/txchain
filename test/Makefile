@@ -2,7 +2,7 @@ CPP = g++
 
 CSDKDIR	= ../HdacCSDK2
 
-SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_serialization -lboost_thread -lpthread
+SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_thread -lpthread
 LIBS	= -lzmq -lpq -lleveldb
 
 INCLUDE	= -I/usr/include/postgresql -I.. -I../HdacCSDK2/include
