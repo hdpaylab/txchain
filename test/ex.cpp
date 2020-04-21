@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 void	test_create_stream_publish_tx(void)
 {
 	struct PrivateKeyHelpInfo privinfo = {
