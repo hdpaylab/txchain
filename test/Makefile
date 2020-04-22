@@ -2,12 +2,12 @@ CPP = g++
 
 CSDKDIR	= ../HdacCSDK2
 
-SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_thread -lpthread
+SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_serialization -lboost_thread -lpthread
 LIBS	= -lzmq -lpq -lleveldb
 
 INCLUDE	= -I/usr/include/postgresql -I.. -I../HdacCSDK2/include
 
-CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
+CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
 ALIBS	= \
 	$(CSDKDIR)/lib/libhelpers.a \
@@ -32,8 +32,8 @@ leveldbex: leveldbex.cpp
 speed: speed.cpp ../util.cpp 
 	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
-ser1: ser1.cpp
-	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp $(LIBS) $(SDKLIBS) 
+ser1: ser1.cpp xsz.cpp
+	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp xsz.cpp $(LIBS) $(SDKLIBS) 
 
 clean:
-	rm -f ser1 ex leveldbex speed serialize_ex $(OBJS) *.o *.out *.ver *.log
+	rm -f ex leveldbex speed ser1 $(OBJS) *.o *.out *.ver *.log
