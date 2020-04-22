@@ -39,7 +39,7 @@ main()
 
 void	set_struct(seriz_test_t& tx)
 {
-	tx.str1 = "ABCDEF123456";
+	tx.str1 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123456789";
 
 	tx.dd = 12345678.9012345e+125;
 	tx.ff = 1234.5678e+17;
@@ -65,7 +65,7 @@ void	test_c(seriz_test_t& tx)
 	int	len = 0, len2 = 0;
 
 	printf("--------------------------------------------------------------------------------\n");
-	printf("SERIALIZATION C test\n\n");
+	printf("C: SERIALIZATION C test\n\n");
 
 	len = 0;
 	printf("STRING: %s\n", tx.str1.c_str());
@@ -106,7 +106,7 @@ void	test_c(seriz_test_t& tx)
 	}
 	printf("\n\n");
 
-	char	strbuf[100] = {0};
+	char	strbuf[255] = {0};
 
 	len2 = 0;
 	len2 += xdeserialize(buf + len2, len - len2, XSZ_TYPE_STRING, strbuf, sizeof(strbuf));
@@ -149,7 +149,7 @@ void	test_cpp(seriz_test_t& tx)
 	int	len = 0;
 
 	printf("--------------------------------------------------------------------------------\n");
-	printf("SERIALIZATION C++ test\n\n");
+	printf("C++: SERIALIZATION C++ test\n\n");
 
 	xserial xsz(64 * 1024);
 

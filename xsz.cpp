@@ -220,17 +220,29 @@ size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t da
 	{
 	case XSZ_TYPE_BINARY:
 		sz = getdatasize(bp, hdrbytes);
-		assert(datasz >= sz);
 		bp += hdrbytes;
-		memcpy(data, bp, sz);
+		if (datasz < sz)
+		{
+			fprintf(stderr, "WARNING: Binary real length=%ld copyed %ld\n",
+				sz, datasz);
+			memcpy(data, bp, datasz); 
+		}
+		else
+			memcpy(data, bp, sz);
 		dumpbin((char *)data, sz);
 		return sz + 1 + hdrbytes;
 
 	case XSZ_TYPE_STRING:
 		sz = getdatasize(bp, hdrbytes);
-		assert(datasz >= sz + 1);
 		bp += hdrbytes;
-		memcpy(data, bp, sz); dp[sz] = 0;
+		if (datasz < sz + 1)
+		{
+			fprintf(stderr, "WARNING: String real length=%ld copyed %ld\n",
+				sz, datasz);
+			memcpy(data, bp, datasz - 1); dp[datasz] = 0;
+		}
+		else
+			memcpy(data, bp, sz); dp[sz] = 0;
 		bp++;
 		dumpbin((char *)data, sz + 1);
 		return sz + 2 + hdrbytes;
