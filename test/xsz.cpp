@@ -8,21 +8,21 @@ const char *gettypename(int datatype)
 {
 	switch (datatype)
 	{
-	case SERIZ_TYPE_BINARY:	return toliteral(SERIZ_TYPE_BINARY);
-	case SERIZ_TYPE_STRING:	return toliteral(SERIZ_TYPE_STRING);
+	case XSZ_TYPE_BINARY:	return toliteral(XSZ_TYPE_BINARY);
+	case XSZ_TYPE_STRING:	return toliteral(XSZ_TYPE_STRING);
 
-	case SERIZ_TYPE_INT8:	return toliteral(SERIZ_TYPE_INT8);
-	case SERIZ_TYPE_INT16:	return toliteral(SERIZ_TYPE_INT16);
-	case SERIZ_TYPE_INT32:	return toliteral(SERIZ_TYPE_INT32);
-	case SERIZ_TYPE_INT64:	return toliteral(SERIZ_TYPE_INT64);
+	case XSZ_TYPE_INT8:	return toliteral(XSZ_TYPE_INT8);
+	case XSZ_TYPE_INT16:	return toliteral(XSZ_TYPE_INT16);
+	case XSZ_TYPE_INT32:	return toliteral(XSZ_TYPE_INT32);
+	case XSZ_TYPE_INT64:	return toliteral(XSZ_TYPE_INT64);
 
-	case SERIZ_TYPE_UINT8:	return toliteral(SERIZ_TYPE_UINT8);
-	case SERIZ_TYPE_UINT16:	return toliteral(SERIZ_TYPE_UINT16);
-	case SERIZ_TYPE_UINT32:	return toliteral(SERIZ_TYPE_UINT32);
-	case SERIZ_TYPE_UINT64:	return toliteral(SERIZ_TYPE_UINT64);
+	case XSZ_TYPE_UINT8:	return toliteral(XSZ_TYPE_UINT8);
+	case XSZ_TYPE_UINT16:	return toliteral(XSZ_TYPE_UINT16);
+	case XSZ_TYPE_UINT32:	return toliteral(XSZ_TYPE_UINT32);
+	case XSZ_TYPE_UINT64:	return toliteral(XSZ_TYPE_UINT64);
 
-	case SERIZ_TYPE_FLOAT:	return toliteral(SERIZ_TYPE_FLOAT);
-	case SERIZ_TYPE_DOUBLE:	return toliteral(SERIZ_TYPE_DOUBLE);
+	case XSZ_TYPE_FLOAT:	return toliteral(XSZ_TYPE_FLOAT);
+	case XSZ_TYPE_DOUBLE:	return toliteral(XSZ_TYPE_DOUBLE);
 	}
 	return "UNKNOWN";
 }
@@ -113,7 +113,7 @@ void	dumpbin(char *buf, size_t bufsz)
 //
 size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz)
 {
-	if (datatype < 0 || datatype > SERIZ_TYPE_MASK)
+	if (datatype < 0 || datatype > XSZ_TYPE_MASK)
 	{
 		printf("ERROR: data tyep unknown=0x%08X\n", datatype);
 		return 0;
@@ -134,7 +134,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 
 	switch (datatype)
 	{
-	case SERIZ_TYPE_BINARY:
+	case XSZ_TYPE_BINARY:
 		// hdr 1 byte copy
 		hdrlen = size2hdrlen(datasz);
 		*bp = datatype | hdrlen;
@@ -151,7 +151,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 		dumpbin(sp, datasz + 1 + hdrbytes);
 		return datasz + 1 + hdrbytes;
 
-	case SERIZ_TYPE_STRING:
+	case XSZ_TYPE_STRING:
 		// hdr 1 byte copy
 		hdrlen = size2hdrlen(datasz);
 		*bp = datatype | hdrlen;
@@ -172,18 +172,18 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 		return datasz + 2 + hdrbytes;
 
 
-	case SERIZ_TYPE_INT8:
-	case SERIZ_TYPE_INT16:
-	case SERIZ_TYPE_INT32:
-	case SERIZ_TYPE_INT64:
+	case XSZ_TYPE_INT8:
+	case XSZ_TYPE_INT16:
+	case XSZ_TYPE_INT32:
+	case XSZ_TYPE_INT64:
 
-	case SERIZ_TYPE_UINT8:
-	case SERIZ_TYPE_UINT16:
-	case SERIZ_TYPE_UINT32:
-	case SERIZ_TYPE_UINT64:
+	case XSZ_TYPE_UINT8:
+	case XSZ_TYPE_UINT16:
+	case XSZ_TYPE_UINT32:
+	case XSZ_TYPE_UINT64:
 
-	case SERIZ_TYPE_FLOAT:
-	case SERIZ_TYPE_DOUBLE:
+	case XSZ_TYPE_FLOAT:
+	case XSZ_TYPE_DOUBLE:
 		// hdr 1 byte copy
 		hdrlen = size2hdrlen(datasz);
 		*bp = datatype | hdrlen;
@@ -203,22 +203,22 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 
 size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz)
 {
-	if (datatype < 0 || datatype > SERIZ_TYPE_MASK)
+	if (datatype < 0 || datatype > XSZ_TYPE_MASK)
 		return 0;
 	if (buf == NULL || bufsz <= 0 || data == NULL || datasz <= 0)
 		return 0;
 
 	char	*bp = buf, *dp = (char *)data;
-	int	hdrlen = (*bp & SERIZ_HDRLEN_MASK) >> 6;
+	int	hdrlen = (*bp & XSZ_HDRLEN_MASK) >> 6;
 	int	hdrbytes = hdrlen2bytes(hdrlen);
 	assert(hdrbytes != 0);
-	int	type = (*bp & SERIZ_TYPE_MASK);
+	int	type = (*bp & XSZ_TYPE_MASK);
 	size_t	sz = 0;
 
 	bp++;
 	switch (type)
 	{
-	case SERIZ_TYPE_BINARY:
+	case XSZ_TYPE_BINARY:
 		sz = getdatasize(bp, hdrbytes);
 		assert(datasz >= sz);
 		bp += hdrbytes;
@@ -226,7 +226,7 @@ size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t da
 		dumpbin((char *)data, sz);
 		return sz + 1 + hdrbytes;
 
-	case SERIZ_TYPE_STRING:
+	case XSZ_TYPE_STRING:
 		sz = getdatasize(bp, hdrbytes);
 		assert(datasz >= sz + 1);
 		bp += hdrbytes;
@@ -235,18 +235,18 @@ size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t da
 		dumpbin((char *)data, sz + 1);
 		return sz + 2 + hdrbytes;
 
-	case SERIZ_TYPE_UINT8:
-	case SERIZ_TYPE_UINT16:
-	case SERIZ_TYPE_UINT32:
-	case SERIZ_TYPE_UINT64:
+	case XSZ_TYPE_UINT8:
+	case XSZ_TYPE_UINT16:
+	case XSZ_TYPE_UINT32:
+	case XSZ_TYPE_UINT64:
 
-	case SERIZ_TYPE_INT8:
-	case SERIZ_TYPE_INT16:
-	case SERIZ_TYPE_INT32:
-	case SERIZ_TYPE_INT64:
+	case XSZ_TYPE_INT8:
+	case XSZ_TYPE_INT16:
+	case XSZ_TYPE_INT32:
+	case XSZ_TYPE_INT64:
 
-	case SERIZ_TYPE_FLOAT:
-	case SERIZ_TYPE_DOUBLE:
+	case XSZ_TYPE_FLOAT:
+	case XSZ_TYPE_DOUBLE:
 		memcpy(data, bp, datasz);
 		dumpbin((char *)data, datasz);
 		return datasz + 1;

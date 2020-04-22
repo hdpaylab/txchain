@@ -7,7 +7,7 @@ LIBS	= -lzmq -lpq -lleveldb
 
 INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include
 
-CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
+CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter
 
 SRCS	= xmain.cpp xpub.cpp xsub.cpp \
 	  xverify.cpp xleveldb.cpp params.cpp util.cpp

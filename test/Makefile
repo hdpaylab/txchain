@@ -7,7 +7,7 @@ LIBS	= -lzmq -lpq -lleveldb
 
 INCLUDE	= -I/usr/include/postgresql -I.. -I../HdacCSDK2/include
 
-CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings 
+CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
 ALIBS	= \
 	$(CSDKDIR)/lib/libhelpers.a \
