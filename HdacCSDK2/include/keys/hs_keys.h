@@ -26,6 +26,8 @@ class IWalletAddrHelper;
 /// 개인키를 생성한다.
 KeyPairs createKeyPairs(const IPrivateKeyHelper &privateHelper, const IWalletAddrHelper &addrHelper);
 
+unsigned char *createpubKeyBinarys(const IPrivateKeyHelper &privateHelper, const IWalletAddrHelper &addrHelper);
+
 class IWalletAddrHelper;
 class IPrivateKeyHelper;
 

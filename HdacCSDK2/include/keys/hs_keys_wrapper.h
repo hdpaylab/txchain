@@ -81,6 +81,9 @@ extern "C" {
 /// createKeyPairs 함수를 c에서 사용 하기 위해 wrapping 한 함수.
 	keys_wrapper_EXPORT keypairs_type_t *create_key_pairs(const struct PrivateKeyHelpInfo *privatehelper,
 			const struct WalletAddrHelpInfo *addrhelper);
+/// createpubKeybinarys 함수를 c에서 사용 하기 위해 wrapping 한 함수.
+	keys_wrapper_EXPORT unsigned char *create_pub_key_binarys(const struct PrivateKeyHelpInfo *privatehelper,
+			const struct WalletAddrHelpInfo *addrhelper);
 /// createAssetSendTx 함수를 c에서 사용 하기 위해 wrapping 한 함수.
 	keys_wrapper_EXPORT char *create_asset_send_tx(const char *toAddr, double quantity, const char *issueTxid, int multiple,
 			const char *unspentScriptPubKey, const char *unspentTxid, uint32_t unspentVout,

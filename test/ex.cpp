@@ -40,6 +40,21 @@ void	test_create_key_pairs(void)
 	free(keypairs);
 }
 
+void	test_create_pub_key_binarys(void)
+{
+	struct PrivateKeyHelpInfo privinfo = {
+		"8075fa23", "cb507245"
+	};
+
+	struct WalletAddrHelpInfo addrinfo = {
+		"003fd61c", "0571a3e6", "cb507245"
+	};
+
+	unsigned char *keypairs = create_pub_key_binarys(&privinfo, &addrinfo);
+
+	printf("pub key binary : [%s]\n", HexStr(keypairs, keypairs[66]));
+}
+
 void	test_create_asset_send_tx(void)
 {
 	struct PrivateKeyHelpInfo privinfo = {
@@ -102,6 +117,8 @@ int	main()
 	test_create_stream_publish_tx();
 
 	test_create_key_pairs();
+
+	test_create_pub_key_binarys();
 
 	test_create_asset_send_tx();
 	

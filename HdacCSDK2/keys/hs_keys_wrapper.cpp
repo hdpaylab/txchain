@@ -205,6 +205,17 @@ keypairs_type_t *create_key_pairs(const struct PrivateKeyHelpInfo *privatehelper
 	return keys;
 }
 
+unsigned char *create_pub_key_binarys(const struct PrivateKeyHelpInfo *privatehelper,
+			  		const struct WalletAddrHelpInfo *addrhelper)
+{
+	PrivateKeyHelperConstant privHelper(privatehelper->privateKeyPrefix, privatehelper->addrChecksum);
+	WalletAddrHelperConstant addrHelper(addrhelper->pubKeyAddrPrefix, addrhelper->scriptAddrPrefix, addrhelper->addrChecksum);
+
+	static unsigned char *pubkey_binary = createpubKeyBinarys(privHelper, addrHelper);
+
+	return pubkey_binary;
+}
+
 /**
  *
  * @brief createAssetSendTx 함수를 c에서 사용 하기 위해 wrapping 한 함수

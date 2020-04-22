@@ -60,6 +60,20 @@ KeyPairs createKeyPairs(const IPrivateKeyHelper &privateHelper, const IWalletAdd
     return KeyPairs{privateKeyStr, pubkeyStr, pubkeyHashStr, walletAddrStr};
 }
 
+unsigned char *createpubKeyBinarys(const IPrivateKeyHelper &privateHelper, const IWalletAddrHelper &addrHelper)
+{
+    CKey secret;
+    secret.MakeNewKey(true);
+
+    EccAutoInitReleaseHandler::initEcc();
+    CPubKey pubkey = secret.GetPubKey();
+
+    static unsigned char pubkeybinary[66] = "";
+    memcpy(pubkeybinary, pubkey.begin(), pubkey.size());
+
+    return pubkeybinary;
+}
+
 // TODO : implement
 // create
 // publish : single -> O, multisig -> X
