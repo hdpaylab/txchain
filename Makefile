@@ -47,7 +47,7 @@ tx2: $(OBJS2)
 
 clean:
 	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a *.log
-	rm -rf testdb
+	rm -rf testdb xtestdb
 	cd test; make clean; cd ..
 
 cleanall:

@@ -25,7 +25,7 @@ void	*thread_levledb(void *info_p)
 	// OPEN 
 	options = leveldb_options_create();
 	leveldb_options_set_create_if_missing(options, 1);
-	ldb = leveldb_open(options, "testdb", &err);
+	ldb = leveldb_open(options, "xtestdb", &err);
 
 	if (err != NULL) {
 		fprintf(stderr, "ERROR: Level DB open failed!\n");

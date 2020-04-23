@@ -117,9 +117,9 @@ bool CKey::Check(const unsigned char *vch) {
 }
 
 void CKey::MakeNewKey(bool fCompressedIn) {
-//    RandAddSeedPerfmon();
+//  RandAddSeedPerfmon();
     do {
-//        GetRandBytes(vch, sizeof(vch));
+//      GetRandBytes(vch, sizeof(vch));
         GetStrongRandBytes(vch, sizeof(vch));
     } while (!Check(vch));
     fValid = true;
@@ -132,6 +132,21 @@ bool CKey::SetPrivKey(const CPrivKey &privkey, bool fCompressedIn) {
     fCompressed = fCompressedIn;
     fValid = true;
     return true;
+}
+
+bool CKey::SetPrivKey(const unsigned char *pbegin, const unsigned char *pend, bool fCompressedIn)
+{
+    if (pend - pbegin != 32) {
+        return false;
+    }
+    if (Check(&pbegin[0])) {
+        memcpy(vch, (unsigned char*)&pbegin[0], 32);
+        fValid = true;
+        fCompressed = fCompressedIn;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 CPrivKey CKey::GetPrivKey() const {

@@ -32,7 +32,7 @@ using namespace std;
 
 const string strMessageMagic = "Hdac Signed Message:\n"; // for verify message
 
-void	dumpbin(const char *name, char *buf, size_t bufsz)
+void	_dumpbin(const char *name, char *buf, size_t bufsz)
 {
 	printf("DUMP %s: ", name);
 	for (int ii = 0; ii < bufsz; ii++)
@@ -63,11 +63,11 @@ KeyPairs createKeyPairs(const IPrivateKeyHelper &privateHelper, const IWalletAdd
 
     char pubkeybuf[66] = {0};
     memcpy(pubkeybuf, pubkey.begin(), pubkey.size());
-    dumpbin("PubKey", pubkeybuf, pubkey.size());
+    _dumpbin("PubKey", pubkeybuf, pubkey.size());
 
     char privkeybuf[66] = {0};
     memcpy(privkeybuf, secret.begin(), secret.size());
-    dumpbin("PrivKey", privkeybuf, secret.size());
+    _dumpbin("PrivKey", privkeybuf, secret.size());
 
     CBitcoinAddress addr(pubkey.GetID(), addrHelper);
     string privateKeyStr = CBitcoinSecret(secret, privateHelper).ToString();

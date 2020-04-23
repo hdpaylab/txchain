@@ -99,6 +99,8 @@ public:
     //! Initialize from a CPrivKey (serialized OpenSSL private key data).
     bool SetPrivKey(const CPrivKey& vchPrivKey, bool fCompressed);
 
+    bool SetPrivKey(const unsigned char *pbegin, const unsigned char *pend, bool fCompressedIn);
+
     //! Generate a new private key using a cryptographic PRNG.
     void MakeNewKey(bool fCompressed);
 

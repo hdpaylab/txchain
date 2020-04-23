@@ -21,10 +21,13 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed ex ser1 leveldbex 
+all: speed ex ser1 leveldbex keypair hashdb_test
 
 ex: ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+
+keypair: keypair.cpp
+	$(CPP) $(CPPFLAGS) -o $@ keypair.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
 leveldbex: leveldbex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ leveldbex.cpp $(LIBS) $(SDKLIBS) 
@@ -34,6 +37,9 @@ speed: speed.cpp ../util.cpp
 
 ser1: ser1.cpp xsz.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp xsz.cpp $(LIBS) $(SDKLIBS) 
+
+hashdb_test: hashdb.cpp hashdb_test.cpp
+	$(CPP) $(CPPFLAGS) -o $@ hashdb.cpp hashdb_test.cpp xsz.cpp $(LIBS) $(SDKLIBS) 
 
 clean:
 	rm -f ex leveldbex speed ser1 $(OBJS) *.o *.out *.ver *.log
