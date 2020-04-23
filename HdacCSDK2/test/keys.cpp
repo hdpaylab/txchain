@@ -3,21 +3,29 @@
 #include <keys/multisig.h>
 #include <keys/hs_keys.h>
 
+
 using namespace std;
+
 
 class SampleWalletAddrHelper : public IWalletAddrHelper {
 public:
     SampleWalletAddrHelper() { }
 
+    // address-pubkeyhash-version = 28   # Version bytes used for pay-to-pubkeyhash addresses.
     const std::vector<unsigned char> pubkeyAddrPrefix() const override  {
-        return ParseHex("003fd61c");
+    //  return ParseHex("003fd61c");
+        return ParseHex("28");
     }
+    // address-scripthash-version = 08   # Version bytes used for pay-to-scripthash addresses.
     const std::vector<unsigned char> scriptAddrPrefix() const override  {
-        return ParseHex("0571a3e6");
+    //  return ParseHex("0571a3e6");
+        return ParseHex("08");
     }
 
+    // address-checksum-value = 48444143       # Bytes used for XOR in address checksum calculation.
     int32_t addrChecksumValue() const override {
-        return parseHexToInt32Le("cb507245");
+    //  return parseHexToInt32Le("cb507245");
+        return parseHexToInt32Le("48444143");
     }
 };
 
@@ -25,26 +33,32 @@ class SamplePrivateKeyHelper : public IPrivateKeyHelper {
 public:
     SamplePrivateKeyHelper() { }
 
+    // private-key-version = 83          # Version bytes used for exporting private keys.
     const std::vector<unsigned char> privkeyPrefix() const override {
-        return ParseHex("8075fa23");
+    //  return ParseHex("8075fa23");
+        return ParseHex("83");
     }
 
+    // address-checksum-value = 48444143       # Bytes used for XOR in address checksum calculation.
     int32_t addrChecksumValue() const override {
-        return parseHexToInt32Le("cb507245");
+    //  return parseHexToInt32Le("cb507245");
+        return parseHexToInt32Le("48444143");
     }
 };
 
+
 void testPubkeyToAddr()
 {
-    //CPubKey pubkey(ParseHex("027e75736b41474547b7e2443d7235f4030cbb378093bbd2e98ea36ded6d703c2b"));
-	CPubKey pubkey(ParseHex("0287b7aeb453d64da31c20c316a7ec11b484327b3881b13d5f3818ff34ff821d6e"));
+//  CPubKey pubkey(ParseHex("027e75736b41474547b7e2443d7235f4030cbb378093bbd2e98ea36ded6d703c2b"));
+//  CPubKey pubkey(ParseHex("0287b7aeb453d64da31c20c316a7ec11b484327b3881b13d5f3818ff34ff821d6e"));
+    CPubKey pubkey(ParseHex("024892b49213a029429b8c4ef17352f185e0bae8ad712b7860a7d93f08de12a61d"));
     cout << "pubKey: " << HexStr(pubkey) << endl;
 
     //cout << hex << checksum << endl;
     CBitcoinAddress addr(pubkey.GetID(), SampleWalletAddrHelper());
-	cout << "id: " << pubkey.GetID().ToString() << endl;
+    cout << "id: " << pubkey.GetID().ToString() << endl;
 
-    cout << "address: " << addr.ToString() << endl;
+    cout << "address: " << addr.ToString() << endl << endl;
 }
 
 void testMultisigScript()

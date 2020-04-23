@@ -67,7 +67,7 @@ void	*thread_publisher(void *info_p)
 		printf("Signature: %s\n\n", tx.signature);
 		tmstart = xgetclock();
 
-		for (int ii = 0; ii < 500000; ii++)
+		for (int ii = 0; ii < 1000000; ii++)
 		{
 			// send 260 bytes
 			count++;
@@ -75,14 +75,14 @@ void	*thread_publisher(void *info_p)
 
 			sprintf(data, "%s%7d %c%s%c%s%c%s", 
 				filter, count, ESC, tx.pubkey, ESC, tx.message, ESC, tx.signature);
-			bool ret = s_sendmore(xpub, data);
+			bool ret = s_send(xpub, data);
 
 			// send 260 bytes
-			count++;
-			if (count % 100000 == 0)
-				printf("PUB: Send %d\n", count);
+		//	count++;
+		//	if (count % 100000 == 0)
+		//		printf("PUB: Send %d\n", count);
 
-			ret = s_send(xpub, data);
+		//	ret = s_send(xpub, data);
 
 		//	cout << "s_send: " << data << endl;
 

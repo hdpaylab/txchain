@@ -130,14 +130,16 @@ void	*thread_publisher(void *info_p)
 		count++;
 		txdata = _sendq.pop();
 
-		bool ret = s_sendmore(xpub, txdata.data);
+		bool ret = s_send(xpub, txdata.data);
 
 		if (txdata.seq == MAX_SEQ) break;
 
-		count++;
-		txdata = _sendq.pop();
+	//	count++;
+	//	txdata = _sendq.pop();
 
-		ret = s_send(xpub, txdata.data);
+	//	ret = s_send(xpub, txdata.data);
+
+	//	if (txdata.seq == MAX_SEQ) break;
 
 #ifdef DEBUG
 		sleepms(DEBUG_SLEEP);
@@ -146,8 +148,6 @@ void	*thread_publisher(void *info_p)
 		if (count % 100000 == 0)
 #endif
 			printf("PUB : Send %7d sendq=%5ld\n", count, _sendq.size());
-
-		if (txdata.seq == MAX_SEQ) break;
 	}
 
 	tmend = xgetclock();

@@ -35,7 +35,7 @@ void	*thread_verifier(void *info_p)
 	}
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
-	sprintf(tmp, "Verifier %d.ver", thrid);
+	sprintf(tmp, "XVER%d.ver", thrid);
 	outfp = fopen(tmp, "w+b");
 	assert(outfp != NULL);
 
@@ -124,6 +124,7 @@ void	*thread_verifier(void *info_p)
 
 		fprintf(outfp, "Verifier %d: %8d: %s signature=%s\n",
 			thrid, count, tx.verified == 1 ? "true" : "false", tx.signature);
+		fflush(outfp);
 
 #ifdef TXCHAIN_VERIFY_MODEL_QUEUE
 
@@ -142,8 +143,6 @@ void	*thread_verifier(void *info_p)
 		}
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
-
-		fflush(outfp);
 	}
 
 	fclose(outfp);

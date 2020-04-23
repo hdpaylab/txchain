@@ -97,6 +97,7 @@ void	*thread_subscriber(void *info_p)
 
 			count++;
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
+			fflush(outfp);
 			if (count % 100000 == 0)
 				printf("SUB: Receive %d\n", count);
 
