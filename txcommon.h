@@ -47,6 +47,8 @@
 using namespace std;
 
 
+typedef unsigned char	uchar;
+
 typedef struct {
 	char	*pubkey;
 	char	*message;

@@ -32,7 +32,7 @@ void testCalcSHA256()
 
 void testCreateKeyPairs()
 {
-    RpcClient client{"13.125.145.98", 4260, "hdacrpc", "1234", "kcc"};
+    RpcClient client{"192.168.1.10", 28822, "hdacrpc", "hdac1234", "phdac"};
     KeysHelperWithRpc helper(client);
 
     auto keyPairs = createKeyPairs(helper.privHelper(), helper.addrHelper());
@@ -476,6 +476,8 @@ void checkMultisigAddr()
 
 int main()
 {
+    testCreateKeyPairs();
+
 #if 0
     cout << "1. test sha256 of \"This is test message\"" << endl;
     testCalcSHA256();

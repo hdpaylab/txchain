@@ -48,7 +48,8 @@ void	*thread_subscriber(void *info_p)
 		zmq::context_t context_sub(1);
 		zmq::socket_t xsock(context_sub, ZMQ_SUB);
 
-		strcpy(tmp, peer);
+		strcpy(tmp, "X");
+		strcat(tmp, peer);
 		strcat(tmp, ".out");
 		tp = strchr(tmp, ':');
 		assert(tp != NULL);

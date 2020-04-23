@@ -32,6 +32,16 @@ using namespace std;
 
 const string strMessageMagic = "Hdac Signed Message:\n"; // for verify message
 
+void	dumpbin(const char *name, char *buf, size_t bufsz)
+{
+	printf("DUMP %s: ", name);
+	for (int ii = 0; ii < bufsz; ii++)
+	{
+		printf("%02X ", buf[ii] & 0x00FF);
+	}
+	printf("\n");
+}
+
 /**
  *
  * @brief 개인키를 생성한다.
@@ -48,8 +58,16 @@ KeyPairs createKeyPairs(const IPrivateKeyHelper &privateHelper, const IWalletAdd
     //secret.MakeNewKey(fCompressed);
     secret.MakeNewKey(true);
 
-	EccAutoInitReleaseHandler::initEcc();
+    EccAutoInitReleaseHandler::initEcc();
     CPubKey pubkey = secret.GetPubKey();
+
+    char pubkeybuf[66] = {0};
+    memcpy(pubkeybuf, pubkey.begin(), pubkey.size());
+    dumpbin("PubKey", pubkeybuf, pubkey.size());
+
+    char privkeybuf[66] = {0};
+    memcpy(privkeybuf, secret.begin(), secret.size());
+    dumpbin("PrivKey", privkeybuf, secret.size());
 
     CBitcoinAddress addr(pubkey.GetID(), addrHelper);
     string privateKeyStr = CBitcoinSecret(secret, privateHelper).ToString();
