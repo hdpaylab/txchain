@@ -5,7 +5,7 @@ CSDKDIR	= ../HdacCSDK2
 SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_serialization -lboost_thread -lpthread
 LIBS	= -lzmq -lpq -lleveldb
 
-INCLUDE	= -I/usr/include/postgresql -I.. -I../HdacCSDK2/include
+INCLUDE	= -I/usr/include/postgresql -I.. -I../HdacCSDK2/include -I../lib
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
@@ -35,8 +35,8 @@ leveldbex: leveldbex.cpp
 speed: speed.cpp ../util.cpp 
 	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
-ser1: ser1.cpp ../xsz.cpp
-	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp ../xsz.cpp $(LIBS) $(SDKLIBS) 
+ser1: ser1.cpp ../lib/xsz.cpp
+	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp ../lib/xsz.cpp $(LIBS) $(SDKLIBS) 
 
 leveldb_test: leveldb.cpp leveldb_test.cpp
 	$(CPP) $(CPPFLAGS) -o $@ leveldb.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
@@ -45,4 +45,5 @@ hashdb_test: hashdb.cpp hashdb_test.cpp
 	$(CPP) $(CPPFLAGS) -o $@ hashdb.cpp hashdb_test.cpp $(LIBS) $(SDKLIBS) 
 
 clean:
-	rm -f speed ex ser1 leveldbex keypair leveldb_test $(OBJS) *.o *.out *.ver *.log
+	rm -f $(OBJS) *.o *.out *.ver *.log \
+	speed ex ser1 leveldbex keypair leveldb_test hashdb_test 
