@@ -25,6 +25,8 @@ class hashdb
 private:
 	leveldb::DB* db;
 	leveldb::Iterator *it;
+	leveldb::Options opt;
+	leveldb::ReadOptions ropt; 
 	leveldb::WriteOptions wopt; 
 
 public:
@@ -40,6 +42,7 @@ public:
 	void put(string key, int value);
 	void put(string key, double value);
 	void put(string key, long value);
+
 	void remove(string key);
 	void sync(bool sync);
 

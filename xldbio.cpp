@@ -1,13 +1,11 @@
 #include "txcommon.h"
+#include "leveldb.h"
 
 
 void	*thread_levledb(void *info_p)
 {
-	leveldb_t *ldb = NULL;
-	leveldb_options_t *options = NULL;
-	leveldb_writeoptions_t *woptions = NULL;
-	char	*err = NULL;
 	int	count = 0;
+	double	tmstart, tmend;
 
 #ifdef TXCHAIN_VERIFY_MODEL_MSGQ
 
@@ -22,18 +20,9 @@ void	*thread_levledb(void *info_p)
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
-	// OPEN 
-	options = leveldb_options_create();
-	leveldb_options_set_create_if_missing(options, 1);
-	ldb = leveldb_open(options, "xtestdb", &err);
+	leveldb db("testdb");
 
-	if (err != NULL) {
-		fprintf(stderr, "ERROR: Level DB open failed!\n");
-		return 0;
-	}
-
-	// reset error var 
-	leveldb_free(err); err = NULL;
+	tmstart = xgetclock();
 
 	while (1)
 	{
@@ -42,6 +31,7 @@ void	*thread_levledb(void *info_p)
 #ifdef TXCHAIN_VERIFY_MODEL_QUEUE
 
 		txdata_t txdata;
+		char	key[16] = {0};
 
 		txdata = _veriq.pop();
 		data = txdata.data;
@@ -61,17 +51,9 @@ void	*thread_levledb(void *info_p)
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
-		// WRITE 
-		woptions = leveldb_writeoptions_create();
-		leveldb_put(ldb, woptions, "key", 3, data.c_str(), data.length(), &err);
+		sprintf(key, "key %d", count);
 
-		if (err != NULL) {
-			fprintf(stderr, "ERROR: Level DB write failed!\n");
-			sleepms(1);
-			continue;
-		}
-
-		leveldb_free(err); err = NULL;
+		db.put(key, txdata.data);
 
 		count++;
 		if (count % 100000 == 0)
@@ -80,18 +62,11 @@ void	*thread_levledb(void *info_p)
 		}
 	}
 
-	// CLOSE 
-	leveldb_close(ldb);
+	tmend = xgetclock();
+	printf("LDB : Recv time=%.3f / %.1f/sec\n",
+		tmend - tmstart, count / (tmend - tmstart));
 
-	// DESTROY 
-	leveldb_destroy_db(options, "testdb", &err);
-
-	if (err != NULL) {
-		fprintf(stderr, "Destroy fail.\n");
-		return 0;
-	}
-
-	leveldb_free(err); err = NULL;
+//	db.close();
 
 	return 0;
 }

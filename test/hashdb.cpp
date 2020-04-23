@@ -21,12 +21,9 @@ using namespace std;
 //
 void	hashdb::init(string dbname)
 {
-	it = NULL;
+	opt.create_if_missing = true;
 
-	leveldb::Options options;
-	options.create_if_missing = true;
-
-	leveldb::Status status = leveldb::DB::Open(options, dbname, &db);
+	leveldb::Status status = leveldb::DB::Open(opt, dbname, &db);
 
 	if (!status.ok())
 	{
@@ -45,7 +42,7 @@ void	hashdb::seek_first()
 	if (it)
 		delete it;
 
-	it = db->NewIterator(leveldb::ReadOptions());
+	it = db->NewIterator(ropt);
 
 	it->SeekToFirst();
 }
@@ -53,10 +50,9 @@ void	hashdb::seek_first()
 
 string	hashdb::get(string key)
 {
-	leveldb::ReadOptions options;
 	string value;
 
-	db->Get(options, key, &value);
+	db->Get(ropt, key, &value);
 
 	return value;
 }

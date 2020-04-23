@@ -75,10 +75,10 @@ int	main(int ac, char *av[])
 	CPrivKey privkey = secret.GetPrivKey();
 
 	result = newsecret.SetPrivKey(privkey, true);
-	printf("SerPrivKey=%s\n", result ? "OK" : "FAIL");
+	printf("SerPrivKey=%s\n\n", result ? "OK" : "FAIL");
 
 	result = newsecret.SetPrivKey(&privkeybuf[0], &privkeybuf[32], true);
-	printf("SerPrivKey=%s\n", result ? "OK" : "FAIL");
+	printf("SerPrivKey=%s\n\n", result ? "OK" : "FAIL");
 
 	EccAutoInitReleaseHandler::initEcc();		// 반드시 해야 함 
 	CPubKey newpubkey = newsecret.GetPubKey();
