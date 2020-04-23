@@ -211,7 +211,7 @@ unsigned char *create_pub_key_binarys(const struct PrivateKeyHelpInfo *privatehe
 	PrivateKeyHelperConstant privHelper(privatehelper->privateKeyPrefix, privatehelper->addrChecksum);
 	WalletAddrHelperConstant addrHelper(addrhelper->pubKeyAddrPrefix, addrhelper->scriptAddrPrefix, addrhelper->addrChecksum);
 
-	static unsigned char *pubkey_binary = createpubKeyBinarys(privHelper, addrHelper);
+	unsigned char *pubkey_binary = createpubKeyBinarys(privHelper, addrHelper);
 
 	return pubkey_binary;
 }

@@ -52,7 +52,18 @@ void	test_create_pub_key_binarys(void)
 
 	unsigned char *keypairs = create_pub_key_binarys(&privinfo, &addrinfo);
 
-	printf("pub key binary : [%s]\n", HexStr(keypairs, keypairs[66]));
+	printf("pub key binary : [%s]\n", keypairs);
+	
+	printf("pub key hex : [");	
+
+	int i;
+	for (i = 0; i < 66; i++) {
+		printf("%02X", keypairs[i]);
+	}
+
+	printf("]\n");
+
+	free(keypairs);
 }
 
 void	test_create_asset_send_tx(void)

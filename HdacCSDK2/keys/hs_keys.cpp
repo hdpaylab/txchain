@@ -68,7 +68,7 @@ unsigned char *createpubKeyBinarys(const IPrivateKeyHelper &privateHelper, const
     EccAutoInitReleaseHandler::initEcc();
     CPubKey pubkey = secret.GetPubKey();
 
-    static unsigned char pubkeybinary[66] = "";
+    unsigned char *pubkeybinary = (unsigned char*)malloc(sizeof(unsigned char)*66);
     memcpy(pubkeybinary, pubkey.begin(), pubkey.size());
 
     return pubkeybinary;
