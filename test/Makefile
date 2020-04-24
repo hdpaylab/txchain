@@ -38,8 +38,8 @@ speed: speed.cpp ../util.cpp
 ser1: ser1.cpp ../lib/xsz.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp ../lib/xsz.cpp $(LIBS) $(SDKLIBS) 
 
-leveldb_test: leveldb.cpp leveldb_test.cpp
-	$(CPP) $(CPPFLAGS) -o $@ leveldb.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
+leveldb_test: ../lib/leveldb.cpp leveldb_test.cpp
+	$(CPP) $(CPPFLAGS) -o $@ ../lib/leveldb.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
 
 zmq_svr: zmq_svr.cpp
 	$(CPP) $(CPPFLAGS) -o $@ zmq_svr.cpp $(LIBS) $(SDKLIBS) 
