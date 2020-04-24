@@ -25,6 +25,7 @@
 //
 
 #include "leveldb.h"
+#include <assert.h>
 
 
 int	main(int ac, char *av[])
@@ -33,38 +34,27 @@ int	main(int ac, char *av[])
 
 	db.put("version", "1.20");
 
-	for (int ii = 0; ii < 1000; ii++)
+	for (int ii = 0; ii < 10000; ii++)
 	{
-		char	tmp[64] = {0}, key[16] = {0}, value[64] = {0};
-/***
-		memset(key, 'k', sizeof(key));
-		key[sizeof(key)-2] = 0;
+		char	key[32] = {0}, value[64] = {0};
 
-		memset(value, 'v', sizeof(value));
-		value[sizeof(value)-2] = 0;
-
-		sprintf(tmp, "key %03d", ii);
-		strncpy(key, tmp, strlen(tmp));
-		sprintf(tmp, "value %03d", ii);
-		strncpy(value, tmp, strlen(tmp));
-***/
-		sprintf(key, "123k%2d", ii);
-		sprintf(value, "123v%02d", ii);
+		sprintf(key, "key %08d", ii);
+		sprintf(value, "value %08d", ii);
 
 		string kk = key;
 		string vv = value;
 
-		printf("---PUT KEY=%s VALUE=%s----\n", kk.c_str(), vv.c_str());
+	//	printf("---PUT KEY=%s VALUE=%s\n", kk.c_str(), vv.c_str());
 		db.put(kk, vv);
 
 		string value2 = db.get(kk);
-		printf("---GET KEY=%s VALUE=%s----\n", kk.c_str(), value2.c_str());
+	//	printf("---GET KEY=%s VALUE=%s\n", kk.c_str(), value2.c_str());
 
 		if (value != value2)
 			printf("ERROR: value=%s(%ld)\nvalue2=%s(%ld)\n", 
 				value, strlen(value), value2.c_str(), value2.length());
 
-		if (ii % 10000 == 0)
+		if (ii % 100 == 0)
 		{
 			printf("%d...    \r", ii);
 			fflush(stdout);
@@ -87,4 +77,5 @@ int	main(int ac, char *av[])
 	{
 		cout << db.key() << " : " << db.value() << endl;
 	}
+	printf("END!\n");
 }

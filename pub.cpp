@@ -134,13 +134,6 @@ void	*thread_publisher(void *info_p)
 
 		if (txdata.seq == MAX_SEQ) break;
 
-	//	count++;
-	//	txdata = _sendq.pop();
-
-	//	ret = s_send(xpub, txdata.data);
-
-	//	if (txdata.seq == MAX_SEQ) break;
-
 #ifdef DEBUG
 		sleepms(DEBUG_SLEEP);
 	//	if (count % 10 == 0)

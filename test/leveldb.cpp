@@ -48,7 +48,6 @@ bool	leveldb::init(string dbname)
 
 void	leveldb::close()
 {
-	if (ldb_) leveldb_close(ldb_); 
 	if (it_) leveldb_iter_destroy(it_);
 	if (opt_) leveldb_options_destroy(opt_);
 	if (ropt_) leveldb_readoptions_destroy(ropt_);
@@ -56,6 +55,8 @@ void	leveldb::close()
 //	if (cache_) leveldb_cache_destroy(cache_);
 //	if (cmp_) leveldb_comparator_destroy(cmp_);
 //	if (env_) leveldb_env_destroy(env_);
+
+	if (ldb_) leveldb_close(ldb_); 
 }
 
 
@@ -73,6 +74,8 @@ bool	leveldb::destroy(string dbname)
 		return false;
 	}
 	leveldb_free(err); 
+
+	leveldb_options_destroy(opt);
 
 	return true;
 }
@@ -150,6 +153,16 @@ bool	leveldb::remove(string key)
 	leveldb_free(err); 
 
 	return true;
+}
+
+
+void	leveldb::seek_first()
+{ 
+	if (it_)
+		leveldb_iter_destroy(it_);
+	it_ = leveldb_create_iterator(ldb_, ropt_); 
+
+	leveldb_iter_seek_to_first(it_);
 }
 
 

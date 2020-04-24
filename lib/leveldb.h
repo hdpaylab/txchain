@@ -58,13 +58,7 @@ public:
 	bool remove(string key);
 	bool destroy(string dbname);
 
-	void seek_first()
-		{ 
-			if (it_)
-				leveldb_iter_destroy(it_);
-			it_ = leveldb_create_iterator(ldb_, ropt_); 
-			leveldb_iter_seek_to_first(it_);
-		}
+	void seek_first();
 	void next()
 		{ leveldb_iter_next(it_); }
 	void prev()
