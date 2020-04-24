@@ -1,5 +1,6 @@
 //
-// Usage: tx maxnode publish_port peer1:port1 [peer2:port2 ...]
+// Usage: tx [-cPORT] maxnode publish_port peer1:port1 [peer2:port2 ...]
+//		-cPORT : Client input mode (auto data generation mode disabled)
 // ex:
 //	tx 4 7000 192.168.1.10:7000 192.168.1.10:7001 192.168.1.10:7002 192.168.1.10:7003
 //	tx 4 7001 192.168.1.10:7000 192.168.1.10:7001 192.168.1.10:7002 192.168.1.10:7003
@@ -11,10 +12,11 @@
 
 
 int	_nverifier = MAX_VERIFIER;
-	
+int	_automode = 1;		// auto data generation mode (client input disabled)
+int	_clientport = DEFAULT_CLIENT_PORT;	
 
 int	_maxnode = 1;		// 나중에 설정으로 뺄 것 
-int	_sendport = 7000;
+int	_chainport = DEFAULT_CHAIN_PORT;
 
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
@@ -65,6 +67,17 @@ void	parse_command_line(int ac, char *av[])
 {
 	int	ii = 0;
 
+	if (ac >= 2 && strncmp(av[1], "-c", 2) == 0)
+	{
+		_automode = 0;
+		_clientport = atoi(&av[1][2]);
+		if (_clientport <= 0)
+			_clientport = DEFAULT_CLIENT_PORT;
+		ac--, av++;
+	}
+	printf("Auto mode = %d\n", _automode);
+	printf("Client port = %d\n", _clientport);
+
 	// 최대 노드 개수 지정 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
@@ -79,15 +92,15 @@ void	parse_command_line(int ac, char *av[])
 	// 발송 포트 지정 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
-		_sendport = atoi(av[1]);
-		if (_sendport <= 10 || _sendport > 65535)
+		_chainport = atoi(av[1]);
+		if (_chainport <= 10 || _chainport > 65535)
 		{
 			fprintf(stderr, "ERROR: port range error (1 ~ 65535)\n");
 			exit(-1);
 		}
 		ac--, av++;
 	}
-	printf("Send port = %d\n", _sendport);
+	printf("Chain port = %d\n", _chainport);
 
 
 	// 연결할 peer 지정 (테스트 때는 다이나믹하게 바뀌지 않고 고정으로..)
@@ -113,8 +126,8 @@ void	create_main_threads()
 	int	ret = 0;
 
 	// Send thread
-	printf("Create publisher thread: sendport=%d\n", _sendport);
-	ret = pthread_create(&thrid, NULL, thread_publisher, (void *)&_sendport);
+	printf("Create [publisher] thread: sendport=%d\n", _chainport);
+	ret = pthread_create(&thrid, NULL, thread_publisher, (void *)&_chainport);
 	if (ret < 0)
 	{
 		perror("thread_publisher() thread creation error");
@@ -124,18 +137,22 @@ void	create_main_threads()
 	sleepms(10);
 
 	// Send test thread
-	printf("Create send test thread\n");
-	ret = pthread_create(&thrid, NULL, thread_send_test, NULL);
-	if (ret < 0)
+	if (_automode)
 	{
-		perror("thread_send_test() thread creation error");
-		exit(-1);
+		printf("Create [send test] thread\n");
+		ret = pthread_create(&thrid, NULL, thread_send_test, NULL);
+		if (ret < 0)
+		{
+			perror("thread_send_test() thread creation error");
+			exit(-1);
+		}
+		pthread_detach(thrid);
+		sleepms(10);
 	}
-	pthread_detach(thrid);
-	sleepms(10);
 
 	// level db thread
-	ret = pthread_create(&thrid, NULL, thread_levledb, (void *)&_sendport);
+	printf("Create [leveldb] thread\n");
+	ret = pthread_create(&thrid, NULL, thread_levledb, (void *)&_chainport);
 	if (ret < 0)
 	{
 		perror("thread_levledb() thread creation error");
@@ -147,9 +164,24 @@ void	create_main_threads()
 
 void	create_subscriber_threads()
 {
-	pthread_t thrid[100];
+	pthread_t cthrid, thrid[100];
 	int	ret = 0, idx = 0;
 
+	// Client thread
+	if (_automode == 0)
+	{
+		printf("Create [client] thread\n");
+		ret = pthread_create(&cthrid, NULL, thread_client, (void *)&_clientport);
+		if (ret < 0)
+		{
+			perror("thread_client() thread creation error");
+			exit(-1);
+		}
+		pthread_detach(cthrid);
+		sleepms(10);
+	}
+
+	// Subscriber threads
 	for (idx = 0; idx < _npeer; idx ++)
 	{
 		char	*peer = _peerlist[idx];
@@ -164,7 +196,7 @@ void	create_subscriber_threads()
 		printf("Create subscriber thread [%d]=%s\n", idx, peer);
 
 		// 다수의 노드로 테스트할 때는 자신이 자신의 프로세스에게 발송 요청을 하지 않음.
-		if (_maxnode > 1 && atoi(tp+1) == _sendport)
+		if (_maxnode > 1 && atoi(tp+1) == _chainport)
 		{
 			printf("Peer %s skipped.\n", peer);
 			printf("\n");

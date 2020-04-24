@@ -33,7 +33,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: lib tx tx2
+all: lib tx tx2 cli
 
 lib: $(ALIBS)
 
@@ -46,6 +46,9 @@ tx: $(OBJS)
 
 tx2: $(OBJS2)
 	$(CPP) $(CPPFLAGS) -o $@ $(OBJS2) $(ALIBS) $(SDKLIBS) $(LIBS) 
+
+cli: cli.o params.o
+	$(CPP) $(CPPFLAGS) -o $@ cli.o params.o $(ALIBS) $(SDKLIBS) $(LIBS) 
 
 clean:
 	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a *.log

@@ -4,6 +4,7 @@
 
 #include <zmq.hpp>
 #include <iostream>
+#include <string>
 #include <queue>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,9 +30,11 @@
 #define TXCHAIN_VERIFY_MODEL_QUEUE	3
 
 
-#define MAX_NODE	100
+#define MAX_NODE		100
 
-#define MAX_VERIFIER	4			// thread 개수 
+#define MAX_VERIFIER		4		// default thread 개수 
+#define DEFAULT_CLIENT_PORT	6999		// default client management port
+#define DEFAULT_CHAIN_PORT	7000		// default chain management port
 
 #define MAX_SEND_QUEUE_SIZE	100		// send queue for publisher
 #define MAX_RECV_QUEUE_SIZE	100		// receive queue for subscriber
@@ -91,6 +94,7 @@ Params_type_t paramsget(const string& Path);	// params.cpp
 void	*thread_publisher(void *info_p);	// pub.cpp
 void	*thread_send_test(void *info_p);	// main.cpp
 void	*thread_subscriber(void *info_p);	// sub.cpp
+void	*thread_client(void *info_p);		// sub.cpp
 void	*thread_verifier(void *info_p);		// verify.cpp
 void	*thread_levledb(void *info_p);		// leveldb.cpp
 

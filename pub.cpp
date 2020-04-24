@@ -12,7 +12,7 @@ void	*thread_send_test(void *info_p)
 	const char ESC = TX_DELIM;
 	const char *message = "Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
 	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
-	char	data[8192];
+	char	data[1024];
 	double	tmstart = 0, tmend = 0;
 
 

@@ -92,3 +92,73 @@ void	*thread_subscriber(void *info_p)
 
 	return NULL;
 }
+
+
+//
+// Send client thread (Client management)
+//
+void	*thread_client(void *info_p)
+{
+        int	clientport = *(int *)info_p;
+	char	tmp[256] = {0}, ip_port[100] = {0};
+
+
+	printf("CLIENT: client port=%d START!\n", clientport);
+
+	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
+	FILE *outfp = fopen(tmp, "w+b");	// 출력파일 
+	assert(outfp != NULL);
+
+	zmq::context_t context(1);
+
+	zmq::socket_t responder(context, ZMQ_REP);
+	sprintf(ip_port, "tcp://*:%d", clientport);
+	responder.bind(ip_port);
+
+	int bufsize = 64 * 1024;	// 64k 버퍼 
+	responder.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
+
+	bufsize = 64 * 1024;		// 64k 버퍼 
+	responder.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
+
+	int	count = 0;
+
+	while(1)
+	{
+		txdata_t txdata;
+		char	retbuf[256] = {0};
+
+		//  Wait for next request from client
+		txdata.data = s_recv(responder);
+
+		count++;
+
+		fprintf(outfp, "%d: %s\n", count, txdata.data.c_str());
+		fflush(outfp);
+
+		txdata.seq = count;
+		txdata.verified = TXCHAIN_STATUS_EMPTY;
+		txdata.status = TXCHAIN_STATUS_EMPTY;
+
+		_recvq.push(txdata);	// 수신된 데이터로 처리함 
+
+		if (count % 10000 == 0)
+			cout << "Receive client request: count=" << count << " data=" << txdata.data << endl;
+
+		snprintf(retbuf, sizeof(retbuf) - 1, "RECV port %d, %5d: %s\n", 
+			clientport, count, txdata.data.c_str());
+
+		// Send reply back to client
+		s_send(responder, retbuf);
+	}
+
+	fclose(outfp);
+
+	printf("CLIENT: ----- END!\n\n");
+
+	pthread_exit(NULL);
+
+	return NULL;
+}
+
+

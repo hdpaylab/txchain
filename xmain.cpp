@@ -17,7 +17,7 @@ int	_push_count = 0, _pop_count = 0;
 
 
 int	_maxnode = 1;		// 나중에 설정으로 뺄 것 
-int	_sendport = 7000;
+int	_chainport = DEFAULT_CHAIN_PORT;
 
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
@@ -41,8 +41,8 @@ int	main(int ac, char *av[])
 
 
 	// 발신자 thread
-	printf("Create publisher sendport=%d\n", _sendport);
-	ret = pthread_create(&thrid[0], NULL, thread_publisher, (void *)&_sendport);
+	printf("Create publisher sendport=%d\n", _chainport);
+	ret = pthread_create(&thrid[0], NULL, thread_publisher, (void *)&_chainport);
 	if (ret < 0)
 	{
 		perror("thread create error : ");
@@ -66,7 +66,7 @@ int	main(int ac, char *av[])
 		}
 
 		// 다수의 노드로 테스트할 때는 자신이 자신의 프로세스에게 발송 요청을 하지 않음.
-		if (_maxnode > 1 && atoi(tp+1) == _sendport)
+		if (_maxnode > 1 && atoi(tp+1) == _chainport)
 		{
 			printf("Peer %s skipped.\n", peer);
 			printf("\n");
@@ -85,7 +85,7 @@ int	main(int ac, char *av[])
 
 	// level db thread
 	ret = pthread_create(&thrid[ii], NULL,
-			thread_levledb, (void *)&_sendport);
+			thread_levledb, (void *)&_chainport);
 	if (ret < 0)
 	{
 		perror("thread create error : ");
@@ -128,15 +128,15 @@ void	parse_command_line(int ac, char *av[])
 	// 발송 포트 지정 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
-		_sendport = atoi(av[1]);
-		if (_sendport <= 10 || _sendport > 65535)
+		_chainport = atoi(av[1]);
+		if (_chainport <= 10 || _chainport > 65535)
 		{
 			fprintf(stderr, "ERROR: port range error (1 ~ 65535)\n");
 			exit(-1);
 		}
 		ac--, av++;
 	}
-	printf("Send port = %d\n", _sendport);
+	printf("Send port = %d\n", _chainport);
 
 
 	// 연결할 peer 지정 (테스트 때는 다이나믹하게 바뀌지 않고 고정으로..)
