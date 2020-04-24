@@ -6,6 +6,7 @@ using namespace std;
 
 
 void	req_rep(int port);
+void	push_pull(int direc);
 
 
 int	main(int ac, char *av[])
@@ -15,7 +16,9 @@ int	main(int ac, char *av[])
 	if (ac == 2)
 		port = atoi(av[1]);
 
-	req_rep(port);
+//	req_rep(port);
+
+	push_pull(1);	// 1=단방향  2=양방향 
 }
 
 
@@ -60,5 +63,53 @@ void	req_rep(int port)
 	//	zmq::message_t reply(256);
 	//	memcpy(reply.data(), retbuf.c_str(), retbuf.length());
 	//	responder.send(reply);
+	}
+}
+
+
+//
+// Request - Reply model
+//
+void	push_pull(int direc)
+{
+	zmq::context_t context(1);
+
+	//  Socket to receive messages on
+	zmq::socket_t receiver(context, ZMQ_PULL);
+	receiver.bind("tcp://*:5558");
+
+	//  Socket to send messages to
+	zmq::socket_t sender(context, ZMQ_PUSH);
+	if (direc == 2)
+	{
+		sender.connect("tcp://localhost:5557");
+	}
+
+	uint64_t count = 0;
+	uint64_t recvsz = 0, sendsz = 0;
+
+	//  Process tasks forever
+	while (1)
+	{
+		zmq::message_t message;
+
+		count++;
+		receiver.recv(&message);
+		std::string smessage(static_cast<char*>(message.data()), message.size());
+
+		recvsz += smessage.length();
+		if (count % 10000 == 0)
+			printf("RECV: %lu %.3g Mbytes\n", count, recvsz / 1000000.0);
+
+		//  Send results to sink
+		if (direc == 2)
+		{
+			sender.send(message);
+		//	s_send(sender, smessage);
+
+			sendsz += message.size();
+			if (count % 10000 == 0)
+				printf("SEND: %lu %.3g Mbytes\n", count, sendsz / 1000000.0);
+		}
 	}
 }
