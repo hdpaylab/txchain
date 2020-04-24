@@ -43,28 +43,6 @@ struct WalletAddrHelpInfo addrinfo = {
 };
 
 
-void	keypair_dump_test()
-{
-	CKey secret;
-	//secret.MakeNewKey(fCompressed);
-	secret.MakeNewKey(true);
-
-	EccAutoInitReleaseHandler::initEcc();
-	CPubKey pubkey = secret.GetPubKey();
-
-	CBitcoinAddress addr(pubkey.GetID(), addrHelper);
-
-	string privateKeyStr = CBitcoinSecret(secret, privateHelper).ToString();
-	string pubkeyStr = HexStr(pubkey);
-	string pubkeyHashStr = HexStr(pubkey.GetID());
-	string walletAddrStr = addr.ToString();
-
-	uchar	data[66] = {0};
-	memcpy(data, pubkey.begin(), pubkey.size());
-
-}
-
-
 void	test_create_key_pairs(void)
 {
 	keypairs_type_t *keypairs = create_key_pairs(&privinfo, &addrinfo);
@@ -97,8 +75,6 @@ void	test_create_pub_key_binarys(void)
 
 int	main()
 {
-	keypair_dump_test();
-
 	test_create_key_pairs();
 
 	test_create_pub_key_binarys();
