@@ -21,7 +21,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli
+all: speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr
 
 ex: ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
@@ -40,6 +40,9 @@ ser1: ser1.cpp ../lib/xsz.cpp
 
 leveldb_test: ../lib/leveldb.cpp leveldb_test.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ../lib/leveldb.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
+
+zmq_msvr: zmq_msvr.cpp
+	$(CPP) $(CPPFLAGS) -o $@ zmq_msvr.cpp $(LIBS) $(SDKLIBS) 
 
 zmq_svr: zmq_svr.cpp
 	$(CPP) $(CPPFLAGS) -o $@ zmq_svr.cpp $(LIBS) $(SDKLIBS) 

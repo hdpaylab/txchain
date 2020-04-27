@@ -20,7 +20,7 @@ void	*thread_levledb(void *info_p)
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
-	leveldb db("testdb");
+	leveldb db("test.db");
 
 	tmstart = xgetclock();
 

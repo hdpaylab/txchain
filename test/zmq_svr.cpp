@@ -5,29 +5,33 @@
 using namespace std;
 
 
-void	req_rep(int port);
+void	req_rep(int ac, char *av[]);
 void	push_pull(int direc);
 
 
 int	main(int ac, char *av[])
 {
-	int	port = 7070;
+	req_rep(ac, av);
 
-	if (ac == 2)
-		port = atoi(av[1]);
-
-//	req_rep(port);
-
-	push_pull(1);	// 1=단방향  2=양방향 
+//	push_pull(1);	// 1=uni-directional  2=bi-directional
 }
 
 
 //
 // Request - Reply model
+// 다수의 Client가 send 후 아래의 코드와 같이 receive하면, 
+// 정확히 자신이 보낸 것에 대해서 수신을 함 (queue와 같이 작동함)
 //
-void	req_rep(int port)
+void	req_rep(int ac, char *av[])
 {
+	int	port = 7070;
 	char	ip_port[100] = {0};
+
+	if (ac == 2)
+	{
+		port = atoi(av[1]);
+		ac--, av++;
+	}
 
 	zmq::context_t context(1);
 
@@ -36,10 +40,10 @@ void	req_rep(int port)
 	responder.bind(ip_port);
 	printf("READY: %s\n", ip_port);
 
-	int bufsize = 1 * 1024 * 1024;	// 1MB 버퍼 
+	int bufsize = 64 * 1024;	// 1MB 버퍼 
 	responder.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
-	bufsize = 1 * 1024 * 1024;	// 1MB 버퍼 
+	bufsize = 64 * 1024;	// 1MB 버퍼 
 	responder.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
 	int	count = 0;
@@ -52,7 +56,7 @@ void	req_rep(int port)
 		string str = s_recv(responder);
 
 		count++;
-		snprintf(retbuf, sizeof(retbuf) - 1, "RECV port %d, %5d: %s\n", port, count, str.c_str());
+		snprintf(retbuf, sizeof(retbuf) - 1, "RECV port %d, %5d: %s", port, count, str.c_str());
 
 	//	if (count % 10000 == 0)
 			cout << count << " Received request: " << str << endl;
@@ -68,7 +72,7 @@ void	req_rep(int port)
 
 
 //
-// Request - Reply model
+// Push Pull model
 //
 void	push_pull(int direc)
 {
@@ -80,9 +84,9 @@ void	push_pull(int direc)
 
 	//  Socket to send messages to
 	zmq::socket_t sender(context, ZMQ_PUSH);
-	if (direc == 2)
+	if (direc == 2)		// bi-directional
 	{
-		sender.connect("tcp://localhost:5557");
+		sender.connect("tcp://192.168.1.10:5557");
 	}
 
 	uint64_t count = 0;
@@ -98,7 +102,7 @@ void	push_pull(int direc)
 		std::string smessage(static_cast<char*>(message.data()), message.size());
 
 		recvsz += smessage.length();
-		if (count % 10000 == 0)
+	//	if (count % 10000 == 0)
 			printf("RECV: %lu %.3g Mbytes\n", count, recvsz / 1000000.0);
 
 		//  Send results to sink
@@ -108,8 +112,9 @@ void	push_pull(int direc)
 		//	s_send(sender, smessage);
 
 			sendsz += message.size();
-			if (count % 10000 == 0)
+		//	if (count % 10000 == 0)
 				printf("SEND: %lu %.3g Mbytes\n", count, sendsz / 1000000.0);
 		}
+		usleep(500 * 1000);
 	}
 }
