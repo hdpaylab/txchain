@@ -15,6 +15,16 @@ int main(){
 	BigInt a = "-1137531041259095389425522063651335971086542522289";
 	BigInt b = "-9214001518046086468566115579527473139501";
 
+	uint32_t k = 100;
+	uint64_t l = 200;
+
+	BigInt r = k;
+	BigInt e = l;
+
+	BigInt q = e - r;
+
+	q.write(std::cout) << std::endl;
+
 	// Available operators:
 	// +, -, *, /, %, <<, >>
 	// +=, -=, *=, /=, %=, <<=, >>=, ++, --
