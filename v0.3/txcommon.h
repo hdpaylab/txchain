@@ -22,7 +22,7 @@ using namespace std;
 
 #include "zhelpers.hpp"
 #include "safe_queue.h"
-//#include "tx.h"
+#include "tx.h"
 
 
 //#define DEBUG		1		// for debugging
