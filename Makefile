@@ -32,6 +32,10 @@ $(ALIBS):
 test:
 	cd test; make; cd ..
 
+bak:
+	tar cf ~/BAK/txchain-`date +"%y%m%d"`.tar M* README* HISTORY */*.[hc]* */Make* */README* */*/*.[hc]* */*/Make* */*/*/*.[hc]* 
+	gzip -f ~/BAK/txchain-`date +"%y%m%d"`.tar
+
 cleanall:
 	cd $(CSDKDIR); make clean; cd ..
 	make clean
