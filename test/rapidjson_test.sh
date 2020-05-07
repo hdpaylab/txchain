@@ -1,6 +1,6 @@
 #!/bin/sh
 
-searchdir=/home/aiadmin/temp/err
+searchdir=$1
 
 for entry in $searchdir/*
 
