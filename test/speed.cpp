@@ -12,7 +12,7 @@
 #include <assert.h>
 #include <string.h>
 #include <pthread.h>
-#include "../txcommon.h"
+#include "../v0.2/txcommon.h"
 #include <queue>
 #include "safe_queue.h"
 

@@ -32,8 +32,8 @@ keypair: keypair.cpp
 leveldbex: leveldbex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ leveldbex.cpp $(LIBS) $(SDKLIBS) 
 
-speed: speed.cpp ../util.cpp 
-	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+speed: speed.cpp ../lib/util.cpp 
+	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../lib/util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
 ser1: ser1.cpp ../lib/xsz.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp ../lib/xsz.cpp $(LIBS) $(SDKLIBS) 

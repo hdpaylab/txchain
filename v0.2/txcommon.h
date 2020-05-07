@@ -16,8 +16,13 @@
 #include <sys/time.h>
 #include <leveldb/c.h>			// xleveldb.cpp
 
+
+using namespace std;
+
+
 #include "zhelpers.hpp"
 #include "safe_queue.h"
+//#include "tx.h"
 
 
 //#define DEBUG		1		// for debugging
@@ -47,11 +52,9 @@
 #define TX_DELIM	'|'			// TX delimiter
 
 
-using namespace std;
-
-
 typedef unsigned char	uchar;
 
+// msg 데이터 전송 테스트용 
 typedef struct {
 	char	*pubkey;
 	char	*message;
@@ -69,6 +72,7 @@ enum {
 	TXCHAIN_STATUS_VERI_REQ		= 0x00080000,
 	TXCHAIN_STATUS_VERI_RESULT	= 0x00100000,
 };
+
 
 typedef struct {
 	string		data;

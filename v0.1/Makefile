@@ -1,13 +1,19 @@
 CPP	= g++
 
-CSDKDIR	= HdacCSDK2
+CSDKDIR	= ../HdacCSDK2
 
 SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_thread -lpthread
 LIBS	= -lzmq -lpq -lleveldb
 
-INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include -Ilib
+INCLUDE	= -I/usr/include/postgresql -I../HdacCSDK2/include -I../lib
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter
+
+SRCS	= xmain.cpp xpub.cpp xsub.cpp \
+	  xverify.cpp xldbio.cpp params.cpp \
+	  ../lib/leveldb.cpp ../lib/xsz.cpp util.cpp
+
+OBJS	= $(SRCS:.cpp=.o)
 
 ALIBS	= \
 	$(CSDKDIR)/lib/libhelpers.a \
@@ -21,7 +27,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: lib 
+all: lib tx 
 
 lib: $(ALIBS)
 
@@ -29,11 +35,9 @@ $(ALIBS):
 	cd $(CSDKDIR); make; cd ..
 #	ln -f -s $(CSDKDIR)/lib/*.a .
 
-cleanall:
-	cd $(CSDKDIR); make clean; cd ..
-	make clean
+tx: $(OBJS)
+	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(ALIBS) $(SDKLIBS) $(LIBS)
 
 clean:
-	cd v0.1; make clean; cd ..
-	cd v0.2; make clean; cd ..
-	cd test; make clean; cd ..
+	rm -f tx $(OBJS) *.o *.out *.ver *.a *.log
+	rm -rf test.db 

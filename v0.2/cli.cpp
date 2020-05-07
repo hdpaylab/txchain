@@ -1,5 +1,5 @@
 //
-// cli IP:PORT
+// Usage: cli IP:PORT
 //
 
 #include "txcommon.h"
@@ -57,7 +57,7 @@ int	main(int ac, char *av[])
 
 	char	data[1024];
 
-	for (int count = 0; count < 1000000; count++)
+	for (int count = 0; count < 100000; count++)
 	{
 		txdata_t txdata;
 

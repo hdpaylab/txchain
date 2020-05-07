@@ -1,9 +1,9 @@
-# txchain
-tx speed up processing
+# txchain README
 
-ubuntu 에서 빌드 방법
+tx speed up project
 
-빌드 전에 설치해야 할 패키지
+
+# ubuntu required packages
 
 sudo apt install  autoconf libtool cmake g++ libssl-dev pkg-config
 
@@ -18,7 +18,8 @@ sudo apt-get install libpq-dev
 sudo apt install libleveldb-dev 
 
 
-직접 빌드해서 설치해야 할 개발용 라이브러리
+
+# Basic packages 
 
 
 secp256k1
