@@ -5,7 +5,7 @@ CSDKDIR	= ../HdacCSDK2
 SDKLIBS	= -lsecp256k1 -lssl -lcrypto -ldl -lboost_system -lboost_serialization -lboost_thread -lpthread
 LIBS	= -lzmq -lpq -lleveldb
 
-INCLUDE	= -I/usr/include/postgresql -I.. -I../HdacCSDK2/include -I../lib
+INCLUDE	= -I./ -I/usr/include/postgresql -I.. -I../HdacCSDK2/include -I../lib
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
@@ -21,7 +21,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint
+all: speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex
 
 ex: ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
@@ -52,6 +52,9 @@ zmq_cli: zmq_cli.cpp
 
 bigint: bigint_ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ bigint_ex.cpp bigint.c $(LIBS) $(SDKLIBS) 
+
+rapidjson_ex: rapidjson_ex.cpp
+	$(CPP) $(CPPFLAGS) -o $@ rapidjson_ex.cpp $(LIBS) $(SDKLIBS) 
 
 clean:
 	rm -f $(OBJS) *.o *.out *.ver *.log \
