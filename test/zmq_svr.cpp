@@ -21,6 +21,8 @@ int	main(int ac, char *av[])
 // Request - Reply model
 // 다수의 Client가 send 후 아래의 코드와 같이 receive하면, 
 // 정확히 자신이 보낸 것에 대해서 수신을 함 (queue와 같이 작동함)
+// request는 queue로 순서대로 들어오므로 다음 recv 전까지는 block됨
+// (multi-thread로 읽어서 처리해도 마찬가지임)
 //
 void	req_rep(int ac, char *av[])
 {

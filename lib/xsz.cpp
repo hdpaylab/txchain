@@ -1,7 +1,14 @@
+//
+// Performance: 300000/sec 
+//
+
 #include "xsz.h"
 
 
 #define toliteral(v)	#v
+
+
+int	_xsz_debug = 0;
 
 
 const char *gettypename(int datatype)
@@ -97,12 +104,12 @@ uint64_t getdatasize(void *buf, int hdrbytes)
 
 void	dumpbin(char *buf, size_t bufsz)
 {
-	printf("DUMP:	");
+//	printf("DUMP:	");
 	for (size_t ii = 0; ii < bufsz; ii++)
 	{
-		printf("%02X ", buf[ii] & 0x00FF);
+//		printf("%02X ", buf[ii] & 0x00FF);
 	}
-	printf("\n");
+//	printf("\n");
 }
 
 
@@ -138,7 +145,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 		// hdr 1 byte copy
 		hdrlen = size2hdrlen(datasz);
 		*bp = datatype | hdrlen;
-		printf("    HDR=0x%02X: hdrlen=0x%02X type=0x%02X\n", *bp & 0x00FF, hdrlen, datatype);
+		if (_xsz_debug) printf("    HDR=0x%02X: hdrlen=0x%02X type=0x%02X\n", *bp & 0x00FF, hdrlen, datatype);
 		bp++;
 
 		// hdr data length block copy
@@ -155,7 +162,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 		// hdr 1 byte copy
 		hdrlen = size2hdrlen(datasz);
 		*bp = datatype | hdrlen;
-		printf("    HDR=0x%02X: hdrlen=0x%02X type=0x%02X\n", *bp & 0x00FF, hdrlen, datatype);
+		if (_xsz_debug) printf("    HDR=0x%02X: hdrlen=0x%02X type=0x%02X\n", *bp & 0x00FF, hdrlen, datatype);
 		bp++;
 
 		// hdr data length block copy
@@ -187,7 +194,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 		// hdr 1 byte copy
 		hdrlen = size2hdrlen(datasz);
 		*bp = datatype | hdrlen;
-		printf("    HDR=0x%02X: hdrlen=0x%02X type=0x%02X\n", *bp & 0x00FF, hdrlen, datatype);
+		if (_xsz_debug) printf("    HDR=0x%02X: hdrlen=0x%02X type=0x%02X\n", *bp & 0x00FF, hdrlen, datatype);
 		bp++;
 
 		memcpy(bp, data, datasz);
@@ -233,6 +240,7 @@ size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t da
 		return sz + 1 + hdrbytes;
 
 	case XSZ_TYPE_STRING:
+		dumpbin(buf, hdrbytes + 1);
 		sz = getdatasize(bp, hdrbytes);
 		bp += hdrbytes;
 		if (datasz < sz + 1)

@@ -11,7 +11,7 @@ void	*thread_verifier(void *info_p)
 
 	FILE	*outfp = NULL;
 	char	ESC = TX_DELIM;
-	tx_t	tx;
+	txmsg_t	txmsg;
 	char	endmark[100] = {0};
 	char	tmp[4096] = {0}, *buf = NULL;
 	const char *filter = ZMQ_FILTER;	// s_sendmore()로 publisher에서 보내는 것만 수용함 
@@ -45,10 +45,10 @@ void	*thread_verifier(void *info_p)
 
 	while (1)
 	{
-		tx.pubkey = NULL;
-		tx.message = NULL;
-		tx.signature = NULL;
-		tx.verified = -1;
+		txmsg.pubkey = NULL;
+		txmsg.message = NULL;
+		txmsg.signature = NULL;
+		txmsg.verified = -1;
 
 		string data;
 
@@ -98,32 +98,32 @@ void	*thread_verifier(void *info_p)
 					char *sp = strchr(mp, ESC);
 					if (sp) {
 						*sp = 0; sp++;
-						tx.pubkey = pp;
-						tx.message = mp;
-						tx.signature = sp;
+						txmsg.pubkey = pp;
+						txmsg.message = mp;
+						txmsg.signature = sp;
 					}
 				}
 			}
 		}
 
-		if (tx.pubkey == NULL || tx.message == NULL || tx.signature == NULL)
+		if (txmsg.pubkey == NULL || txmsg.message == NULL || txmsg.signature == NULL)
 		{
 			fprintf(stderr, "ERROR: Verifier %d: pubkey len=%d message len=%d signature len=%d\n",
-				thrid, tx.pubkey ? (int)strlen(tx.pubkey) : 0, 
-				tx.message ? (int)strlen(tx.message) : 0,
-				tx.signature ? (int)strlen(tx.signature) : 0);
+				thrid, txmsg.pubkey ? (int)strlen(txmsg.pubkey) : 0, 
+				txmsg.message ? (int)strlen(txmsg.message) : 0,
+				txmsg.signature ? (int)strlen(txmsg.signature) : 0);
 			continue;
 		}
 
-	//	printf("xv:pubkey	: [%s]\n", tx.pubkey);
-	//	printf("xv:message	: [%s]\n", tx.message);
-	//	printf("xv:signature	: [%s]\n", tx.signature);
+	//	printf("xv:pubkey	: [%s]\n", txmsg.pubkey);
+	//	printf("xv:message	: [%s]\n", txmsg.message);
+	//	printf("xv:signature	: [%s]\n", txmsg.signature);
 
-		tx.verified = verify_message(tx.pubkey, tx.signature, tx.message, &params.AddrHelper);
-	//	printf("xv:VERITY	: %d\n", tx.verified);
+		txmsg.verified = verify_message(txmsg.pubkey, txmsg.signature, txmsg.message, &params.AddrHelper);
+	//	printf("xv:VERITY	: %d\n", txmsg.verified);
 
 		fprintf(outfp, "Verifier %d: %8d: %s signature=%s\n",
-			thrid, count, tx.verified == 1 ? "true" : "false", tx.signature);
+			thrid, count, txmsg.verified == 1 ? "true" : "false", txmsg.signature);
 		fflush(outfp);
 
 #ifdef TXCHAIN_VERIFY_MODEL_QUEUE

@@ -42,16 +42,16 @@ int	main(int ac, char *av[])
 	// params set
 	Params_type_t params = paramsget("params.dat");
 
-	tx_t	tx;
-	tx.message = strdup(message);
-	tx.pubkey = strdup(pubkey);
-	tx.signature = sign_message(privkey, tx.message, &params.PrivHelper, &params.AddrHelper);
+	txmsg_t	txmsg;
+	txmsg.message = strdup(message);
+	txmsg.pubkey = strdup(pubkey);
+	txmsg.signature = sign_message(privkey, txmsg.message, &params.PrivHelper, &params.AddrHelper);
 
-	printf("pubkey   : [%s]\n", tx.pubkey);
-	printf("message  : [%s]\n", tx.message);
-	printf("signature: [%s]\n", tx.signature);
+	printf("pubkey   : [%s]\n", txmsg.pubkey);
+	printf("message  : [%s]\n", txmsg.message);
+	printf("signature: [%s]\n", txmsg.signature);
 
-	int verify_check = verify_message(tx.pubkey, tx.signature, tx.message, &params.AddrHelper);
+	int verify_check = verify_message(txmsg.pubkey, txmsg.signature, txmsg.message, &params.AddrHelper);
 	printf("verify_check=%d\n", verify_check);
 	printf("\n");
 
@@ -62,7 +62,7 @@ int	main(int ac, char *av[])
 		txdata_t txdata;
 
 		snprintf(data, sizeof(data), "CLI-%7d %c%s%c%s%c%s", 
-			count, ESC, tx.pubkey, ESC, tx.message, ESC, tx.signature);
+			count, ESC, txmsg.pubkey, ESC, txmsg.message, ESC, txmsg.signature);
 
 		txdata.data = data;
 		txdata.seq = count + 1;

@@ -12,12 +12,12 @@ void	*thread_publisher(void *info_p)
 	const char ESC = TX_DELIM;
 	double	tmstart = 0, tmend = 0;
 
-	tx_t	tx;
+	txmsg_t	txmsg;
 	const char *message = "Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
 	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 
-	tx.message = strdup(message);
-	tx.pubkey = strdup(pubkey);
+	txmsg.message = strdup(message);
+	txmsg.pubkey = strdup(pubkey);
 
 	// params set
 	Params_type_t params = paramsget("params.dat");
@@ -48,23 +48,23 @@ void	*thread_publisher(void *info_p)
 		sleep(2);
 
 		fprintf(stderr, "Publisher: %d START SEND!\n\n", loop);
-		fprintf(stderr, "Message=%s\n\n", tx.message);
+		fprintf(stderr, "Message=%s\n\n", txmsg.message);
 
-		tx.signature = sign_message(
+		txmsg.signature = sign_message(
 			"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
-			tx.message,
+			txmsg.message,
 			&params.PrivHelper, &params.AddrHelper);
 
 		/*****
-		printf("xp:pubkey	: [%s]\n", tx.pubkey);
-		printf("xp:message	: [%s]\n", tx.message);
-		printf("xp:signature	: [%s]\n", tx.signature);
+		printf("xp:pubkey	: [%s]\n", txmsg.pubkey);
+		printf("xp:message	: [%s]\n", txmsg.message);
+		printf("xp:signature	: [%s]\n", txmsg.signature);
 
-		int verify_check = verify_message(tx.pubkey, tx.signature, tx.message, &params.AddrHelper);
+		int verify_check = verify_message(txmsg.pubkey, txmsg.signature, txmsg.message, &params.AddrHelper);
 		printf("xp:verify_check=%d\n", verify_check);
 		*****/
 
-		printf("Signature: %s\n\n", tx.signature);
+		printf("Signature: %s\n\n", txmsg.signature);
 		tmstart = xgetclock();
 
 		for (int ii = 0; ii < 1000000; ii++)
@@ -74,7 +74,7 @@ void	*thread_publisher(void *info_p)
 			memset(tmp, 0x00, sizeof(tmp));
 
 			sprintf(data, "%s%7d %c%s%c%s%c%s", 
-				filter, count, ESC, tx.pubkey, ESC, tx.message, ESC, tx.signature);
+				filter, count, ESC, txmsg.pubkey, ESC, txmsg.message, ESC, txmsg.signature);
 			bool ret = s_send(xpub, data);
 
 			// send 260 bytes
@@ -101,8 +101,8 @@ void	*thread_publisher(void *info_p)
 		tmend = xgetclock();
 		printf("PUB: Send time=%.3f sec\n", tmend - tmstart);
 
-		free(tx.signature);
-		tx.signature = NULL;
+		free(txmsg.signature);
+		txmsg.signature = NULL;
 
 		sprintf(data, "%s CLOSE", filter);
 		printf("\n\nSEND: %s\n", data);

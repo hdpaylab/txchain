@@ -10,14 +10,16 @@
 #include <zmq.hpp>
 
 
-void	*worker_routine (void *arg)
+void	*worker_routine(void *arg)
 {
 	int	count = 0;
 
+	printf("worker_routine() thread!\n");
+
 	zmq::context_t *context = (zmq::context_t *) arg;
 
-	zmq::socket_t socket (*context, ZMQ_REP);
-	socket.connect ("inproc://workers");
+	zmq::socket_t socket(*context, ZMQ_REP);
+	socket.connect("inproc://workers");
 
 	while (true)
 	{
@@ -25,16 +27,14 @@ void	*worker_routine (void *arg)
 
 		//  Wait for next request from client
 		zmq::message_t request;
-		socket.recv (&request);
+		socket.recv(&request);
 		std::cout << "Received request: [" << (char*) request.data() << "]" << std::endl;
 
 		count++;
 		snprintf(retbuf, sizeof(retbuf) - 1, "%5d: %s", count, (char *)request.data());
 
 		if (strstr(retbuf, "1111"))
-			usleep(1000 * 1000);
-		else
-			usleep(100 * 1000);
+			usleep(5000 * 1000);
 
 		//  Send reply back to client
 		zmq::message_t reply(strlen(retbuf) + 1);
@@ -57,24 +57,26 @@ int	main(int ac, char *av[])
 	}
 
 	//  Prepare our context and sockets
-	zmq::context_t context (1);
-	zmq::socket_t clients (context, ZMQ_ROUTER);
+	zmq::context_t context(1);
+	zmq::socket_t clients(context, ZMQ_ROUTER);
 	sprintf(ip_port, "tcp://*:%d", port);
 	clients.bind(ip_port);
 	printf("READY: %s\n", ip_port);
 
-	zmq::socket_t workers (context, ZMQ_DEALER);
-	workers.bind ("inproc://workers");
+	zmq::socket_t workers(context, ZMQ_DEALER);
+	workers.bind("inproc://workers");
 
 	//  Launch pool of worker threads
 	for (int thread_nbr = 0; thread_nbr != 5; thread_nbr++)
 	{
 		pthread_t worker;
-		pthread_create (&worker, NULL, worker_routine, (void *) &context);
+		pthread_create(&worker, NULL, worker_routine, (void *) &context);
+		pthread_detach(worker);
+		usleep(10 * 1000);
 	}
 
 	//  Connect work threads to client threads via a queue
-	zmq::proxy (static_cast<void*>(clients), static_cast<void*>(workers), nullptr);
+	zmq::proxy(static_cast<void*>(clients), static_cast<void*>(workers), nullptr);
 
 	return 0;
 }

@@ -21,20 +21,20 @@ void	*thread_send_test(void *info_p)
 	// params set
 	Params_type_t params = paramsget("params.dat");
 
-	tx_t	tx;
-	tx.message = strdup(message);
-	tx.pubkey = strdup(pubkey);
-	tx.signature = sign_message(
+	txmsg_t	txmsg;
+	txmsg.message = strdup(message);
+	txmsg.pubkey = strdup(pubkey);
+	txmsg.signature = sign_message(
 		"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
-		tx.message,
+		txmsg.message,
 		&params.PrivHelper, &params.AddrHelper);
 
 	/*****
-	printf("xp:pubkey	: [%s]\n", tx.pubkey);
-	printf("xp:message	: [%s]\n", tx.message);
-	printf("xp:signature	: [%s]\n", tx.signature);
+	printf("xp:pubkey	: [%s]\n", txmsg.pubkey);
+	printf("xp:message	: [%s]\n", txmsg.message);
+	printf("xp:signature	: [%s]\n", txmsg.signature);
 
-	int verify_check = verify_message(tx.pubkey, tx.signature, tx.message, &params.AddrHelper);
+	int verify_check = verify_message(txmsg.pubkey, txmsg.signature, txmsg.message, &params.AddrHelper);
 	printf("xp:verify_check=%d\n", verify_check);
 	*****/
 
@@ -47,7 +47,7 @@ void	*thread_send_test(void *info_p)
 		txdata_t txdata;
 
 		snprintf(data, sizeof(data), "%s%7d %c%s%c%s%c%s", 
-			filter, ii, ESC, tx.pubkey, ESC, tx.message, ESC, tx.signature);
+			filter, ii, ESC, txmsg.pubkey, ESC, txmsg.message, ESC, txmsg.signature);
 
 		txdata.data = data;
 		txdata.seq = ii + 1;
