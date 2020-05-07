@@ -57,7 +57,7 @@ typedef struct {
 	char	*message;
 	char	*signature;
 	int	verified;
-}	tx_t;
+}	txmsg_t;
 
 enum {
 	TXCHAIN_STATUS_ERROR		= 0xFFFFFFFF,

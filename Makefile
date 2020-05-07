@@ -51,7 +51,7 @@ cli: cli.o params.o
 	$(CPP) $(CPPFLAGS) -o $@ cli.o params.o $(ALIBS) $(SDKLIBS) $(LIBS) 
 
 clean:
-	rm -f tx tx2 $(OBJS) *.o *.out *.ver *.a *.log
+	rm -f tx tx2 cli $(OBJS) *.o *.out *.ver *.a *.log
 	rm -rf testdb xtestdb
 	cd test; make clean; cd ..
 
