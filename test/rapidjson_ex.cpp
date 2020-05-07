@@ -59,14 +59,14 @@ int main(int ac, char *av[]) {
 	d.Accept(writer);
 
 	// Output {"project":"rapidjson","stars":11}
-	// std::cout << buffer.GetString() << std::endl;
-
+	std::cout << buffer.GetString() << std::endl;
+/*
 	if (buffer.GetString() == 0) {
 		printf("[%s] error\n", av[1]);
 	} else {
 		printf("[%s] OK\n", av[1]);
 	}
-
+*/
 	return 0;
 }
 
