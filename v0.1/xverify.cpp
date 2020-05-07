@@ -7,7 +7,7 @@ void	*thread_verifier(void *info_p)
 	int	count = 0;
 
 	// params set
-	Params_type_t params = paramsget("params.dat");
+	Params_type_t params = paramsget("../lib/params.dat");
 
 	FILE	*outfp = NULL;
 	char	ESC = TX_DELIM;

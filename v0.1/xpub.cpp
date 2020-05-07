@@ -20,7 +20,7 @@ void	*thread_publisher(void *info_p)
 	txmsg.pubkey = strdup(pubkey);
 
 	// params set
-	Params_type_t params = paramsget("params.dat");
+	Params_type_t params = paramsget("../lib/params.dat");
 
 	for (int loop = 1; loop <= 1; loop++)
 	{

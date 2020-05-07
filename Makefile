@@ -21,13 +21,16 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: lib 
+all: lib test
 
 lib: $(ALIBS)
 
 $(ALIBS): 
 	cd $(CSDKDIR); make; cd ..
 #	ln -f -s $(CSDKDIR)/lib/*.a .
+
+test:
+	cd test; make; cd ..
 
 cleanall:
 	cd $(CSDKDIR); make clean; cd ..

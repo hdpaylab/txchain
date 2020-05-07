@@ -40,7 +40,7 @@ int	main(int ac, char *av[])
 	const char *message = "Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
 
 	// params set
-	Params_type_t params = paramsget("params.dat");
+	Params_type_t params = paramsget("../lib/params.dat");
 
 	txmsg_t	txmsg;
 	txmsg.message = strdup(message);
