@@ -1,0 +1,63 @@
+{
+    "hex" : "0100000001d269f1f0bf628c4c67e328d1a936b0f0b91cf0c35ae529f8bc61188eca396ef6000000006b483045022100f3909ceb7f86939a7a2d88809b6759f70a3142eb67cb0ff67be5642f78f22b590220421172c624c642103e9e89d7249190ac7302d68c0b0bdffe390c1ad2c5f6f718012103e456e5896a4087284b169d65d1048845a7b1d45db370d499ed32cd6bcaf7a45affffffff0200000000000000000d0a73706b6e020001025354756ac045436a740000001976a9145a94c19c959a0d3ae1d0f9a5111aac2eede4054e88ac00000000",
+    "txid" : "0b0993096ecb23f160433ae3c51bfc2d236a8b4836bd2302f40114e183f2cdee",
+    "version" : 1,
+    "locktime" : 0,
+    "vin" : [
+        {
+            "txid" : "f66e39ca8e1861bcf829e55ac3f01cb9f0b036a9d128e3674c8c62bff0f169d2",
+            "vout" : 0,
+            "scriptSig" : {
+                "asm" : "3045022100f3909ceb7f86939a7a2d88809b6759f70a3142eb67cb0ff67be5642f78f22b590220421172c624c642103e9e89d7249190ac7302d68c0b0bdffe390c1ad2c5f6f71801 03e456e5896a4087284b169d65d1048845a7b1d45db370d499ed32cd6bcaf7a45a",
+                "hex" : "483045022100f3909ceb7f86939a7a2d88809b6759f70a3142eb67cb0ff67be5642f78f22b590220421172c624c642103e9e89d7249190ac7302d68c0b0bdffe390c1ad2c5f6f718012103e456e5896a4087284b169d65d1048845a7b1d45db370d499ed32cd6bcaf7a45a"
+            },
+            "sequence" : 4294967295
+        }
+    ],
+    "vout" : [
+        {
+            "value" : 0.00000000,
+            "n" : 0,
+            "scriptPubKey" : {
+                "asm" : "73706b6e020001025354 OP_DROP OP_RETURN",
+                "hex" : "0a73706b6e020001025354756a",
+                "type" : "nulldata"
+            },
+            "assets" : [
+            ],
+            "permissions" : [
+            ],
+            "items" : [
+            ]
+        },
+        {
+            "value" : 4999.99000000,
+            "n" : 1,
+            "scriptPubKey" : {
+                "asm" : "OP_DUP OP_HASH160 5a94c19c959a0d3ae1d0f9a5111aac2eede4054e OP_EQUALVERIFY OP_CHECKSIG",
+                "hex" : "76a9145a94c19c959a0d3ae1d0f9a5111aac2eede4054e88ac",
+                "reqSigs" : 1,
+                "type" : "pubkeyhash",
+                "addresses" : [
+                    "HEn5QNriNknvzee1D1YpLQaMpz9adCMoRZ"
+                ]
+            },
+            "assets" : [
+            ],
+            "permissions" : [
+            ],
+            "items" : [
+            ]
+        }
+    ],
+    "create" : {
+        "type" : "stream",
+        "name" : "ST",
+        "streamref" : null,
+        "open" : false,
+        "details" : {
+        }
+    },
+    "data" : [
+    ]
+}

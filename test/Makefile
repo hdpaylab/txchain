@@ -21,10 +21,10 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex
+all: speed keypair_ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex
 
-ex: ex.cpp
-	$(CPP) $(CPPFLAGS) -o $@ ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+keypair_ex: keypair_ex.cpp
+	$(CPP) $(CPPFLAGS) -o $@ keypair_ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
 keypair: keypair.cpp
 	$(CPP) $(CPPFLAGS) -o $@ keypair.cpp $(ALIBS) $(SDKLIBS) $(LIBS)

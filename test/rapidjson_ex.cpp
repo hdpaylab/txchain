@@ -1,4 +1,9 @@
+//
 // rapidjson/example/simpledom/simpledom.cpp
+//
+// Performance: rawtx.json parsing speed: 150,000/sec @ubuntu i7-6700 3.4GHz
+//
+
 #include <iostream>
 #include <stdio.h>
 
@@ -11,64 +16,67 @@
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
  
 
 using namespace rapidjson;
 using namespace std;
 
-char *file_get(char *path);
 
-int main(int ac, char *av[]) {
+char	*file_get(char *path);
+
+
+int	main(int ac, char *av[])
+{
 
 	if (ac != 2) {
-		cout << "Usage : " << av[0] << 
-				" [JSON FILE PATH]" << endl;
+		cout << "Usage : " << av[0] << " [JSON FILE PATH]" << endl;
 		return 0;
 	}
 
-	// ==== test data ====
-
-/*
-	const char *json =  "{ \
-  \"publishers\":[ \
-   \"14Zs9naW81CFsHp3AwWPG3XmKPw4mwWj9WvYmA\" \
-  ], \
-  \"key\":\"HDACT\", \ 
-  \"data\":\"3836343030203130302031302e303030303030202d202d\", \
-  \"confirmations\":1162, \
-  \"blocktime\":1518496716, \
-  \"txid\":\"451cfdd2b55f67f26ebb86e234e194f08dc39785edac72a772a5d8b730bab4f9\" \
- }";
-*/
+	/*
+		const char *json =  "{ \
+	  \"publishers\":[ \
+	   \"14Zs9naW81CFsHp3AwWPG3XmKPw4mwWj9WvYmA\" \
+	  ], \
+	  \"key\":\"HDACT\", \ 
+	  \"data\":\"3836343030203130302031302e303030303030202d202d\", \
+	  \"confirmations\":1162, \
+	  \"blocktime\":1518496716, \
+	  \"txid\":\"451cfdd2b55f67f26ebb86e234e194f08dc39785edac72a772a5d8b730bab4f9\" \
+	 }";
+	*/
 
 	// const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
 
+	printf("FILE: %s\n", av[1]);
 	char *json = file_get(av[1]);
 
 	// 1. Parse a JSON string into DOM.
-	Document d;
-	d.Parse(json);
+	for (int ii = 0; ii < 1000000; ii++)
+	{
+		Document d;
+		d.Parse(json);
 
-	// 2. Modify it by DOM.
-	// Value& s = d["blocktime"];
-	// s.SetInt(s.GetInt() + 1);
+		// 2. Modify it by DOM.
+		// Value& s = d["blocktime"];
+		// s.SetInt(s.GetInt() + 1);
 
-	// 3. Stringify the DOM
-	StringBuffer buffer;
-	Writer<StringBuffer> writer(buffer);
-	d.Accept(writer);
+		// 3. Stringify the DOM
+		StringBuffer buffer;
+	//	Writer<StringBuffer> writer(buffer);
+		PrettyWriter<StringBuffer> writer(buffer);
+		d.Accept(writer);
 
-	// Output {"project":"rapidjson","stars":11}
-	std::cout << buffer.GetString() << std::endl;
-/*
-	if (buffer.GetString() == 0) {
-		printf("[%s] error\n", av[1]);
-	} else {
-		printf("[%s] OK\n", av[1]);
+		// Output {"project":"rapidjson","stars":11}
+	//	cout << "Result: " << buffer.GetString() << endl;
 	}
-*/
+
+	printf("\n\n");
+
 	return 0;
 }
+
 
 char *file_get(char *path)
 {
