@@ -28,14 +28,14 @@ char	*file_get(char *path);
 
 int	main(int ac, char *av[])
 {
-
-	if (ac != 2) {
+	if (ac != 2)
+	{
 		cout << "Usage : " << av[0] << " [JSON FILE PATH]" << endl;
 		return 0;
 	}
 
 	/*
-		const char *json =  "{ \
+	const char *json =  "{ \
 	  \"publishers\":[ \
 	   \"14Zs9naW81CFsHp3AwWPG3XmKPw4mwWj9WvYmA\" \
 	  ], \
@@ -44,7 +44,7 @@ int	main(int ac, char *av[])
 	  \"confirmations\":1162, \
 	  \"blocktime\":1518496716, \
 	  \"txid\":\"451cfdd2b55f67f26ebb86e234e194f08dc39785edac72a772a5d8b730bab4f9\" \
-	 }";
+	}";
 	*/
 
 	// const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
@@ -53,7 +53,7 @@ int	main(int ac, char *av[])
 	char *json = file_get(av[1]);
 
 	// 1. Parse a JSON string into DOM.
-	for (int ii = 0; ii < 1000000; ii++)
+//	for (int ii = 0; ii < 1000000; ii++)
 	{
 		Document d;
 		d.Parse(json);
@@ -62,6 +62,26 @@ int	main(int ac, char *av[])
 		// Value& s = d["blocktime"];
 		// s.SetInt(s.GetInt() + 1);
 
+		Value& ss = d["vin"][0]["txid"];
+		string sval = ss.GetString();
+		cout << "TXID=" << sval << endl;
+
+		Value& vv = d["vout"][1]["value"];
+		double val = vv.GetDouble();
+		cout << "DOUBLE=" << val << endl;
+		vv.SetDouble(vv.GetDouble() + 1.0);
+		val = vv.GetDouble();
+		cout << "DOUBLE+1.0=" << val << endl;
+
+		Value& vin = d["vin"][0]["scriptSig"]["hex"];
+		string shex = vin.GetString();
+		cout << "VIN.HEX=" << shex << endl;
+
+		Value& pk = d["vout"][0]["scriptPubKey"]["asm"];
+		string sasm = pk.GetString();
+		cout << "VOUT.ASM=" << sasm << endl;
+		cout << endl << endl;
+
 		// 3. Stringify the DOM
 		StringBuffer buffer;
 	//	Writer<StringBuffer> writer(buffer);
@@ -69,7 +89,7 @@ int	main(int ac, char *av[])
 		d.Accept(writer);
 
 		// Output {"project":"rapidjson","stars":11}
-	//	cout << "Result: " << buffer.GetString() << endl;
+		cout << "Result: " << buffer.GetString() << endl;
 	}
 
 	printf("\n\n");
@@ -78,7 +98,7 @@ int	main(int ac, char *av[])
 }
 
 
-char *file_get(char *path)
+char	*file_get(char *path)
 {
 	FILE *fp = NULL;
 	static char json[1048576];

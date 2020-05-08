@@ -51,11 +51,12 @@ zmq_cli: zmq_cli.cpp
 	$(CPP) $(CPPFLAGS) -o $@ zmq_cli.cpp $(LIBS) $(SDKLIBS) 
 
 bigint: bigint_ex.cpp
-	$(CPP) $(CPPFLAGS) -o $@ bigint_ex.cpp bigint.c $(LIBS) $(SDKLIBS) 
+	$(CPP) $(CPPFLAGS) -o $@ bigint_ex.cpp ../lib/bigint.c $(LIBS) $(SDKLIBS) 
 
 rapidjson_ex: rapidjson_ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ rapidjson_ex.cpp $(LIBS) $(SDKLIBS) 
 
 clean:
 	rm -f $(OBJS) *.o *.out *.ver *.log \
-	speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint
+	speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint \
+	keypair_ex rapidjson_ex
