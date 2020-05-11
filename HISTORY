@@ -1,18 +1,18 @@
 TXCHAIN HISTORY
 
 
-200413	tx ½Ì±Û ÇÁ·Î¼¼½º »ó¿¡¼­ ÀÛµ¿ °ËÁõ ¿Ï·á (vector ±¸Á¶)
-	´ÜÁ¡: vector ±¸Á¶´Â º¹ÀâÇÑ ¾ÆÅ°ÅØÃÄ¿¡ Àû¿ë ¾î·Á¿ò => queue·Î º¯°æ (100¸¸op/sec)
+200413	tx ì‹±ê¸€ í”„ë¡œì„¸ìŠ¤ ìƒì—ì„œ ì‘ë™ ê²€ì¦ ì™„ë£Œ (vector êµ¬ì¡°)
+	ë‹¨ì : vector êµ¬ì¡°ëŠ” ë³µì¡í•œ ì•„í‚¤í…ì³ì— ì ìš© ì–´ë ¤ì›€ => queueë¡œ ë³€ê²½ (100ë§Œop/sec)
 
-200414	tx2 ºôµå¸¦ À§ÇÑ ¾ÆÅ°ÅØÃÄ º¯°æ (queue ±¸Á¶·Î º¯°æ)
+200414	tx2 ë¹Œë“œë¥¼ ìœ„í•œ ì•„í‚¤í…ì³ ë³€ê²½ (queue êµ¬ì¡°ë¡œ ë³€ê²½)
 
-200417	tx ºôµå¸¦ À§ÇÑ ÄÚµå¿Í, tx2 ºôµå¸¦ À§ÇÑ ÄÚµå ºĞ¸® (Makefile ¼öÁ¤)
+200417	tx ë¹Œë“œë¥¼ ìœ„í•œ ì½”ë“œì™€, tx2 ë¹Œë“œë¥¼ ìœ„í•œ ì½”ë“œ ë¶„ë¦¬ (Makefile ìˆ˜ì •)
 
 200422	xsz.cpp string copy bug fixed.
-	gcc compile option added: -fno-strict-aliasing -Wno-unused-parameter.¡¦
+	gcc compile option added: -fno-strict-aliasing -Wno-unused-parameter.â€¦
 
-200423	keypair.cpp : keypair ¹ÙÀÌ³Ê¸® Ã³¸®¿ë ¿¹Á¦ Ãß°¡ 
-	leveldb.cpp : leveldb C++ class Ãß°¡
+200423	keypair.cpp : keypair ë°”ì´ë„ˆë¦¬ ì²˜ë¦¬ìš© ì˜ˆì œ ì¶”ê°€ 
+	leveldb.cpp : leveldb C++ class ì¶”ê°€
 	leveldb.cpp library newly added. Some iterator bug exists.
 	Add privkey&pubkey dump code at hs_keys.cpp
 	s_sendmore() removed.

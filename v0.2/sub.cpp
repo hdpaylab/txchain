@@ -13,7 +13,7 @@ void	*thread_subscriber(void *info_p)
 	FILE	*outfp = NULL;
 	char	peerstr[100] = {0}, endmark[100] = {0};
 	char	tmp[4096] = {0}, *tp = NULL;
-	const char *filter = ZMQ_FILTER;	// s_sendmore()·Î publisher¿¡¼­ º¸³»´Â °Í¸¸ ¼ö¿ëÇÔ 
+	const char *filter = ZMQ_FILTER;	// s_sendmore()ë¡œ publisherì—ì„œ ë³´ë‚´ëŠ” ê²ƒë§Œ ìˆ˜ìš©í•¨ 
 
 
 	printf("SUB : peer=%s START!\n", peer);
@@ -26,7 +26,7 @@ void	*thread_subscriber(void *info_p)
 	tp = strchr(tmp, ':');
 	assert(tp != NULL);
 	*tp = '_';
-	outfp = fopen(tmp, "w+b");	// Ãâ·ÂÆÄÀÏ *.out
+	outfp = fopen(tmp, "w+b");	// ì¶œë ¥íŒŒì¼ *.out
 	assert(outfp != NULL);
 
 	// ZMQ setup 
@@ -35,10 +35,10 @@ void	*thread_subscriber(void *info_p)
 	
 	xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 
-	int bufsize = 1 * 1024 * 1024;	// 1MB ¹öÆÛ 
+	int bufsize = 1 * 1024 * 1024;	// 1MB ë²„í¼ 
 	xsock.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
-	int qsize = 10000;		// 10000 °³
+	int qsize = 10000;		// 10000 ê°œ
 	xsock.setsockopt(ZMQ_RCVHWM, &qsize, sizeof(qsize));
 
 	sleepms(100);
@@ -106,7 +106,7 @@ void	*thread_client(void *info_p)
 	printf("CLIENT: client port=%d START!\n", clientport);
 
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
-	FILE *outfp = fopen(tmp, "w+b");	// Ãâ·ÂÆÄÀÏ 
+	FILE *outfp = fopen(tmp, "w+b");	// ì¶œë ¥íŒŒì¼ 
 	assert(outfp != NULL);
 
 	zmq::context_t context(1);
@@ -115,10 +115,10 @@ void	*thread_client(void *info_p)
 	sprintf(ip_port, "tcp://*:%d", clientport);
 	responder.bind(ip_port);
 
-	int bufsize = 64 * 1024;	// 64k ¹öÆÛ 
+	int bufsize = 64 * 1024;	// 64k ë²„í¼ 
 	responder.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
-	bufsize = 64 * 1024;		// 64k ¹öÆÛ 
+	bufsize = 64 * 1024;		// 64k ë²„í¼ 
 	responder.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
 	int	count = 0;
@@ -140,7 +140,7 @@ void	*thread_client(void *info_p)
 		txdata.verified = TXCHAIN_STATUS_EMPTY;
 		txdata.status = TXCHAIN_STATUS_EMPTY;
 
-		_recvq.push(txdata);	// ¼ö½ÅµÈ µ¥ÀÌÅÍ·Î Ã³¸®ÇÔ 
+		_recvq.push(txdata);	// ìˆ˜ì‹ ëœ ë°ì´í„°ë¡œ ì²˜ë¦¬í•¨ 
 
 		if (count % 10000 == 0)
 			cout << "Receive client request: count=" << count << " data=" << txdata.data << endl;

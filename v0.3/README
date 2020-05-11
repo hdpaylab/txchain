@@ -1,17 +1,7 @@
-1. create tx on cli
 
-2. send tx
+1. Execute tx2.sh
 
-3. verify tx and reply to cli
+2. Execute cli
 
-4. broadcast tx to other nodes
+100,000 requests are processed
 
-5. verify on each node
-
-6. reply result to original node
-
-7. request to other node for consensus
-
-8. reply arrived and check consensus rule
-
-9. save to db

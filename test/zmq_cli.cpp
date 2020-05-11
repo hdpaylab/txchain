@@ -26,14 +26,14 @@ void	req_rep(int ac, char *av[])
 
 	zmq::socket_t requester(context, ZMQ_REQ);
 	requester.connect("tcp://192.168.1.10:7070");
-//	requester.connect("tcp://192.168.1.10:7071");	// ø©∑Ø º≠πˆ∑Œ ∫∏≥æ ∂ß¥¬, Nπ¯ ∫∏≥ªæﬂ ∞¢ º≠πˆ∑Œ ¿¸º€µ  
+//	requester.connect("tcp://192.168.1.10:7071");	// Ïó¨Îü¨ ÏÑúÎ≤ÑÎ°ú Î≥¥ÎÇº ÎïåÎäî, NÎ≤à Î≥¥ÎÇ¥Ïïº Í∞Å ÏÑúÎ≤ÑÎ°ú Ï†ÑÏÜ°Îê® 
 //	requester.connect("tcp://192.168.1.10:7072");
 	int nsvr = 1;
 
-	int bufsize = 1 * 1024 * 1024;	// 1MB πˆ∆€ 
+	int bufsize = 1 * 1024 * 1024;	// 1MB Î≤ÑÌçº 
 	requester.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
-	bufsize = 1 * 1024 * 1024;	// 1MB πˆ∆€ 
+	bufsize = 1 * 1024 * 1024;	// 1MB Î≤ÑÌçº 
 	requester.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
 //	const char *data = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";

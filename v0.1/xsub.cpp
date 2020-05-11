@@ -41,7 +41,7 @@ void	*thread_subscriber(void *info_p)
 		FILE	*outfp = NULL;
 		char	peerstr[100] = {0}, endmark[100] = {0};
 		char	tmp[4096] = {0}, *tp = NULL;
-		const char *filter = ZMQ_FILTER;	// s_sendmore()·Î publisher¿¡¼­ º¸³»´Â °Í¸¸ ¼ö¿ëÇÔ 
+		const char *filter = ZMQ_FILTER;	// s_sendmore()ë¡œ publisherì—ì„œ ë³´ë‚´ëŠ” ê²ƒë§Œ ìˆ˜ìš©í•¨ 
 
 		fprintf(stderr, "Subscriber START! peer=%s\n\n", peer);
 
@@ -54,7 +54,7 @@ void	*thread_subscriber(void *info_p)
 		tp = strchr(tmp, ':');
 		assert(tp != NULL);
 		*tp = '_';
-		outfp = fopen(tmp, "w+b");	// Ãâ·ÂÆÄÀÏ *.out
+		outfp = fopen(tmp, "w+b");	// ì¶œë ¥íŒŒì¼ *.out
 		assert(outfp != NULL);
 
 		sprintf(peerstr, "tcp://%s", peer);
@@ -73,10 +73,10 @@ void	*thread_subscriber(void *info_p)
 
 		xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 
-		int bufsize = 4 * 1024 * 1024;	// 4MB ¹öÆÛ 
+		int bufsize = 4 * 1024 * 1024;	// 4MB ë²„í¼ 
 		xsock.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
-		int qsize = 100000;	// 10000 °³
+		int qsize = 100000;	// 10000 ê°œ
 		xsock.setsockopt(ZMQ_RCVHWM, &qsize, sizeof(qsize));
 
 		sprintf(endmark, "%s CLOSE", filter);

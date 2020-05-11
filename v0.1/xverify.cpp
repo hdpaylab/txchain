@@ -14,7 +14,7 @@ void	*thread_verifier(void *info_p)
 	txmsg_t	txmsg;
 	char	endmark[100] = {0};
 	char	tmp[4096] = {0}, *buf = NULL;
-	const char *filter = ZMQ_FILTER;	// s_sendmore()·Î publisher¿¡¼­ º¸³»´Â °Í¸¸ ¼ö¿ëÇÔ 
+	const char *filter = ZMQ_FILTER;	// s_sendmore()ë¡œ publisherì—ì„œ ë³´ë‚´ëŠ” ê²ƒë§Œ ìˆ˜ìš©í•¨ 
 
 
 	printf("Verifier %d START!\n\n", thrid);
@@ -75,7 +75,7 @@ void	*thread_verifier(void *info_p)
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
-//continue;	// msg ¼ö½Å¸¸ ÇÏ´Â °æ¿ì 
+//continue;	// msg ìˆ˜ì‹ ë§Œ í•˜ëŠ” ê²½ìš° 
 
 		count++;
 		if (count % 10000 == 0)

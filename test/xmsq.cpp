@@ -13,7 +13,7 @@ int ai_msq_open(int key, int queue_size)
     if ((msqid = msgget(key, IPC_CREAT|0666)) < 0)
         return -1;
 
-    /* queue size ÀçÁ¶Á¤ */
+    /* queue size ìž¬ì¡°ì • */
     if (queue_size > 0 && msgctl(msqid, IPC_STAT, &buf) == 0) {
         if (buf.msg_qbytes < queue_size) {
             buf.msg_qbytes = queue_size;

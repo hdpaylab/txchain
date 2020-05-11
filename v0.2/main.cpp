@@ -15,7 +15,7 @@ int	_nverifier = MAX_VERIFIER;
 int	_automode = 1;		// auto data generation mode (client input disabled)
 int	_clientport = DEFAULT_CLIENT_PORT;	
 
-int	_maxnode = 1;		// ³ªÁß¿¡ ¼³Á¤À¸·Î »¬ °Í 
+int	_maxnode = 1;		// ë‚˜ì¤‘ì— ì„¤ì •ìœ¼ë¡œ ëº„ ê²ƒ 
 int	_chainport = DEFAULT_CHAIN_PORT;
 
 int	_npeer = 0;
@@ -46,7 +46,7 @@ int	main(int ac, char *av[])
 
 	create_verifier_threads(_nverifier);		// VERIFIER
 
-	// Å×½ºÆ®¿ë ÄÚµåÀÌ¹Ç·Î..
+	// í…ŒìŠ¤íŠ¸ìš© ì½”ë“œì´ë¯€ë¡œ..
 	while (1)
 	{
 		sleep(1);
@@ -78,18 +78,18 @@ void	parse_command_line(int ac, char *av[])
 	printf("Auto mode = %d\n", _automode);
 	printf("Client port = %d\n", _clientport);
 
-	// ÃÖ´ë ³ëµå °³¼ö ÁöÁ¤ 
+	// ìµœëŒ€ ë…¸ë“œ ê°œìˆ˜ ì§€ì • 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
 		_maxnode = atoi(av[1]);
 		if (_maxnode > 100)
-			_maxnode = 100;	// ÃÖ´ë node´Â 100°³·Î..
+			_maxnode = 100;	// ìµœëŒ€ nodeëŠ” 100ê°œë¡œ..
 		ac--, av++;
 	}
 	printf("Max node = %d\n", _maxnode);
 
 
-	// ¹ß¼Û Æ÷Æ® ÁöÁ¤ 
+	// ë°œì†¡ í¬íŠ¸ ì§€ì • 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
 		_chainport = atoi(av[1]);
@@ -103,7 +103,7 @@ void	parse_command_line(int ac, char *av[])
 	printf("Chain port = %d\n", _chainport);
 
 
-	// ¿¬°áÇÒ peer ÁöÁ¤ (Å×½ºÆ® ¶§´Â ´ÙÀÌ³ª¹ÍÇÏ°Ô ¹Ù²îÁö ¾Ê°í °íÁ¤À¸·Î..)
+	// ì—°ê²°í•  peer ì§€ì • (í…ŒìŠ¤íŠ¸ ë•ŒëŠ” ë‹¤ì´ë‚˜ë¯¹í•˜ê²Œ ë°”ë€Œì§€ ì•Šê³  ê³ ì •ìœ¼ë¡œ..)
 	for (ii = 1; ii < ac && _npeer < MAX_NODE; ii++)
 	{
 		if (_npeer > _maxnode)
@@ -195,7 +195,7 @@ void	create_subscriber_threads()
 
 		printf("Create subscriber thread [%d]=%s\n", idx, peer);
 
-		// ´Ù¼öÀÇ ³ëµå·Î Å×½ºÆ®ÇÒ ¶§´Â ÀÚ½ÅÀÌ ÀÚ½ÅÀÇ ÇÁ·Î¼¼½º¿¡°Ô ¹ß¼Û ¿äÃ»À» ÇÏÁö ¾ÊÀ½.
+		// ë‹¤ìˆ˜ì˜ ë…¸ë“œë¡œ í…ŒìŠ¤íŠ¸í•  ë•ŒëŠ” ìì‹ ì´ ìì‹ ì˜ í”„ë¡œì„¸ìŠ¤ì—ê²Œ ë°œì†¡ ìš”ì²­ì„ í•˜ì§€ ì•ŠìŒ.
 		if (_maxnode > 1 && atoi(tp+1) == _chainport)
 		{
 			printf("Peer %s skipped.\n", peer);

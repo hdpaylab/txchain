@@ -19,10 +19,10 @@ int	main(int ac, char *av[])
 
 //
 // Request - Reply model
-// ´Ù¼öÀÇ Client°¡ send ÈÄ ¾Æ·¡ÀÇ ÄÚµå¿Í °°ÀÌ receiveÇÏ¸é, 
-// Á¤È®È÷ ÀÚ½ÅÀÌ º¸³½ °Í¿¡ ´ëÇØ¼­ ¼ö½ÅÀ» ÇÔ (queue¿Í °°ÀÌ ÀÛµ¿ÇÔ)
-// request´Â queue·Î ¼ø¼­´ë·Î µé¾î¿À¹Ç·Î ´ÙÀ½ recv Àü±îÁö´Â blockµÊ
-// (multi-thread·Î ÀĞ¾î¼­ Ã³¸®ÇØµµ ¸¶Âù°¡ÁöÀÓ)
+// ë‹¤ìˆ˜ì˜ Clientê°€ send í›„ ì•„ë˜ì˜ ì½”ë“œì™€ ê°™ì´ receiveí•˜ë©´, 
+// ì •í™•íˆ ìì‹ ì´ ë³´ë‚¸ ê²ƒì— ëŒ€í•´ì„œ ìˆ˜ì‹ ì„ í•¨ (queueì™€ ê°™ì´ ì‘ë™í•¨)
+// requestëŠ” queueë¡œ ìˆœì„œëŒ€ë¡œ ë“¤ì–´ì˜¤ë¯€ë¡œ ë‹¤ìŒ recv ì „ê¹Œì§€ëŠ” blockë¨
+// (multi-threadë¡œ ì½ì–´ì„œ ì²˜ë¦¬í•´ë„ ë§ˆì°¬ê°€ì§€ì„)
 //
 void	req_rep(int ac, char *av[])
 {
@@ -42,10 +42,10 @@ void	req_rep(int ac, char *av[])
 	responder.bind(ip_port);
 	printf("READY: %s\n", ip_port);
 
-	int bufsize = 64 * 1024;	// 1MB ¹öÆÛ 
+	int bufsize = 64 * 1024;	// 1MB ë²„í¼ 
 	responder.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
-	bufsize = 64 * 1024;	// 1MB ¹öÆÛ 
+	bufsize = 64 * 1024;	// 1MB ë²„í¼ 
 	responder.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
 	int	count = 0;

@@ -13,7 +13,7 @@ void	*thread_publisher(void *info_p)
 	double	tmstart = 0, tmend = 0;
 
 	txmsg_t	txmsg;
-	const char *message = "Hdac Technology, Àß °¡´ÂÁö °Ë»çÇÏ´Â °ÍÀÓ23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
+	const char *message = "Hdac Technology, ì˜ ê°€ëŠ”ì§€ ê²€ì‚¬í•˜ëŠ” ê²ƒì„23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
 	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 
 	txmsg.message = strdup(message);
@@ -34,7 +34,7 @@ void	*thread_publisher(void *info_p)
 		sprintf(bindstr, "tcp://*:%d", sendport);
 		xpub.bind(bindstr);
 
-		int bufsize = 1 * 1024 * 1024;	// 1MB ¹öÆÛ 
+		int bufsize = 1 * 1024 * 1024;	// 1MB ë²„í¼ 
 		xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
 		// Avoiding message loss
@@ -42,7 +42,7 @@ void	*thread_publisher(void *info_p)
 		xpub.setsockopt(ZMQ_XPUB_NODROP, &one, sizeof(one));
 
 		// max send message length
-		int qsize = 10000;		// 10000 °³
+		int qsize = 10000;		// 10000 ê°œ
 		xpub.setsockopt(ZMQ_SNDHWM, &qsize, sizeof(qsize));
 
 		sleep(2);
@@ -86,7 +86,7 @@ void	*thread_publisher(void *info_p)
 
 		//	cout << "s_send: " << data << endl;
 
-		//	Ã³À½ ¹®ÀÚ¿­ÀÌ filter°¡ ¾Æ´Ï¸é ¼ö½ÅÇÏÁö ¸øÇÔ
+		//	ì²˜ìŒ ë¬¸ìì—´ì´ filterê°€ ì•„ë‹ˆë©´ ìˆ˜ì‹ í•˜ì§€ ëª»í•¨
 		//	sprintf(data, "1234 %s pubid=%d: s_sendmore DATA %d", filter, loop, rand());
 		//	s_sendmore(xpub, data);
 		//	cout << "s_sendmore: " << data << endl;

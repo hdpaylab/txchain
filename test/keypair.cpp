@@ -80,7 +80,7 @@ int	main(int ac, char *av[])
 	result = newsecret.SetPrivKey(&privkeybuf[0], &privkeybuf[32], true);
 	printf("SerPrivKey=%s\n\n", result ? "OK" : "FAIL");
 
-	EccAutoInitReleaseHandler::initEcc();		// ¹Ýµå½Ã ÇØ¾ß ÇÔ 
+	EccAutoInitReleaseHandler::initEcc();		// ë°˜ë“œì‹œ í•´ì•¼ í•¨ 
 	CPubKey newpubkey = newsecret.GetPubKey();
 
 	uchar newpubkeybuf[66] = {0};

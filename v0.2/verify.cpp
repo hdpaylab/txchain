@@ -11,7 +11,7 @@ void	*thread_verifier(void *info_p)
 	char	ESC = TX_DELIM;
 	char	endmark[100] = {0};
 	char	tmp[4096] = {0}, *buf = NULL;
-	const char *filter = ZMQ_FILTER;	// s_sendmore()·Î publisher¿¡¼­ º¸³»´Â °Í¸¸ ¼ö¿ëÇÔ 
+	const char *filter = ZMQ_FILTER;	// s_sendmore()ë¡œ publisherì—ì„œ ë³´ë‚´ëŠ” ê²ƒë§Œ ìˆ˜ìš©í•¨ 
 
 
 	// params set

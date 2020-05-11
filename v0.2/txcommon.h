@@ -37,7 +37,7 @@ using namespace std;
 
 #define MAX_NODE		100
 
-#define MAX_VERIFIER		4		// default thread °³¼ö 
+#define MAX_VERIFIER		4		// default thread ê°œìˆ˜ 
 #define DEFAULT_CLIENT_PORT	6999		// default client management port
 #define DEFAULT_CHAIN_PORT	7000		// default chain management port
 
@@ -45,16 +45,16 @@ using namespace std;
 #define MAX_RECV_QUEUE_SIZE	100		// receive queue for subscriber
 #define MAX_VERIFY_QUEUE_SIZE	100		// receive queue for verifier
 
-#define sleepms(n)	usleep(n * 1000)	// ms ´ÜÀ§ sleep
-#define MAX_SEQ		0xFFFFFFFF		// ¸¶Áö¸· 
+#define sleepms(n)	usleep(n * 1000)	// ms ë‹¨ìœ„ sleep
+#define MAX_SEQ		0xFFFFFFFF		// ë§ˆì§€ë§‰ 
 
-#define ZMQ_FILTER	"!@#$"			// ZMQ ±¸ºĞÀÚ 
+#define ZMQ_FILTER	"!@#$"			// ZMQ êµ¬ë¶„ì 
 #define TX_DELIM	'|'			// TX delimiter
 
 
 typedef unsigned char	uchar;
 
-// msg µ¥ÀÌÅÍ Àü¼Û Å×½ºÆ®¿ë 
+// msg ë°ì´í„° ì „ì†¡ í…ŒìŠ¤íŠ¸ìš© 
 typedef struct {
 	char	*pubkey;
 	char	*message;

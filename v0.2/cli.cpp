@@ -37,7 +37,7 @@ int	main(int ac, char *av[])
 	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
 	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	// pubkey
 
-	const char *message = "Hdac Technology, Àß °¡´ÂÁö °Ë»çÇÏ´Â °ÍÀÓ23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
+	const char *message = "Hdac Technology, ìž˜ ê°€ëŠ”ì§€ ê²€ì‚¬í•˜ëŠ” ê²ƒìž„23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
 
 	// params set
 	Params_type_t params = paramsget("../lib/params.dat");

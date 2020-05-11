@@ -1,9 +1,9 @@
 //
-// calloc() : 1,000,000 / 0.0001 sec	@100¾ï/sec
-// strcpy   : 1,000,000 / 0.17 sec	@588¸¸/sec
-// memcpy() : 1,000,000 / 0.17 sec	@588¸¸/sec
-// memset() : 1,000,000 / 0.02 sec	@5000¸¸/sec
-// assert() : 1,000,000 / 0.164 sec	@600a¸¸/sec
+// calloc() : 1,000,000 / 0.0001 sec	@100ì–µ/sec
+// strcpy   : 1,000,000 / 0.17 sec	@588ë§Œ/sec
+// memcpy() : 1,000,000 / 0.17 sec	@588ë§Œ/sec
+// memset() : 1,000,000 / 0.02 sec	@5000ë§Œ/sec
+// assert() : 1,000,000 / 0.164 sec	@600aë§Œ/sec
 //
 
 #include <stdint.h>
@@ -60,7 +60,7 @@ void	*thread_queue_send(void *arg)
 	{
 		mydata_t mydata;
 
-		string data = "H31jhfsdj12j3h214g2134h123kj4|Hdac Technology, Àß °¡´ÂÁö °Ë»çÇÏ´Â °ÍÀÓ23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789|000000afasfsadfksadfsakdjfsajKJHSAFKDJDLKASJDLAJDALDJLASJDA";
+		string data = "H31jhfsdj12j3h214g2134h123kj4|Hdac Technology, ìž˜ ê°€ëŠ”ì§€ ê²€ì‚¬í•˜ëŠ” ê²ƒìž„23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789|000000afasfsadfksadfsakdjfsajKJHSAFKDJDLKASJDLAJDALDJLASJDA";
 
 		mydata.data = data;
 
@@ -133,7 +133,7 @@ void	*thread_mutex_test_vector(void *arg)
 
 	for (int ii = 0; ii < loop; )
 	{
-		idx = (ii * nthread + id) %  myv.size();	// ÀÚ½ÅÀÇ À§Ä¡ µ¥ÀÌÅÍ¸¸ Ã³¸®
+		idx = (ii * nthread + id) %  myv.size();	// ìžì‹ ì˜ ìœ„ì¹˜ ë°ì´í„°ë§Œ ì²˜ë¦¬
 
 		if (myv[idx].status != STATUS_READY)
 		{
@@ -167,7 +167,7 @@ void	*thread_mutex_test_vector(void *arg)
 }
 
 //
-// pthread_mutex Å×½ºÆ® ÄÚµå
+// pthread_mutex í…ŒìŠ¤íŠ¸ ì½”ë“œ
 //
 void	mutex_test_vector()
 {
@@ -202,7 +202,7 @@ void	mutex_test_vector()
 		int	idx = ii % myv.size();
 		mytxdata_t	tx;
 
-		// ´ÙÀ½ À§Ä¡ ÁØºñ°¡ µÇ¸é..
+		// ë‹¤ìŒ ìœ„ì¹˜ ì¤€ë¹„ê°€ ë˜ë©´..
 		if (myv[idx].status != 0 && myv[idx].status != STATUS_PROCESSED)
 		{
 			usleep(10);
@@ -279,7 +279,7 @@ void	*thread_mutex_test_queue(void *arg)
 }
 
 //
-// pthread_mutex Å×½ºÆ® ÄÚµå
+// pthread_mutex í…ŒìŠ¤íŠ¸ ì½”ë“œ
 //
 void	mutex_test_queue()
 {

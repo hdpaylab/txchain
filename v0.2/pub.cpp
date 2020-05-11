@@ -6,11 +6,11 @@
 //
 void	*thread_send_test(void *info_p)
 {
-	int	loop = MAX_TEST_NUM_TX;			// 100∏∏ 
+	int	loop = MAX_TEST_NUM_TX;			// 100Îßå 
 
 	const char *filter = ZMQ_FILTER;
 	const char ESC = TX_DELIM;
-	const char *message = "Hdac Technology, ¿ﬂ ∞°¥¬¡ˆ ∞ÀªÁ«œ¥¬ ∞Õ¿”23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
+	const char *message = "Hdac Technology, Ïûò Í∞ÄÎäîÏßÄ Í≤ÄÏÇ¨ÌïòÎäî Í≤ÉÏûÑ23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
 	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 	char	data[1024];
 	double	tmstart = 0, tmend = 0;
@@ -108,7 +108,7 @@ void	*thread_publisher(void *info_p)
 	sprintf(bindstr, "tcp://*:%d", sendport);
 	xpub.bind(bindstr);
 
-	int bufsize = 1 * 1024 * 1024;	// 1MB πˆ∆€ 
+	int bufsize = 1 * 1024 * 1024;	// 1MB Î≤ÑÌçº 
 	xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
 	// Avoiding message loss
@@ -116,7 +116,7 @@ void	*thread_publisher(void *info_p)
 	xpub.setsockopt(ZMQ_XPUB_NODROP, &one, sizeof(one));
 
 	// max send message length
-	int qsize = 10000;		// 10000 ∞≥
+	int qsize = 10000;		// 10000 Í∞ú
 	xpub.setsockopt(ZMQ_SNDHWM, &qsize, sizeof(qsize));
 
 	sleepms(500);
