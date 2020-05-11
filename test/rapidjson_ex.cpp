@@ -47,38 +47,47 @@ int	main(int ac, char *av[])
 	}";
 	*/
 
-	// const char* json = "{\"project\":\"rapidjson\",\"stars\":10}";
+	// const char* jsonfile = "{\"project\":\"rapidjson\",\"stars\":10}";
 
 	printf("FILE: %s\n", av[1]);
-	char *json = file_get(av[1]);
+	char	*jsonfile = file_get(av[1]);
 
 	// 1. Parse a JSON string into DOM.
 //	for (int ii = 0; ii < 1000000; ii++)
 	{
-		Document d;
-		d.Parse(json);
+		Document jsondoc;
+		jsondoc.Parse(jsonfile);
 
 		// 2. Modify it by DOM.
-		// Value& s = d["blocktime"];
+		// Value& s = jsondoc["blocktime"];
 		// s.SetInt(s.GetInt() + 1);
 
-		Value& ss = d["vin"][0]["txid"];
+		Value& ss = jsondoc["vin"][0]["txid"];
 		string sval = ss.GetString();
 		cout << "TXID=" << sval << endl;
 
-		Value& vv = d["vout"][1]["value"];
+		assert(jsondoc["vout"].IsArray());
+		cout << "vout Size=" << jsondoc["vout"].Size() << endl;
+
+		for (int nv = 0; nv < jsondoc["vout"].Size(); nv++)
+		{
+			Value& vv = jsondoc["vout"][nv]["value"];
+			double val = vv.GetDouble();
+			cout << "vout[" << nv << "] DOUBLE=" << val << endl;
+		}
+
+		Value& vv = jsondoc["vout"][1]["value"];
 		double val = vv.GetDouble();
 		cout << "DOUBLE=" << val << endl;
 		vv.SetDouble(vv.GetDouble() + 1.0);
 		val = vv.GetDouble();
 		cout << "DOUBLE+1.0=" << val << endl;
 
-		Value& vin = d["vin"][0]["scriptSig"]["hex"];
+		Value& vin = jsondoc["vin"][0]["scriptSig"]["hex"];
 		string shex = vin.GetString();
 		cout << "VIN.HEX=" << shex << endl;
 
-		Value& pk = d["vout"][0]["scriptPubKey"]["asm"];
-		string sasm = pk.GetString();
+		string sasm = jsondoc["vout"][0]["scriptPubKey"]["asm"].GetString();
 		cout << "VOUT.ASM=" << sasm << endl;
 		cout << endl << endl;
 
@@ -86,7 +95,7 @@ int	main(int ac, char *av[])
 		StringBuffer buffer;
 	//	Writer<StringBuffer> writer(buffer);
 		PrettyWriter<StringBuffer> writer(buffer);
-		d.Accept(writer);
+		jsondoc.Accept(writer);
 
 		// Output {"project":"rapidjson","stars":11}
 		cout << "Result: " << buffer.GetString() << endl;

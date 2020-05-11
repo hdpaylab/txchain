@@ -15,7 +15,7 @@ int	_nverifier = MAX_VERIFIER;
 int	_automode = 1;		// auto data generation mode (client input disabled)
 int	_clientport = DEFAULT_CLIENT_PORT;	
 
-int	_maxnode = 1;		// 나중에 설정으로 뺄 것 
+int	_maxnode = 1;		// 
 int	_chainport = DEFAULT_CHAIN_PORT;
 
 int	_npeer = 0;
@@ -36,9 +36,9 @@ int	main(int ac, char *av[])
 {
 	parse_command_line(ac, av);
 
-	_sendq.setmax(100000);
-	_recvq.setmax(100000);
-	_veriq.setmax(100000);
+	_sendq.setmax(10000);
+	_recvq.setmax(10000);
+	_veriq.setmax(10000);
 
 	create_main_threads();
 
@@ -46,7 +46,6 @@ int	main(int ac, char *av[])
 
 	create_verifier_threads(_nverifier);		// VERIFIER
 
-	// 테스트용 코드이므로..
 	while (1)
 	{
 		sleep(1);
@@ -78,18 +77,18 @@ void	parse_command_line(int ac, char *av[])
 	printf("Auto mode = %d\n", _automode);
 	printf("Client port = %d\n", _clientport);
 
-	// 최대 노드 개수 지정 
+	// get maxnode 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
 		_maxnode = atoi(av[1]);
 		if (_maxnode > 100)
-			_maxnode = 100;	// 최대 node는 100개로..
+			_maxnode = 100;	// ?獵? node?? 100????..
 		ac--, av++;
 	}
 	printf("Max node = %d\n", _maxnode);
 
 
-	// 발송 포트 지정 
+	// get chain port
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
 		_chainport = atoi(av[1]);
@@ -103,7 +102,7 @@ void	parse_command_line(int ac, char *av[])
 	printf("Chain port = %d\n", _chainport);
 
 
-	// 연결할 peer 지정 (테스트 때는 다이나믹하게 바뀌지 않고 고정으로..)
+	// get peer list
 	for (ii = 1; ii < ac && _npeer < MAX_NODE; ii++)
 	{
 		if (_npeer > _maxnode)
@@ -195,7 +194,7 @@ void	create_subscriber_threads()
 
 		printf("Create subscriber thread [%d]=%s\n", idx, peer);
 
-		// 다수의 노드로 테스트할 때는 자신이 자신의 프로세스에게 발송 요청을 하지 않음.
+		// skip subscriber on self node
 		if (_maxnode > 1 && atoi(tp+1) == _chainport)
 		{
 			printf("Peer %s skipped.\n", peer);

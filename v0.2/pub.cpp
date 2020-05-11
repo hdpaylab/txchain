@@ -58,7 +58,7 @@ void	*thread_send_test(void *info_p)
 		_sendq.push(txdata);
 
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
+		sleepms(DEBUG_SLEEP_MS);
 	//	if (ii % 10 == 0)
 #else
 		if (ii % 100000 == 0)
@@ -135,7 +135,7 @@ void	*thread_publisher(void *info_p)
 		if (txdata.seq == MAX_SEQ) break;
 
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
+		sleepms(DEBUG_SLEEP_MS);
 	//	if (count % 10 == 0)
 #else
 		if (count % 100000 == 0)

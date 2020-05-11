@@ -6,12 +6,12 @@
 //
 void	*thread_send_test(void *info_p)
 {
-	int	loop = MAX_TEST_NUM_TX;			// 100¸¸ 
+	int	loop = MAX_TEST_NUM_TX;			// 100
 
 	const char *filter = ZMQ_FILTER;
 	const char ESC = TX_DELIM;
-	const char *message = "Hdac Technology, Àß °¡´ÂÁö °Ë»çÇÏ´Â °ÍÀÓ23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
-	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
+	const char *message = "Hdac Technology, ìž˜ ê°€ëŠ”ì§€ í…ŒìŠ¤íŠ¸ 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
+	const char *address = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 	char	data[1024];
 	double	tmstart = 0, tmend = 0;
 
@@ -23,18 +23,18 @@ void	*thread_send_test(void *info_p)
 
 	txmsg_t	txmsg;
 	txmsg.message = strdup(message);
-	txmsg.pubkey = strdup(pubkey);
+	txmsg.address = strdup(address);
 	txmsg.signature = sign_message(
 		"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
 		txmsg.message,
 		&params.PrivHelper, &params.AddrHelper);
 
 	/*****
-	printf("xp:pubkey	: [%s]\n", txmsg.pubkey);
+	printf("xp:address	: [%s]\n", txmsg.address);
 	printf("xp:message	: [%s]\n", txmsg.message);
 	printf("xp:signature	: [%s]\n", txmsg.signature);
 
-	int verify_check = verify_message(txmsg.pubkey, txmsg.signature, txmsg.message, &params.AddrHelper);
+	int verify_check = verify_message(txmsg.address, txmsg.signature, txmsg.message, &params.AddrHelper);
 	printf("xp:verify_check=%d\n", verify_check);
 	*****/
 
@@ -47,7 +47,7 @@ void	*thread_send_test(void *info_p)
 		txdata_t txdata;
 
 		snprintf(data, sizeof(data), "%s%7d %c%s%c%s%c%s", 
-			filter, ii, ESC, txmsg.pubkey, ESC, txmsg.message, ESC, txmsg.signature);
+			filter, ii, ESC, txmsg.address, ESC, txmsg.message, ESC, txmsg.signature);
 
 		txdata.data = data;
 		txdata.seq = ii + 1;
@@ -58,7 +58,7 @@ void	*thread_send_test(void *info_p)
 		_sendq.push(txdata);
 
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
+		sleepms(DEBUG_SLEEP_MS);
 	//	if (ii % 10 == 0)
 #else
 		if (ii % 100000 == 0)
@@ -108,7 +108,7 @@ void	*thread_publisher(void *info_p)
 	sprintf(bindstr, "tcp://*:%d", sendport);
 	xpub.bind(bindstr);
 
-	int bufsize = 1 * 1024 * 1024;	// 1MB ¹öÆÛ 
+	int bufsize = 1 * 1024 * 1024;	// 1MB ???? 
 	xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
 	// Avoiding message loss
@@ -116,7 +116,7 @@ void	*thread_publisher(void *info_p)
 	xpub.setsockopt(ZMQ_XPUB_NODROP, &one, sizeof(one));
 
 	// max send message length
-	int qsize = 10000;		// 10000 °³
+	int qsize = 10000;		// 10000 ??
 	xpub.setsockopt(ZMQ_SNDHWM, &qsize, sizeof(qsize));
 
 	sleepms(500);
@@ -135,8 +135,7 @@ void	*thread_publisher(void *info_p)
 		if (txdata.seq == MAX_SEQ) break;
 
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
-	//	if (count % 10 == 0)
+	//	sleepms(DEBUG_SLEEP_MS);
 #else
 		if (count % 100000 == 0)
 #endif

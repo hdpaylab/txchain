@@ -31,8 +31,9 @@ all: tx2 cli
 tx2: $(OBJS2)
 	$(CPP) $(CPPFLAGS) -o $@ $(OBJS2) $(ALIBS) $(SDKLIBS) $(LIBS) 
 
-cli: cli.o ../lib/params.cpp
-	$(CPP) $(CPPFLAGS) -o $@ cli.o ../lib/params.cpp $(ALIBS) $(SDKLIBS) $(LIBS) 
+cli: cli.o ../lib/params.cpp ../lib/xsz.cpp ../lib/util.cpp
+	$(CPP) $(CPPFLAGS) -o $@ cli.o ../lib/params.cpp ../lib/xsz.cpp ../lib/util.cpp \
+	$(ALIBS) $(SDKLIBS) $(LIBS) 
 
 bak:
 	tar cf ~/BAK/txchain-v0.3-`date +"%y%m%d"`.tar M* *.[hcy]* *.sh README 

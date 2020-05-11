@@ -13,7 +13,7 @@ void	*thread_subscriber(void *info_p)
 	FILE	*outfp = NULL;
 	char	peerstr[100] = {0}, endmark[100] = {0};
 	char	tmp[4096] = {0}, *tp = NULL;
-	const char *filter = ZMQ_FILTER;	// s_sendmore()로 publisher에서 보내는 것만 수용함 
+	const char *filter = ZMQ_FILTER;
 
 
 	printf("SUB : peer=%s START!\n", peer);
@@ -26,7 +26,7 @@ void	*thread_subscriber(void *info_p)
 	tp = strchr(tmp, ':');
 	assert(tp != NULL);
 	*tp = '_';
-	outfp = fopen(tmp, "w+b");	// 출력파일 *.out
+	outfp = fopen(tmp, "w+b");
 	assert(outfp != NULL);
 
 	// ZMQ setup 
@@ -35,10 +35,10 @@ void	*thread_subscriber(void *info_p)
 	
 	xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 
-	int bufsize = 1 * 1024 * 1024;	// 1MB 버퍼 
+	int bufsize = 1 * 1024 * 1024;	// 1MB buffer
 	xsock.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
-	int qsize = 10000;		// 10000 개
+	int qsize = 10000;		// 10000 
 	xsock.setsockopt(ZMQ_RCVHWM, &qsize, sizeof(qsize));
 
 	sleepms(100);
@@ -62,7 +62,7 @@ void	*thread_subscriber(void *info_p)
 		fprintf(outfp, "%7d: %s\n", count, txdata.data.c_str());
 		fflush(outfp);
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
+		sleepms(DEBUG_SLEEP_MS);
 	//	if (count % 10 == 0)
 #else
 		if (count % 100000 == 0)
@@ -106,7 +106,7 @@ void	*thread_client(void *info_p)
 	printf("CLIENT: client port=%d START!\n", clientport);
 
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
-	FILE *outfp = fopen(tmp, "w+b");	// 출력파일 
+	FILE *outfp = fopen(tmp, "w+b");	// output file
 	assert(outfp != NULL);
 
 	zmq::context_t context(1);
@@ -115,10 +115,10 @@ void	*thread_client(void *info_p)
 	sprintf(ip_port, "tcp://*:%d", clientport);
 	responder.bind(ip_port);
 
-	int bufsize = 64 * 1024;	// 64k 버퍼 
+	int bufsize = 64 * 1024;	// 64k buffer
 	responder.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
-	bufsize = 64 * 1024;		// 64k 버퍼 
+	bufsize = 64 * 1024;		// 64k buffer
 	responder.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
 	int	count = 0;
@@ -140,9 +140,12 @@ void	*thread_client(void *info_p)
 		txdata.verified = TXCHAIN_STATUS_EMPTY;
 		txdata.status = TXCHAIN_STATUS_EMPTY;
 
-		_recvq.push(txdata);	// 수신된 데이터로 처리함 
+		_recvq.push(txdata);	// send to verify.cpp
 
+#ifdef DEBUG
+#else
 		if (count % 10000 == 0)
+#endif
 			cout << "Receive client request: count=" << count << " data=" << txdata.data << endl;
 
 		snprintf(retbuf, sizeof(retbuf) - 1, "RECV port %d, %5d: %s\n", 

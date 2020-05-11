@@ -22,11 +22,12 @@ using namespace std;
 
 #include "zhelpers.hpp"
 #include "safe_queue.h"
+#include "xsz.h"
 #include "tx.h"
 
 
-//#define DEBUG		1		// for debugging
-#define DEBUG_SLEEP	100
+#define DEBUG		1		// for debugging
+#define DEBUG_SLEEP_MS	1000
 #define MAX_TEST_NUM_TX	1000000		// tx count for test..
 
 
@@ -37,7 +38,7 @@ using namespace std;
 
 #define MAX_NODE		100
 
-#define MAX_VERIFIER		4		// default thread 개수 
+#define MAX_VERIFIER		4		// number of verifiers
 #define DEFAULT_CLIENT_PORT	6999		// default client management port
 #define DEFAULT_CHAIN_PORT	7000		// default chain management port
 
@@ -45,18 +46,18 @@ using namespace std;
 #define MAX_RECV_QUEUE_SIZE	100		// receive queue for subscriber
 #define MAX_VERIFY_QUEUE_SIZE	100		// receive queue for verifier
 
-#define sleepms(n)	usleep(n * 1000)	// ms 단위 sleep
-#define MAX_SEQ		0xFFFFFFFF		// 마지막 
+#define sleepms(n)	usleep(n * 1000)	// ms unit sleep
+#define MAX_SEQ		0xFFFFFFFF		// sequence
 
-#define ZMQ_FILTER	"!@#$"			// ZMQ 구분자 
+#define ZMQ_FILTER	"!@#$"			// ZMQ delimiter
 #define TX_DELIM	'|'			// TX delimiter
 
 
 typedef unsigned char	uchar;
 
-// msg 데이터 전송 테스트용 
+// DO NOT USE!
 typedef struct {
-	char	*pubkey;
+	char	*address;
 	char	*message;
 	char	*signature;
 	int	verified;

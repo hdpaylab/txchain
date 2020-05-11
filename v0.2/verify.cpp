@@ -84,7 +84,7 @@ void	*thread_verifier(void *info_p)
 
 		_veriq.push(txdata);
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
+		sleepms(DEBUG_SLEEP_MS);
 	//	if (count % 10 == 0)
 #else
 		if (count % 10000 == 0)

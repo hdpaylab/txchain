@@ -51,8 +51,6 @@ void	*thread_levledb(void *info_p)
 		db.put(key, txdata.data);
 
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
-	//	if (count % 10 == 0)
 #else
 		if (count % 100000 == 0)
 #endif

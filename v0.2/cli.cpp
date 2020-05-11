@@ -79,7 +79,7 @@ int	main(int ac, char *av[])
 		if (txdata.seq == MAX_SEQ) break;
 
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
+		sleepms(DEBUG_SLEEP_MS);
 	//	if (count % 10 == 0)
 #else
 		if (count % 10000 == 0)

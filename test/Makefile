@@ -21,7 +21,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed keypair_ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex
+all: speed keypair_ex xsz_ex leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex
 
 keypair_ex: keypair_ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ keypair_ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
@@ -35,8 +35,8 @@ leveldbex: leveldbex.cpp
 speed: speed.cpp ../lib/util.cpp 
 	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../lib/util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
-ser1: ser1.cpp ../lib/xsz.cpp
-	$(CPP) $(CPPFLAGS) -o $@ ser1.cpp ../lib/xsz.cpp $(LIBS) $(SDKLIBS) 
+xsz_ex: xsz_ex.cpp ../lib/xsz.cpp
+	$(CPP) $(CPPFLAGS) -o $@ xsz_ex.cpp ../lib/xsz.cpp $(LIBS) $(SDKLIBS) 
 
 leveldb_test: ../lib/leveldb.cpp leveldb_test.cpp
 	$(CPP) $(CPPFLAGS) -o $@ ../lib/leveldb.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
@@ -58,5 +58,5 @@ rapidjson_ex: rapidjson_ex.cpp
 
 clean:
 	rm -f $(OBJS) *.o *.out *.ver *.log \
-	speed ex ser1 leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint \
+	speed ex xsz leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint \
 	keypair_ex rapidjson_ex

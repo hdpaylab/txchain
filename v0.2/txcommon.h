@@ -26,7 +26,7 @@ using namespace std;
 
 
 //#define DEBUG		1		// for debugging
-#define DEBUG_SLEEP	100
+#define DEBUG_SLEEP_MS	100
 #define MAX_TEST_NUM_TX	1000000		// tx count for test..
 
 

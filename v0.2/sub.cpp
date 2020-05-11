@@ -62,7 +62,7 @@ void	*thread_subscriber(void *info_p)
 		fprintf(outfp, "%7d: %s\n", count, txdata.data.c_str());
 		fflush(outfp);
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
+		sleepms(DEBUG_SLEEP_MS);
 	//	if (count % 10 == 0)
 #else
 		if (count % 100000 == 0)

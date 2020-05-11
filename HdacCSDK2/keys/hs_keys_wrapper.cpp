@@ -291,6 +291,19 @@ char *sign_message(const char *strAddress, const char *strMessage,
 }
 
 
+string sign_message_bin(const char *strAddress, const char *strMessage, const size_t nMessageSize,
+		struct PrivateKeyHelpInfo *privatehelper, struct WalletAddrHelpInfo *addrhelper)
+{
+	PrivateKeyHelperConstant privHelper(privatehelper->privateKeyPrefix, privatehelper->addrChecksum);
+	WalletAddrHelperConstant addrHelper(addrhelper->pubKeyAddrPrefix, addrhelper->scriptAddrPrefix, addrhelper->addrChecksum);
+
+	string ss(strMessage, nMessageSize);
+	string result = SignMessage(strAddress, ss, privHelper, addrHelper);
+
+	return result;
+}
+
+
 /**
  *
  * @brief VerifyMessage 함수를 c에서 사용 하기 위해 wrapping 한 함수.
@@ -308,6 +321,18 @@ int verify_message(const char *strAddress, const char *strSign, const char *strM
 	WalletAddrHelperConstant addrHelper(addrhelper->pubKeyAddrPrefix, addrhelper->scriptAddrPrefix, addrhelper->addrChecksum);
 
 	int result = VerifyMessage(strAddress, strSign, strMessage, addrHelper);
+
+	return result;
+}
+
+int verify_message_bin(const char *strAddress, const char *strSign, 
+	const char *strMessage, const size_t nMessageSize,
+	struct WalletAddrHelpInfo *addrhelper)
+{
+	WalletAddrHelperConstant addrHelper(addrhelper->pubKeyAddrPrefix, addrhelper->scriptAddrPrefix, addrhelper->addrChecksum);
+
+	string ss(strMessage, nMessageSize);
+	int result = VerifyMessage(strAddress, strSign, ss, addrHelper);
 
 	return result;
 }

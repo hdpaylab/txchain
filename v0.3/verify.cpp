@@ -11,7 +11,7 @@ void	*thread_verifier(void *info_p)
 	char	ESC = TX_DELIM;
 	char	endmark[100] = {0};
 	char	tmp[4096] = {0}, *buf = NULL;
-	const char *filter = ZMQ_FILTER;	// s_sendmore()로 publisher에서 보내는 것만 수용함 
+	const char *filter = ZMQ_FILTER;
 
 
 	// params set
@@ -84,8 +84,6 @@ void	*thread_verifier(void *info_p)
 
 		_veriq.push(txdata);
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP);
-	//	if (count % 10 == 0)
 #else
 		if (count % 10000 == 0)
 #endif
