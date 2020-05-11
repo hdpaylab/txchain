@@ -13,6 +13,8 @@
 #include <unistd.h>
 #include <libpq-fe.h>
 #include <keys/hs_keys_wrapper.h>	// xparams.h
+#include <structs/hashes.h>		// CSHA256()
+#include <utils/utilstrencodings.h>	// HexStr()
 #include <sys/time.h>
 #include <leveldb/c.h>			// xleveldb.cpp
 
@@ -32,7 +34,6 @@ using namespace std;
 
 
 
-//#define TXCHAIN_VERIFY_MODEL_MSGQ	1
 #define TXCHAIN_VERIFY_MODEL_QUEUE	3
 
 
@@ -55,7 +56,8 @@ using namespace std;
 
 typedef unsigned char	uchar;
 
-// DO NOT USE!
+
+// msg 데이터 전송 테스트용 
 typedef struct {
 	char	*address;
 	char	*message;
@@ -63,25 +65,17 @@ typedef struct {
 	int	verified;
 }	txmsg_t;
 
-enum {
-	TXCHAIN_STATUS_ERROR		= 0xFFFFFFFF,
-	TXCHAIN_STATUS_VALID		= 0x61206120,
-	TXCHAIN_STATUS_EMPTY		= 0x00000000,
-	TXCHAIN_STATUS_READY		= 0x00010000,
-	TXCHAIN_STATUS_RECV		= 0x00020000,
-	TXCHAIN_STATUS_VERI		= 0x00040000,
-	TXCHAIN_STATUS_VERI_REQ		= 0x00080000,
-	TXCHAIN_STATUS_VERI_RESULT	= 0x00100000,
-};
-
 
 typedef struct {
-	string		data;
+	string		data;		// for sign (include tx_sign_t)
+	tx_sign_t	sign;		// sign 
+	string		txid;		// sha256(sign)
+
 	uint32_t	seq;		// TX sequence
-	uint32_t	valid;		// Valid TX mark
+	uint32_t	valid;		// 0=invalid 1=valid -1=none
 	int		verified;	// 0=fail 1=success -1=none 
 					// WARNING: DO NOT MOVE status position!
-	uint32_t	status;		// see above TXCHAIN_STATUS_xxx
+	uint32_t	status;		// see above TX_STATUS_xxx
 }	txdata_t;
 
 
@@ -103,16 +97,11 @@ void	*thread_client(void *info_p);		// sub.cpp
 void	*thread_verifier(void *info_p);		// verify.cpp
 void	*thread_levledb(void *info_p);		// leveldb.cpp
 
+
 double	xgetclock();				// util.cpp
-
-
-////////////////////////////////////////////////////////////////////////////////
-#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
-
-#define SUBSCRIBER_MSGQ_ID	1234
-#define VERIFIER_MSGQ_ID	1235
-
-#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
+string	bin2hex(const char *bin, const size_t binlen);
+string	hex2bin(const char *hexstr, const size_t len);
+string	hex2bin(const string& hexstr);
 
 
 #endif	// __COMMON_H

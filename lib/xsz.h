@@ -42,7 +42,7 @@ uint32_t size2hdrlen(size_t sz);
 uint32_t size2hdrbytes(size_t sz);
 void	setdatasize(void *buf, size_t sz, int hdrbytes);
 uint64_t getdatasize(void *buf, int hdrbytes);
-void	dumpbin(char *buf, size_t bufsz);
+void	dumpbin(char *buf, size_t bufsz, int nthnl = 0, int spc = 1);
 
 
 size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz);
@@ -57,7 +57,7 @@ public:
 	{
 		bufsz_ = sz;
 		if (bufsz_ <= 0)
-			bufsz_ = 64 * 1024;
+			bufsz_ = 4 * 1024;
 		inbuf_ = outbuf_ = buf_ = (char *)calloc(1, bufsz_);
 		allocated_ = 1;
 		inbufpos_ = outbufpos_ = 0;
@@ -75,12 +75,18 @@ public:
 		inbuf_ = outbuf_ = buf_ = NULL;
 	}
 
+	void rewind()
+	{
+		outbuf_ = buf_;
+		outbufpos_ = 0;
+	}
+
 	size_t getsize()
 	{
 		return inbufpos_;
 	}
 
-	char *getbuf()
+	char *getdata()
 	{
 		return buf_;
 	}
@@ -91,7 +97,25 @@ public:
 		return ss;
 	}
 
-	int	getcurtype()
+	void setdata(char *data, size_t datalen)
+	{
+		if (data == NULL || datalen <= 0)
+			return;
+		clear();
+		check_in_size(datalen);
+		memcpy(inbuf_, data, datalen);
+	}
+
+	void setstring(string& str)
+	{
+		if (str.length() <= 0)
+			return;
+		clear();
+		check_in_size(str.length());
+		memcpy(inbuf_, str.c_str(), str.length());
+	}
+
+	int getcurtype()
 	{
 		return (*outbuf_ & XSZ_TYPE_MASK);
 	}
@@ -123,7 +147,7 @@ public:
 		}
 	}
 
-	void	setbuf(char *newbuf, size_t newbuflen)
+	void setbuf(char *newbuf, size_t newbuflen)
 	{
 		clear();
 		if (newbuf && newbuflen > 0)
@@ -145,7 +169,7 @@ public:
 				free(buf_);
 			inbufpos_ = outbufpos_ = 0;
 			if (bufsz_ <= 0)
-				bufsz_ = 64 * 1024;
+				bufsz_ = 4 * 1024;
 			inbuf_ = outbuf_ = buf_ = (char *)calloc(1, bufsz_);
 			allocated_ = 1;
 		}
@@ -290,7 +314,6 @@ public:
 	size_t operator >>(int8_t& i8)
 	{
 		if (debug_) printf("i8: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 2);
 		size_t	sz = sizeof(i8);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT8, (void *)&i8, sz));
 	}
@@ -298,7 +321,6 @@ public:
 	size_t operator >>(int16_t& i16)
 	{
 		if (debug_) printf("i16: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 3);
 		size_t	sz = sizeof(i16);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT16, (void *)&i16, sz));
 	}
@@ -306,7 +328,6 @@ public:
 	size_t operator >>(int32_t& i32)
 	{
 		if (debug_) printf("i32: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 5);
 		size_t	sz = sizeof(i32);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT32, (void *)&i32, sz));
 	}
@@ -314,7 +335,6 @@ public:
 	size_t operator >>(int64_t& i64)
 	{
 		if (debug_) printf("i64: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 9);
 		size_t	sz = sizeof(i64);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT64, (void *)&i64, sz));
 	}
@@ -322,7 +342,6 @@ public:
 	size_t operator >>(uint8_t& u8)
 	{
 		if (debug_) printf("u8: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 2);
 		size_t	sz = sizeof(u8);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT8, (void *)&u8, sz));
 	}
@@ -330,7 +349,6 @@ public:
 	size_t operator >>(uint16_t& u16)
 	{
 		if (debug_) printf("u16: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 3);
 		size_t	sz = sizeof(u16);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT16, (void *)&u16, sz));
 	}
@@ -338,7 +356,6 @@ public:
 	size_t operator >>(uint32_t& u32)
 	{
 		if (debug_) printf("u32: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 5);
 		size_t	sz = sizeof(u32);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT32, (void *)&u32, sz));
 	}
@@ -346,7 +363,6 @@ public:
 	size_t operator >>(uint64_t& u64)
 	{
 		if (debug_) printf("u64: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 9);
 		size_t	sz = sizeof(u64);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&u64, sz));
 	}
@@ -354,7 +370,6 @@ public:
 	size_t operator >>(float& ff)
 	{
 		if (debug_) printf("ff: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 5);
 		size_t	sz = sizeof(ff);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&ff, sz));
 	}
@@ -362,16 +377,15 @@ public:
 	size_t operator >>(double& dd)
 	{
 		if (debug_) printf("dd: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
-	//	dumpbin(outbuf_, 9);
 		size_t	sz = sizeof(dd);
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&dd, sz));
 	}
 
-	void	dump()
+	void	dump(int nthnl = 1, int spc = 0)
 	{
 		size_t sz = getsize();
-		char *buf = getbuf();
-		dumpbin(buf, sz);
+		char *buf = getdata();
+		dumpbin(buf, sz, nthnl, spc);
 	}
 
 private:
@@ -388,7 +402,7 @@ private:
 		}
 		else if (allocated_ && inbufpos_ + reqsz > bufsz_ && buf_)
 		{
-			size_t	newsz = (inbufpos_ + reqsz) + 64 * 1024;
+			size_t	newsz = (inbufpos_ + reqsz) + 4 * 1024;
 			char	*newbuf = (char *)calloc(1, newsz);
 			if (newbuf)
 			{

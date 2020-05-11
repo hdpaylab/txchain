@@ -7,19 +7,6 @@ void	*thread_levledb(void *info_p)
 	int	count = 0;
 	double	tmstart, tmend;
 
-#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
-
-	data_t	msq_data;
-
-	// message queue connect
-	int rmsqid = msgget( (key_t)VERIFIER_MSGQ_ID, IPC_CREAT | 0666);
-	if (rmsqid == -1) {
-		perror("msgget(VERIFIER_MSGQ_ID)");
-		exit(-1);
-	}
-
-#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
-
 	leveldb db("test.db");
 
 	tmstart = xgetclock();
@@ -27,26 +14,20 @@ void	*thread_levledb(void *info_p)
 	while (1)
 	{
 		txdata_t txdata;
-		char	key[16] = {0};
+		tx_send_token_t txsend;
+		xserial txsz(4 * 1024);
+		string	key;
 
 		count++;
 		txdata = _veriq.pop();
 
-#ifdef TXCHAIN_VERIFY_MODEL_MSGQ
+		txsz.setstring(txdata.data);
+		printf("\n");
+		printf("LDBIO:\n");
+		deseriz(txsz, txsend, 1);
+		deseriz(txsz, txdata.sign, 1);
 
-		// message queue recv
-		if (msgrcv(rmsqid, &msq_data, BUFF_SIZE, 1, 0) == -1)
-		{
-			fprintf(stderr, "ERROR: message queue recv error\n");
-			sleepms(1);
-			continue;
-		}
-
-		data = msq_data.mtext;
-
-#endif	// TXCHAIN_VERIFY_MODEL_MSGQ
-
-		sprintf(key, "key %d", count);
+		key = txdata.sign.signature;
 
 		db.put(key, txdata.data);
 

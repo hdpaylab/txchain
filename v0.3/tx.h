@@ -6,6 +6,18 @@
 
 
 enum {
+	TX_STATUS_SEND		= 0x00000000,
+	TX_STATUS_REPLY		= 0x00000001,
+	TX_STATUS_READY		= 0x00010000,
+	TX_STATUS_RECV		= 0x00020000,
+	TX_STATUS_VERI		= 0x00040000,
+	TX_STATUS_VERI_REQ	= 0x00080000,
+	TX_STATUS_VERI_RESULT	= 0x00100000,
+	TX_STATUS_ERROR		= 0xFFFFFFFF,
+	TX_STATUS_VALID		= 0x61206120,
+};
+
+enum {
         // Token commands
         TX_CREATE_TOKEN         = 100,
         TX_SEND_TOKEN,
@@ -36,43 +48,47 @@ enum {
 
 
 typedef struct {
-        string  signature;
-        double  sign_clock;
-}       tx_sign_t;
+	size_t		data_length;	// sign data length
+	string		signature;
+}	tx_sign_t;
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
+	uint32_t        type;		// TX_xxx
+	uint32_t	status;		// TX_STATUS_xxx
+	uint32_t        seq;
 
-        string          from_addr;
-        string          to_addr;
-        string          token_name;     // 256 bytes
+	string          from_addr;
+	string          to_addr;
+	string          token_name;     // 256 bytes
 
-        uint64_t        quantity;       // 발행 수량
-        uint64_t        smallest_unit;  // 최소 단위
-        uint64_t        native_amount;  // native 수량
+	uint64_t        quantity;       // 발행 수량
+	uint64_t        smallest_unit;  // 최소 단위
+	uint64_t        native_amount;  // native 수량
 
-        string          access;         // "1"=1time / "##"=N번 추가 생성 가능 / "forever"=계속 생성 가능
-        time_t          start_time;     // token 시작 시간 (0이면 즉시)
-        time_t          expire_time;    // token 중단 시간 (0이면 계속)
+	string          access;         // "1"=1time / "##"=N번 추가 생성 가능 / "forever"=계속 생성 가능
+	time_t          start_time;     // token 시작 시간 (0이면 즉시)
+	time_t          expire_time;    // token 중단 시간 (0이면 계속)
 
-        string          user_data;
+	string          user_data;
+        double  	sign_clock;
 }       tx_create_token_t;
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
+	uint32_t        type;
+	uint32_t	status;		// TX_STATUS_xxx
+	uint32_t        seq;
 
-        string          from_addr;
-        string          to_addr;
-        string          token_name;     // 256 bytes
-        uint64_t        amount;
-        uint64_t        native_amount;
-        uint32_t        fee;
+	string          from_addr;
+	string          to_addr;
+	string          token_name;     // 256 bytes
+	double		amount;
+	double		native_amount;
+	double		fee;
 
-        string          user_data;
+	string          user_data;
+        double  	sign_clock;
 }       tx_send_token_t;
 
 
@@ -89,6 +105,7 @@ typedef struct {
         time_t          expire_time;    // channel 중단 시간 (0이면 계속)
 
         string          user_data;
+        double  	sign_clock;
 }       tx_create_channel_t;
 
 
@@ -103,6 +120,7 @@ typedef struct {
         string          value;          // size limit: max tx size
 
         string          user_data;
+        double  	sign_clock;
 }       tx_publish_channel_t;
 
 
@@ -119,6 +137,7 @@ typedef struct {
         time_t          expire_time;    // contract 중단 시간 (0이면 계속)
 
         string          user_data;
+        double  	sign_clock;
 }       tx_create_contract_t;
 
 
@@ -133,6 +152,7 @@ typedef struct {
         string          action;         // "pause" "stop" "start" "destroy"
 
         string          user_data;
+        double  	sign_clock;
 }       tx_destroy_t;
 
 
@@ -152,6 +172,7 @@ typedef struct {
         time_t          expire_time;    // permission 중단 시간 (0이면 계속)
 
         string          user_data;
+        double  	sign_clock;
 }       tx_grant_revoke_t;
 
 
@@ -168,6 +189,7 @@ typedef struct {
         time_t          expire_time;    // permission 중단 시간 (0이면 계속)
 
         string          user_data;
+        double  	sign_clock;
 }       tx_create_wallet_t;
 
 
@@ -184,6 +206,7 @@ typedef struct {
         time_t          expire_time;    // permission 중단 시간 (0이면 계속)
 
         string          user_data;
+        double  	sign_clock;
 }       tx_create_account_t;
 
 
@@ -201,6 +224,7 @@ typedef struct {
         string          command;
 
         string          user_data;
+        double  	sign_clock;
 }       tx_control_t;
 
 
@@ -215,6 +239,12 @@ typedef struct {
         uint32_t        reply_fail;     // map 필요
 
 }       txstat_t;
+
+
+int	seriz_add(xserial& xsz, tx_send_token_t& tx);
+int	seriz_add(xserial& xsz, tx_sign_t& tx);
+int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump = 0);
+int	deseriz(xserial& xsz, tx_sign_t& tx, int dump = 0);
 
 
 #endif  // __TX_H

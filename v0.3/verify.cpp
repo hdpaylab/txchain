@@ -8,9 +8,8 @@ void	*thread_verifier(void *info_p)
 	double	tmstart, tmend;
 
 	FILE	*outfp = NULL;
-	char	ESC = TX_DELIM;
 	char	endmark[100] = {0};
-	char	tmp[4096] = {0}, *buf = NULL;
+	char	tmp[256] = {0};
 	const char *filter = ZMQ_FILTER;
 
 
@@ -30,56 +29,26 @@ void	*thread_verifier(void *info_p)
 	while (1)
 	{
 		txdata_t txdata;
-		string data, pubkey, message, signature;
+		tx_send_token_t txsend;
+		xserial txsz(4 * 1024);
+		string	data;
 
 		count++;
 		txdata = _recvq.pop();
-		data = txdata.data;
-		txdata.verified = 0;
 
-		buf = (char *)data.c_str();
-	//	printf("VER%02d: data=%s seq=%d status=%X\n", thrid, buf, txdata.seq, txdata.status);
+		txsz.setstring(txdata.data);
+		printf("\n");
+		printf("VERIFY:\n");
+		deseriz(txsz, txsend, 1);
+		deseriz(txsz, txdata.sign, 1);
 
-		if (strlen(buf) >= strlen(filter) + 8)	// 4 byte filter, 8 byte number
-		{
-			//                 pp       mp        sp
-			// "!@#$####### ESCpubkeyESCmessageESCsignatureESC"
-			char	*pp = strchr(buf, ESC); 
-			if (pp)
-			{
-				*pp = 0; pp++;
-				char *mp = strchr(pp, ESC);
-				if (mp)
-				{
-					*mp = 0; mp++;
-					char *sp = strchr(mp, ESC);
-					if (sp) {
-						*sp = 0; sp++;
-						pubkey = pp;
-						message = mp;
-						signature = sp;
-					}
-				}
-			}
-		}
+		txdata.verified = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
+					txdata.data.c_str(), txdata.sign.data_length, &params.AddrHelper);
 
-		if (pubkey.length() == 0 || message.length() == 0 || signature.length() == 0)
-		{
-			fprintf(stderr, "ERROR: Verifier %d: pubkey len=%ld message len=%ld signature len=%ld\n",
-				thrid, pubkey.length(), message.length(), signature.length());
-			continue;
-		}
+		printf("	VERITY	: %d\n", txdata.verified);
 
-		txdata.verified = verify_message(pubkey.c_str(), signature.c_str(), 
-					message.c_str(), &params.AddrHelper);
-
-	//	printf("	pubkey	: [%s]\n", pubkey.c_str());
-	//	printf("	message	: [%s]\n", message.c_str());
-	//	printf("	signature	: [%s]\n", signature.c_str());
-	//	printf("	VERITY	: %d\n", txdata.verified);
-
-		fprintf(outfp, "VER%02d: %7d: %s signature=%s\n",
-			thrid, count, txdata.verified == 1 ? "true" : "false", signature.c_str());
+		fprintf(outfp, "VER%02d: %7d: %s signature=%s\n", thrid, count, 
+			txdata.verified == 1 ? "true" : "false", txdata.sign.signature.c_str());
 		fflush(outfp);
 
 		_veriq.push(txdata);

@@ -102,12 +102,13 @@ uint64_t getdatasize(void *buf, int hdrbytes)
 }
 
 
-void	dumpbin(char *buf, size_t bufsz)
+void	dumpbin(char *buf, size_t bufsz, int nthnl, int spc)
 {
-//	printf("DUMP:	");
 	for (size_t ii = 0; ii < bufsz; ii++)
 	{
-		printf("%02X ", buf[ii] & 0x00FF);
+		if (ii > 0 && nthnl > 0 && ii % nthnl == 0)
+			printf("\n");
+		printf("%02X%s", buf[ii] & 0x00FF, spc ? " " : "");
 	}
 	printf("\n");
 }

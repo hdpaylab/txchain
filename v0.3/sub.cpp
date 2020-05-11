@@ -62,16 +62,14 @@ void	*thread_subscriber(void *info_p)
 		fprintf(outfp, "%7d: %s\n", count, txdata.data.c_str());
 		fflush(outfp);
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP_MS);
-	//	if (count % 10 == 0)
 #else
 		if (count % 100000 == 0)
 #endif
 			printf("SUB : Recv %7d recvq=%5ld\n", count, _recvq.size());
 
 		txdata.seq = count;
-		txdata.verified = TXCHAIN_STATUS_EMPTY;
-		txdata.status = TXCHAIN_STATUS_EMPTY;
+		txdata.verified = -1;
+		txdata.status = TX_STATUS_SEND;
 
 		_recvq.push(txdata);
 	}
@@ -105,6 +103,9 @@ void	*thread_client(void *info_p)
 
 	printf("CLIENT: client port=%d START!\n", clientport);
 
+	// params set
+	Params_type_t params = paramsget("../lib/params.dat");
+
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
 	FILE *outfp = fopen(tmp, "w+b");	// output file
 	assert(outfp != NULL);
@@ -126,6 +127,8 @@ void	*thread_client(void *info_p)
 	while(1)
 	{
 		txdata_t txdata;
+		tx_send_token_t txsend;
+		xserial txsz(4 * 1024);
 		char	retbuf[256] = {0};
 
 		//  Wait for next request from client
@@ -133,12 +136,31 @@ void	*thread_client(void *info_p)
 
 		count++;
 
-		fprintf(outfp, "%d: %s\n", count, txdata.data.c_str());
-		fflush(outfp);
+		txsz.setstring(txdata.data);
 
-		txdata.seq = count;
-		txdata.verified = TXCHAIN_STATUS_EMPTY;
-		txdata.status = TXCHAIN_STATUS_EMPTY;
+		txsz >> txsend.type;
+		txsz >> txsend.status;
+		txsz.rewind();
+
+		printf("\n");
+		printf("SUB:\n");
+		deseriz(txsz, txsend, 1);
+		deseriz(txsz, txdata.sign, 1);
+
+		txdata.verified = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
+					txdata.data.c_str(), txdata.sign.data_length, &params.AddrHelper);
+
+		printf("	VERITY	: %d\n", txdata.verified);
+sleep(1);
+		CSHA256 sha;
+		unsigned char hash[CSHA256::OUTPUT_SIZE];	// 32B
+		sha.Write(reinterpret_cast<const unsigned char*>(txdata.sign.signature.c_str()), txdata.sign.signature.length()).Finalize(hash);
+		txdata.txid = bin2hex((const char *)hash, sizeof(hash));
+	//	printf("HASH=%s\nDUMP:", txdata.txid.c_str()); 
+	//	dumpbin((char *)hash, sizeof(hash), 0);
+
+		txdata.valid = -1;
+		txdata.status = TX_STATUS_READY;
 
 		_recvq.push(txdata);	// send to verify.cpp
 
@@ -146,10 +168,12 @@ void	*thread_client(void *info_p)
 #else
 		if (count % 10000 == 0)
 #endif
-			cout << "Receive client request: count=" << count << " data=" << txdata.data << endl;
+			cout << "Client request: count=" << count << " sign=" << txdata.sign.signature << endl;
 
-		snprintf(retbuf, sizeof(retbuf) - 1, "RECV port %d, %5d: %s\n", 
-			clientport, count, txdata.data.c_str());
+		if (txdata.verified)
+			snprintf(retbuf, sizeof(retbuf) - 1, "%s", txdata.txid.c_str());
+		else
+			snprintf(retbuf, sizeof(retbuf) - 1, "Transaction verification failed!\n");
 
 		// Send reply back to client
 		s_send(responder, retbuf);
