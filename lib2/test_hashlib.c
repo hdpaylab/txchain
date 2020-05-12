@@ -11,16 +11,12 @@
 //
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdbool.h>
-#include "rc4.h"
-#include "md5.h"
-#include "sha1.h"
-#include "sha256.h"
-#include "sha512.h"
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <stdint.h>
+//#include <string.h>
+//#include <stdbool.h>
+#include "libhash.h"
 
 
 #define MAX_PLAINTEXT_SIZE      100
@@ -164,7 +160,7 @@ static TestVector gTestVectors [] =
     },
 
 };
-#define NUM_TEST_VECTORS ( sizeof(gTestVectors) / sizeof(gTestVectors[0]) )
+#define NUM_TEST_VECTORS (sizeof(gTestVectors) / sizeof(gTestVectors[0]) )
 
 
 //
@@ -179,42 +175,42 @@ static	bool	TestMd5 (void)
     MD5_HASH    hash;
     bool        success = true;
 
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Md5Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        Md5Update( &context, gTestVectors[i].PlainText, (uint32_t)len );
-        Md5Finalise( &context, &hash );
+        Md5Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        Md5Update(&context, gTestVectors[i].PlainText, (uint32_t)len);
+        Md5Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Md5Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Md5Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestMd5 - Test vector %u failed\n", i );
+            printf("TestMd5 - Test vector %u failed\n", i);
             success = false;
         }
     }
 
     // Check the vectors again, this time adding just 1 char at a time to the hash functions
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Md5Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        for( k=0; k<len; k++ )
+        Md5Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        for(k=0; k<len; k++ )
         {
-            Md5Update( &context, &gTestVectors[i].PlainText[k], 1 );
+            Md5Update(&context, &gTestVectors[i].PlainText[k], 1);
         }
-        Md5Finalise( &context, &hash );
+        Md5Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Md5Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Md5Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestMd5 - Test vector %u failed [byte by byte]\n", i );
+            printf("TestMd5 - Test vector %u failed [byte by byte]\n", i);
             success = false;
         }
     }
@@ -236,42 +232,42 @@ static	bool	TestSha1(void)
     SHA1_HASH   hash;
     bool        success = true;
 
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Sha1Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        Sha1Update( &context, gTestVectors[i].PlainText, (uint32_t)len );
-        Sha1Finalise( &context, &hash );
+        Sha1Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        Sha1Update(&context, gTestVectors[i].PlainText, (uint32_t)len);
+        Sha1Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Sha1Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Sha1Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestSha1 - Test vector %u failed\n", i );
+            printf("TestSha1 - Test vector %u failed\n", i);
             success = false;
         }
     }
 
     // Check the vectors again, this time adding just 1 char at a time to the hash functions
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Sha1Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        for( k=0; k<len; k++ )
+        Sha1Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        for(k=0; k<len; k++ )
         {
-            Sha1Update( &context, &gTestVectors[i].PlainText[k], 1 );
+            Sha1Update(&context, &gTestVectors[i].PlainText[k], 1);
         }
-        Sha1Finalise( &context, &hash );
+        Sha1Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Sha1Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Sha1Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestSha1 - Test vector %u failed [byte by byte]\n", i );
+            printf("TestSha1 - Test vector %u failed [byte by byte]\n", i);
             success = false;
         }
     }
@@ -293,42 +289,42 @@ static	bool	TestSha256(void)
     SHA256_HASH     hash;
     bool            success = true;
 
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Sha256Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        Sha256Update( &context, gTestVectors[i].PlainText, (uint32_t)len );
-        Sha256Finalise( &context, &hash );
+        Sha256Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        Sha256Update(&context, gTestVectors[i].PlainText, (uint32_t)len);
+        Sha256Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Sha256Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Sha256Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestSha256 - Test vector %u failed\n", i );
+            printf("TestSha256 - Test vector %u failed\n", i);
             success = false;
         }
     }
 
     // Check the vectors again, this time adding just 1 char at a time to the hash functions
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Sha256Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        for( k=0; k<len; k++ )
+        Sha256Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        for(k=0; k<len; k++ )
         {
-            Sha256Update( &context, &gTestVectors[i].PlainText[k], 1 );
+            Sha256Update(&context, &gTestVectors[i].PlainText[k], 1);
         }
-        Sha256Finalise( &context, &hash );
+        Sha256Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Sha256Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Sha256Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestSha256 - Test vector %u failed [byte by byte]\n", i );
+            printf("TestSha256 - Test vector %u failed [byte by byte]\n", i);
             success = false;
         }
     }
@@ -349,42 +345,42 @@ static	bool	TestSha512(void)
     SHA512_HASH     hash;
     bool            success = true;
 
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Sha512Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        Sha512Update( &context, gTestVectors[i].PlainText, (uint32_t)len );
-        Sha512Finalise( &context, &hash );
+        Sha512Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        Sha512Update(&context, gTestVectors[i].PlainText, (uint32_t)len);
+        Sha512Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Sha512Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Sha512Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestSha512 - Test vector %u failed\n", i );
+            printf("TestSha512 - Test vector %u failed\n", i);
             success = false;
         }
     }
 
     // Check the vectors again, this time adding just 1 char at a time to the hash functions
-    for( i=0; i<NUM_TEST_VECTORS; i++ )
+    for(i=0; i < (int)NUM_TEST_VECTORS; i++ )
     {
-        Sha512Initialise( &context );
-        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen( gTestVectors[i].PlainText );
-        for( k=0; k<len; k++ )
+        Sha512Initialise(&context);
+        len = (int) gTestVectors[i].PlainTextSize ? gTestVectors[i].PlainTextSize : (int)strlen(gTestVectors[i].PlainText);
+        for(k=0; k<len; k++ )
         {
-            Sha512Update( &context, &gTestVectors[i].PlainText[k], 1 );
+            Sha512Update(&context, &gTestVectors[i].PlainText[k], 1);
         }
-        Sha512Finalise( &context, &hash );
+        Sha512Finalise(&context, &hash);
 
-        if( memcmp( &hash, &gTestVectors[i].Sha512Hash, sizeof(hash) ) == 0 )
+        if (memcmp(&hash, &gTestVectors[i].Sha512Hash, sizeof(hash)) == 0 )
         {
             // Test vector passed
         }
         else
         {
-            printf( "TestSha512 - Test vector %u failed [byte by byte]\n", i );
+            printf("TestSha512 - Test vector %u failed [byte by byte]\n", i);
             success = false;
         }
     }
@@ -417,31 +413,31 @@ static	bool	TestRc4(void)
     int             i;
     bool            success = true;
 
-    for( i=0; i<(sizeof(TestVectors)/sizeof(TestVectors[0])); i++ )
+    for(i=0; i < (int)(sizeof(TestVectors)/sizeof(TestVectors[0])); i++ )
     {
-        Rc4Initialise( &context, TestVectors[i].Key, (uint8_t)strlen(TestVectors[i].Key), TestVectors[i].Drop );
-        Rc4Output( &context, output, sizeof(output) );
-        if( memcmp( output, TestVectors[i].Output, sizeof(output) ) != 0 )
+        Rc4Initialise(&context, TestVectors[i].Key, (uint8_t)strlen(TestVectors[i].Key), TestVectors[i].Drop);
+        Rc4Output(&context, output, sizeof(output));
+        if (memcmp(output, TestVectors[i].Output, sizeof(output)) != 0 )
         {
-            printf( "TestRc4 - Failed test vector: %u\n", i );
+            printf("TestRc4 - Failed test vector: %u\n", i);
             success = false;
         }
     }
 
     // Test by doing drop manually
-    for( i=0; i<(sizeof(TestVectors)/sizeof(TestVectors[0])); i++ )
+    for(i=0; i < (int)(sizeof(TestVectors)/sizeof(TestVectors[0])); i++ )
     {
         int x;
 
-        Rc4Initialise( &context, TestVectors[i].Key, (uint8_t)strlen(TestVectors[i].Key), 0 );
-        for( x=0; x<TestVectors[i].Drop; x++ )
+        Rc4Initialise(&context, TestVectors[i].Key, (uint8_t)strlen(TestVectors[i].Key), 0);
+        for(x=0; x<TestVectors[i].Drop; x++ )
         {
-            Rc4Output( &context, output, 1 );
+            Rc4Output(&context, output, 1);
         }
-        Rc4Output( &context, output, sizeof(output) );
-        if( memcmp( output, TestVectors[i].Output, sizeof(output) ) != 0 )
+        Rc4Output(&context, output, sizeof(output));
+        if (memcmp(output, TestVectors[i].Output, sizeof(output)) != 0 )
         {
-            printf( "TestRc4 - Failed test vector: %u [manual drop]\n", i );
+            printf("TestRc4 - Failed test vector: %u [manual drop]\n", i);
             success = false;
         }
     }
@@ -451,48 +447,61 @@ static	bool	TestRc4(void)
 }
 
 //
-//  Program entry point
+// online 사이트에서 나오는 값과 비교 완료함 
+// sha1() sha256() sha512() 정상 작동함 
 //
 int	main(void)
 {
+    string data = "해시가 잘 되는지 테스트ABCDEF!@#$1234";
+
+    printf("DATA=%s\n\n", data.c_str());
+
+    string hash1 = sha1(data);
+    printf("sha1=%s\n", hash1.c_str());
+
+    string hash256 = sha256(data);
+    printf("sha256=%s\n", hash256.c_str());
+
+    string hash512 = sha512(data);
+    printf("sha512=%s\n", hash512.c_str());
+
+    exit(0);
+
     bool    success;
     bool    allSuccess = true;
 
-    printf( 
-        "CryptLibTest\n"
-        "------------\n"
-        "\n" );
+    printf("CryptLibTest\n------------\n\n");
 
-    success = TestMd5( );
-    if( !success ) { allSuccess = false; }
-    printf( "Test MD5    - %s\n", success?"Pass":"Fail" );    
+    success = TestMd5();
+    if (!success)
+    	allSuccess = false;
+    printf("Test MD5    - %s\n", success?"Pass":"Fail");    
 
-    success = TestSha1( );
-    if( !success ) { allSuccess = false; }
-    printf( "Test SHA1   - %s\n", success?"Pass":"Fail" );    
+    success = TestSha1();
+    if (!success)
+    	allSuccess = false;
+    printf("Test SHA1   - %s\n", success?"Pass":"Fail");    
 
-    success = TestSha256( );
-    if( !success ) { allSuccess = false; }
-    printf( "Test SHA256 - %s\n", success?"Pass":"Fail" );    
+    success = TestSha256();
+    if (!success)
+    	allSuccess = false;
+    printf("Test SHA256 - %s\n", success?"Pass":"Fail");    
 
-    success = TestSha512( );
-    if( !success ) { allSuccess = false; }
-    printf( "Test SHA512 - %s\n", success?"Pass":"Fail" );    
+    success = TestSha512();
+    if (!success)
+    	allSuccess = false;
+    printf("Test SHA512 - %s\n", success?"Pass":"Fail");    
 
-    success = TestRc4( );
-    if( !success ) { allSuccess = false; }
-    printf( "Test RC4    - %s\n", success?"Pass":"Fail" );    
+    success = TestRc4();
+    if (!success)
+    	allSuccess = false;
+    printf("Test RC4    - %s\n", success?"Pass":"Fail");    
 
-    printf( "\n" );
-    if( allSuccess )
-    {
-        printf( "All tests passed.\n" );
-    }
+    printf("\n");
+    if (allSuccess )
+        printf("All tests passed.\n");
     else
-    {
-        printf( "Fail.\n" );
-        return 1;
-    }
+        printf("Fail.\n");
 
     return 0;
 }

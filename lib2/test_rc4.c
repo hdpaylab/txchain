@@ -32,7 +32,7 @@ int	main(int ac, char **av)
     uint8_t         buffer [BUFFER_SIZE];
     uint32_t        amountLeft;
     uint32_t        chunk;
-    Rc4Context      rc4 = {0};
+    Rc4Context      rc4;
     uint32_t        dropN = 0;
 
     if( 3 != ac  &&  4 != ac )
@@ -50,7 +50,7 @@ int	main(int ac, char **av)
         dropN = atoi( av[3] );
     }
 
-    Rc4Initialise( &rc4, string, (uint32_t)strlen(string), dropN );
+    Rc4Initialise(&rc4, string, (uint32_t)strlen(string), dropN);
 
 
     amountLeft = numBytes;

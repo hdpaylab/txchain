@@ -42,13 +42,13 @@ void	*thread_verifier(void *info_p)
 		deseriz(txsz, txsend, 1);
 		deseriz(txsz, txdata.sign, 1);
 
-		txdata.verified = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
+		txdata.valid = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
 					txdata.data.c_str(), txdata.sign.data_length, &params.AddrHelper);
 
-		printf("	VERITY	: %d\n", txdata.verified);
+		printf("	VERITY	: %d\n", txdata.valid);
 
 		fprintf(outfp, "VER%02d: %7d: %s signature=%s\n", thrid, count, 
-			txdata.verified == 1 ? "true" : "false", txdata.sign.signature.c_str());
+			txdata.valid == 1 ? "true" : "false", txdata.sign.signature.c_str());
 		fflush(outfp);
 
 		_veriq.push(txdata);

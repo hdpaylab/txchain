@@ -36,10 +36,6 @@ cli: cli.o seriz.cpp ../lib/params.cpp ../lib/xsz.cpp ../lib/util.cpp
 	$(CPP) $(CPPFLAGS) -o $@ cli.o seriz.cpp ../lib/params.cpp ../lib/xsz.cpp ../lib/util.cpp \
 	$(ALIBS) $(SDKLIBS) $(LIBS) 
 
-bak:
-	tar cf ~/BAK/txchain-v0.3-`date +"%y%m%d"`.tar M* *.[hcy]* *.sh README 
-	gzip -f ~/BAK/txchain-v0.3-`date +"%y%m%d"`.tar
-
 clean:
 	rm -f tx2 cli $(OBJS) *.o *.out *.ver *.a *.log
 	rm -rf test.db

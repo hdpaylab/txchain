@@ -34,7 +34,9 @@
 #include <stdint.h>
 #include <string.h> // CBC mode, for memset
 
+
 #include "aes.h"
+
 
 // jcallan@github points out that declaring Multiply as a function 
 // reduces code size considerably with the Keil ARM compiler.
@@ -117,6 +119,46 @@ static const uint8_t Rcon[11] = {
  * "Only the first some of these constants are actually used  up to rcon[10] for AES-128 (as 11 round keys are needed), 
  *  up to rcon[8] for AES-192, up to rcon[7] for AES-256. rcon[0] is not used in AES algorithm."
  */
+
+
+// 16바이트 단위로만 처리 가능함 
+string	aes256_encrypt(const string key, const string instr)	// AES_CBC
+{
+    uint8_t iv[]  = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+    aes_t ctx;
+    size_t bufsz = instr.length();
+    uint8_t *buf = (uint8_t *) calloc(1, bufsz + 1);
+
+    memcpy(buf, instr.c_str(), instr.length());
+    aes_init(&ctx, AES_CBC, 256, (const uint8_t *)key.c_str(), iv);
+    aes_encrypt(&ctx, buf, bufsz);
+    aes_exit(&ctx);
+
+    string retstr((const char *)buf, bufsz);
+    free(buf);
+
+    return retstr;
+}
+
+
+// 16바이트 단위로만 처리 가능함 
+string	aes256_decrypt(const string key, const string instr)	// AES_CBC
+{
+    uint8_t iv[]  = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f };
+    aes_t ctx;
+    size_t bufsz = instr.length();
+    uint8_t *buf = (uint8_t *) calloc(1, bufsz + 1);
+
+    memcpy(buf, instr.c_str(), instr.length());
+    aes_init(&ctx, AES_CBC, 256, (const uint8_t *)key.c_str(), iv);
+    aes_decrypt(&ctx, buf, bufsz);
+    aes_exit(&ctx);
+
+    string retstr((const char *)buf, bufsz);
+    free(buf);
+
+    return retstr;
+}
 
 
 aes_t	*aes_init(aes_t *aesp, const int type, const int bits, const uint8_t *key, const uint8_t *iv)

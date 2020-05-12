@@ -8,7 +8,6 @@
 int	seriz_add(xserial& xsz, tx_send_token_t& tx)
 {
 	xsz << tx.type;
-	xsz << tx.status;
 	xsz << tx.seq;
 	xsz << tx.from_addr;
 	xsz << tx.to_addr;
@@ -35,7 +34,6 @@ int	seriz_add(xserial& xsz, tx_sign_t& tx)
 int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump)
 {
 	xsz >> tx.type;
-	xsz >> tx.status;
 	xsz >> tx.seq;
 	xsz >> tx.from_addr;
 	xsz >> tx.to_addr;
@@ -49,7 +47,6 @@ int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump)
 	if (dump)
 	{
 		printf("type = %d\n", tx.type);
-		printf("status = %d\n", tx.status);
 		printf("seq = %d\n", tx.seq);
 		printf("from_addr = %s\n", tx.from_addr.c_str());
 		printf("to_addr = %s\n", tx.to_addr.c_str());

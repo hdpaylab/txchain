@@ -44,7 +44,6 @@ int	main(int ac, char *av[])
 	tx_send_token_t	txsend;
 
 	txsend.type = TX_SEND_TOKEN;
-	txsend.status = TX_STATUS_INIT;
 	txsend.seq = 1;
 	txsend.from_addr = from_addr;
 	txsend.to_addr = to_addr;

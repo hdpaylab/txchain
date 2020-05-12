@@ -3,23 +3,27 @@
 #include <string>
 #include <vector>
 
+
 using namespace std;
 
-vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid = NULL);
-string DecodeBase64(const string& str);
-string EncodeBase64(const unsigned char* pch, size_t len);
-string EncodeBase64(const string& str);
 
+vector<unsigned char> base64_decode(const char* p, bool* pfInvalid = NULL);
+string base64_decode(const string& str);
+string base64_encode(const unsigned char* pch, size_t len);
+string base64_encode(const string& str);
+
+
+/***
 void encodetest(string a)
 {
 	cout << "[" <<  a << "]" << endl;
 
 	// encode
-	string b = EncodeBase64(a);
+	string b = base64_encode(a);
 	cout << "[" <<  b << "]" << endl;
 
 	// decode
-	string c = DecodeBase64(b);
+	string c = base64_decode(b);
 	cout << "[" <<  c << "]" << endl;
 }
 
@@ -38,9 +42,10 @@ int main(void)
 
 	return 0;
 }
+***/
 
 
-string EncodeBase64(const unsigned char* pch, size_t len)
+string base64_encode(const unsigned char* pch, size_t len)
 {
     static const char *pbase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
@@ -86,12 +91,12 @@ string EncodeBase64(const unsigned char* pch, size_t len)
     return strRet;
 }
 
-string EncodeBase64(const string& str)
+string base64_encode(const string& str)
 {
-    return EncodeBase64((const unsigned char*)str.c_str(), str.size());
+    return base64_encode((const unsigned char*)str.c_str(), str.size());
 }
 
-vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid)
+vector<unsigned char> base64_decode(const char* p, bool* pfInvalid)
 {
     static const int decode64_table[256] =
     {
@@ -174,8 +179,8 @@ vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid)
     return vchRet;
 }
 
-string DecodeBase64(const string& str)
+string base64_decode(const string& str)
 {
-    vector<unsigned char> vchRet = DecodeBase64(str.c_str());
+    vector<unsigned char> vchRet = base64_decode(str.c_str());
     return (vchRet.size() == 0) ? string() : string((const char*)&vchRet[0], vchRet.size());
 }

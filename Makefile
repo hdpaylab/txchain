@@ -25,7 +25,9 @@ all: lib lib2 test
 
 lib: $(ALIBS)
 
-lib2: 
+lib2: hashlib.a
+
+hashlib.a:
 	cd lib2; make; cd ..
 
 $(ALIBS): 
@@ -35,15 +37,18 @@ test:
 	cd test; make; cd ..
 
 bak:
-	tar cf ~/BAK/txchain-`date +"%y%m%d"`.tar M* README* HISTORY */*.[hc]* */Make* */README* */*/*.[hc]* */*/Make* */*/*/*.[hc]* 
+	tar cf ~/BAK/txchain-`date +"%y%m%d"`.tar M* README* HISTORY \
+		*/*.[hc]* */Make* */README* */*/*.[hc]* */*/Make* */*/*/*.[hc]* 
 	gzip -f ~/BAK/txchain-`date +"%y%m%d"`.tar
 
 cleanall:
 	cd $(CSDKDIR); make clean; cd ..
 	cd lib2; make clean; cd ..
 	make clean
+	rm -f lib/*.o
 
 clean:
+	rm -f lib/*.o
 	cd v0.1; make clean; cd ..
 	cd v0.2; make clean; cd ..
 	cd v0.3; make clean; cd ..

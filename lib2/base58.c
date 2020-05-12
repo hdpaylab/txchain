@@ -17,10 +17,12 @@
 #include <string.h>
 #include <sys/types.h>
 
+
 #include "base58.h"
 
 
 bool (*sha256_impl)(void *, const void *, size_t) = NULL;
+
 
 static const int8_t b58digits_map[] = {
 	-1,-1,-1,-1,-1,-1,-1,-1, -1,-1,-1,-1,-1,-1,-1,-1,
@@ -34,11 +36,11 @@ static const int8_t b58digits_map[] = {
 };
 
 
-bool base58_decode(void *bin, size_t *binszp, const char *b58, size_t b58sz)
+bool base58_decode(void *outbin, size_t *outbinszp, const char *b58, size_t b58sz)
 {
-	size_t	binsz = *binszp, orgsz = *binszp;
+	size_t	binsz = *outbinszp, orgsz = *outbinszp;
 	const unsigned char *b58u = (const unsigned char *) b58;
-	unsigned char *binu = (unsigned char *) bin;
+	unsigned char *binu = (unsigned char *) outbin;
 	size_t outisz = (binsz + 3) / 4;
 	uint32_t outi[outisz];
 	uint64_t t;
@@ -59,12 +61,18 @@ bool base58_decode(void *bin, size_t *binszp, const char *b58, size_t b58sz)
 	
 	for ( ; i < b58sz; ++i)
 	{
+		// High-bit set on invalid digit
 		if (b58u[i] & 0x80)
-			// High-bit set on invalid digit
+		{
+		//	printf("ERROR: High-bit set on invalid digit: i=%d 0x%02X\n", i, b58u[i] & 0x00FF);
 			return false;
+		}
+		// Invalid base58 digit
 		if (b58digits_map[b58u[i]] == -1)
-			// Invalid base58 digit
+		{
+		//	printf("ERROR: Invalid base58 digit: i=%d 0x%02X\n", i, b58u[i] & 0x00FF);
 			return false;
+		}
 		c = (unsigned)b58digits_map[b58u[i]];
 		for (j = outisz; j--; )
 		{
@@ -72,12 +80,18 @@ bool base58_decode(void *bin, size_t *binszp, const char *b58, size_t b58sz)
 			c = (t & 0x3f00000000) >> 32;
 			outi[j] = t & 0xffffffff;
 		}
+		// Output number too big (carry to the next int32)
 		if (c)
-			// Output number too big (carry to the next int32)
+		{
+		//	printf("ERROR: Output number too big (carry to the next int32): i=%d\n", i);
 			return false;
+		}
+		// Output number too big (last int32 filled too far)
 		if (outi[0] & zeromask)
-			// Output number too big (last int32 filled too far)
+		{
+		//	printf("ERROR: Output number too big (last int32 filled too far): i=%d\n", i);
 			return false;
+		}
 	}
 
 	j = 0;
@@ -102,19 +116,19 @@ bool base58_decode(void *bin, size_t *binszp, const char *b58, size_t b58sz)
 	}
 	
 	// Count canonical base58 byte count
-	binu = (unsigned char *) bin;
+	binu = (unsigned char *) outbin;
 	for (i = 0; i < binsz; ++i)
 	{
 		if (binu[i])
 			break;
-		--*binszp;
+		--*outbinszp;
 	}
-	*binszp += zerocount;
+	*outbinszp += zerocount;
 
 	// 문자열 처음부터 오도록 수정..
-	for (i = 0; i < *binszp; i++)
+	for (i = 0; i < *outbinszp; i++)
 	{
-		binu[i] = binu[orgsz - *binszp + i];
+		binu[i] = binu[orgsz - *outbinszp + i];
 	}
 	binu[i] = 0;
 	
@@ -128,14 +142,15 @@ static	bool	my_dblsha256(void *hash, const void *data, size_t datasz)
 	return sha256_impl(buf, data, datasz) && sha256_impl(hash, buf, sizeof(buf));
 }
 
-int	base58_check(const void *bin, size_t binsz, const char *base58str, size_t b58sz)
+
+int	base58_check(const void *outbin, size_t binsz, const char *base58str, size_t b58sz)
 {
 	unsigned char buf[32];
-	const uint8_t *binc = (const uint8_t *) bin;
+	const uint8_t *binc = (const uint8_t *) outbin;
 	unsigned i;
 	if (binsz < 4)
 		return -4;
-	if (!my_dblsha256(buf, bin, binsz - 4))
+	if (!my_dblsha256(buf, outbin, binsz - 4))
 		return -2;
 	if (memcmp(&binc[binsz - 4], buf, 4))
 		return -1;
@@ -153,21 +168,22 @@ int	base58_check(const void *bin, size_t binsz, const char *base58str, size_t b5
 
 static const char b58digits_ordered[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-bool	base58_encode(char *b58, size_t *b58sz, const void *data, size_t binsz)
+
+bool	base58_encode(char *outb58, size_t *outb58sz, const void *data, size_t binsz)
 {
 	const uint8_t *bin = (const uint8_t *) data;
 	int carry;
 	ssize_t i, j, high, zcount = 0;
 	size_t size;
 	
-	while (zcount < binsz && !bin[zcount])
+	while (zcount < (ssize_t)binsz && !bin[zcount])
 		++zcount;
 	
 	size = (binsz - zcount) * 138 / 100 + 1;
 	uint8_t buf[size];
 	memset(buf, 0, size);
 	
-	for (i = zcount, high = size - 1; i < binsz; ++i, high = j)
+	for (i = zcount, high = size - 1; i < (ssize_t)binsz; ++i, high = j)
 	{
 		for (carry = bin[i], j = size - 1; (j > high) || carry; --j)
 		{
@@ -177,27 +193,27 @@ bool	base58_encode(char *b58, size_t *b58sz, const void *data, size_t binsz)
 		}
 	}
 	
-	for (j = 0; j < size && !buf[j]; ++j);
+	for (j = 0; j < (ssize_t)size && !buf[j]; ++j);
 	
-	if (*b58sz <= zcount + size - j)
+	if (*outb58sz <= zcount + size - j)
 	{
-		*b58sz = zcount + size - j + 1;
+		*outb58sz = zcount + size - j + 1;
 		return false;
 	}
 	
 	if (zcount)
-		memset(b58, '1', zcount);
-	for (i = zcount; j < size; ++i, ++j)
+		memset(outb58, '1', zcount);
+	for (i = zcount; j < (ssize_t)size; ++i, ++j)
 	{
-		b58[i] = b58digits_ordered[buf[j]];
+		outb58[i] = b58digits_ordered[buf[j]];
 	}
-	b58[i] = '\0';
-	*b58sz = i + 1;
+	outb58[i] = '\0';
+	*outb58sz = i + 1;
 	
 	return true;
 }
 
-bool	base58_check_encode(char *b58c, size_t *b58c_sz, uint8_t ver, const void *data, size_t datasz)
+bool	base58_check_encode(char *outb58c, size_t *outb58c_sz, uint8_t ver, const void *data, size_t datasz)
 {
 	uint8_t buf[1 + datasz + 0x20];
 	uint8_t *hash = &buf[1 + datasz];
@@ -206,9 +222,69 @@ bool	base58_check_encode(char *b58c, size_t *b58c_sz, uint8_t ver, const void *d
 	memcpy(&buf[1], data, datasz);
 	if (!my_dblsha256(hash, buf, datasz + 1))
 	{
-		*b58c_sz = 0;
+		*outb58c_sz = 0;
 		return false;
 	}
 	
-	return base58_encode(b58c, b58c_sz, buf, 1 + datasz + 4);
+	return base58_encode(outb58c, outb58c_sz, buf, 1 + datasz + 4);
 }
+
+
+
+string base58_encode(string instr)
+{
+	size_t	outb58sz = instr.length() * 2;
+	char	*outb58 = (char *) calloc(1, outb58sz);
+	string	null;
+
+	if (outb58 == NULL)
+		return null;
+
+	bool ret = base58_encode(outb58, &outb58sz, instr.c_str(), instr.length());
+
+	if (ret)
+	{
+		string retstr(outb58, outb58sz);
+		free(outb58);
+
+		return retstr;
+	}
+	else
+	{
+		string retstr;
+		free(outb58);
+
+		return retstr;
+	}
+}
+
+
+string base58_decode(string instr)
+{
+	size_t	outbinsz = instr.length();
+	char	*outbin = (char *) calloc(1, outbinsz);
+	string	null;
+
+	if (outbin == NULL)
+		return null;
+
+	// instr.length()로 하면 마지막 0x00이 포함되어 오류 출력됨 
+	bool ret = base58_decode(outbin, &outbinsz, instr.c_str(), strlen(instr.c_str()));
+
+	if (ret)
+	{
+		string retstr(outbin, outbinsz);
+		free(outbin);
+
+		return retstr;
+	}
+	else
+	{
+		string retstr;
+		free(outbin);
+
+		return retstr;
+	}
+}
+
+

@@ -13,6 +13,85 @@
 #include "libhash.h"
 
 
+#define TOHEXDIGIT(v)	((v) < 10 ? (v)+'0' : (v)+('a'-10))
+
+
+string	sha1(string instr, bool tohex)
+{
+	Sha1Context	ctx;
+	SHA1_HASH	hash;
+
+	Sha1Initialise(&ctx);
+	Sha1Update(&ctx, instr.c_str(), instr.length());
+	Sha1Finalise(&ctx, &hash);
+
+	char	*outhash = (char *) calloc(1, sizeof(hash) * 2 + 1);
+
+	if (tohex)
+	{
+		string retstr = bin2hex(outhash, (void *)&hash, sizeof(hash));
+		free(outhash);
+		return retstr;
+	}
+	else
+	{
+		string retstr((char *)&hash, sizeof(hash));
+		free(outhash);
+		return retstr;
+	}
+}
+
+
+string	sha256(string instr, bool tohex)
+{
+	Sha256Context	ctx;
+	SHA256_HASH	hash;
+
+	Sha256Initialise(&ctx);
+	Sha256Update(&ctx, instr.c_str(), instr.length());
+	Sha256Finalise(&ctx, &hash);
+
+	char	*outhash = (char *) calloc(1, sizeof(hash) * 2 + 1);
+
+	if (tohex)
+	{
+		string retstr = bin2hex(outhash, (void *)&hash, sizeof(hash));
+		free(outhash);
+		return retstr;
+	}
+	else
+	{
+		string retstr((char *)&hash, sizeof(hash));
+		free(outhash);
+		return retstr;
+	}
+}
+
+
+string	sha512(string instr, bool tohex)
+{
+	Sha512Context	ctx;
+	SHA512_HASH	hash;
+
+	Sha512Initialise(&ctx);
+	Sha512Update(&ctx, instr.c_str(), instr.length());
+	Sha512Finalise(&ctx, &hash);
+
+	char	*outhash = (char *) calloc(1, sizeof(hash) * 2 + 1);
+
+	if (tohex)
+	{
+		string retstr = bin2hex(outhash, (void *)&hash, sizeof(hash));
+		return retstr;
+	}
+	else
+	{
+		string retstr((char *)&hash, sizeof(hash));
+		return retstr;
+	}
+}
+
+
 int	sha1bin(char *outhash, const char *str, const size_t len)
 {
 	Sha1Context	ctx;
@@ -115,7 +194,7 @@ char	*bin2hex(char *hexbuf, const void *binbuf, const size_t binbuflen)
 	char	*sp = (char *)binbuf, *dp = hexbuf;
 	int	ii = 0;
 
-	for (ii = 0; ii < binbuflen; ii++)
+	for (ii = 0; ii < (ssize_t)binbuflen; ii++)
 	{
 		int	cc = (*sp & 0x00F0) >> 4;
 
@@ -136,7 +215,7 @@ void	*hex2bin(void *binbuf, const char *hexbuf, const size_t hexbuflen)
 	char	*sp = (char *)hexbuf, *dp = (char *) binbuf;
 	int	ii = 0;
 
-	for (ii = 0; ii < hexbuflen; ii += 2)
+	for (ii = 0; ii < (ssize_t)hexbuflen; ii += 2)
 	{
 		int	hh = tolower(sp[ii]), ll = tolower(sp[ii+1]);
 

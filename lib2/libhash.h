@@ -13,6 +13,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <assert.h>
+#include <string>
+
+
+using namespace std;
 
 
 #include "base58.h"
@@ -23,10 +27,11 @@
 #include "sha512.h"
 
 
-#define TOHEXDIGIT(v)	((v) < 10 ? (v)+'0' : (v)+('a'-10))
-
-
 // hash functions
+string	sha1(string instr, bool tohex = true);		// C++ binary
+string	sha256(string instr, bool tohex = true);	// C++ binary
+string	sha512(string instr, bool tohex = true);	// C++ binary
+
 char	*sha1(char *outhash, const char *str, const size_t len);
 char	*sha256(char *outhash, const char *str, const size_t len);
 char	*sha512(char *outhash, const char *str, const size_t len);

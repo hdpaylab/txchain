@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <unistd.h>
 #include "leveldb.h"
-#include "xsz.h"
+#include "xserial.h"
 
 
 int	main(int ac, char *av[])

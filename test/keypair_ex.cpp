@@ -8,6 +8,7 @@
 #include <utils/utilstrencodings.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "xserial.h"
 
 
 typedef unsigned char	uchar;

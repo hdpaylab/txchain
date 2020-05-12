@@ -3,6 +3,10 @@
 
 
 #include <stdint.h>
+#include <string>
+
+
+using namespace std;
 
 
 // #define the macros below to 1/0 to enable/disable the mode of operation.
@@ -42,6 +46,11 @@ aes_t	*aes_set_key_iv(aes_t *aesp, const uint8_t *key, const uint8_t *iv);
 // buffer size is exactly AES_BLOCKLEN bytes; buffer size MUST be mutile of AES_BLOCKLEN;
 void	aes_encrypt(aes_t *aesp, uint8_t *buf, size_t buflen);
 void	aes_decrypt(aes_t *aesp, uint8_t *buf, size_t buflen);
+
+
+// 16바이트 단위로만 처리 가능 (마지막 바이트가 16바이트가 안되면 깨짐)
+string	aes256_encrypt(const string key, const string instr);	// AES_CBC C++ binary
+string	aes256_decrypt(const string key, const string instr);	// AES_CBC C++ binary
 
 
 #endif	// __AES_H

@@ -18,7 +18,9 @@
 #define CTR	1
 #define ECB	1
 
+
 #include "aes.h"
+#include "xserial.h"
 
 
 static void print_hex(uint8_t* str, size_t len);
@@ -35,6 +37,25 @@ static void test_xcrypt_ctr(const int bits, const char* xcrypt);
 int main(void)
 {
 	int	ii, bits[3] = {128, 192, 256};
+
+	//                            16              32              48
+	//             123456789 123456789 123456789 123456789 123456789 123456789 
+	char	*dd = "AAAAAAAAAAAAAAX";
+	string data = dd;
+
+	printf("Original: %s\n", data.c_str());
+
+	string encstr = aes256_encrypt("Password!@34", data);
+	printf("Encrypted: "); dumpbin(encstr.c_str(), encstr.length());
+
+	string decstr = aes256_decrypt("Password!@34", encstr);
+	printf("Decrypted: "); dumpbin(decstr.c_str(), decstr.length());
+
+	printf("Decrypted: %s\n", decstr.c_str());
+
+	printf("\n\n");
+	exit(0);
+
 
 	for (ii = 0; ii < 3; ii++)
 	{
@@ -108,7 +129,7 @@ static void test_encrypt_ecb_verbose(int bits)
     // print the resulting cipher as 4 x 16 byte strings
     printf("ciphertext:\n");
     
-    aes_t	ctx = {0};
+    aes_t	ctx;
     aes_init(&ctx, AES_ECB, bits, NULL, NULL);	// No key, no iv
 
     for (ii = 0; ii < 4; ii++)
@@ -138,7 +159,7 @@ static void test_encrypt_ecb(int bits)
     uint8_t in[]  = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
     uint8_t *out = NULL;
 
-    aes_t ctx = {0};
+    aes_t ctx;
 
     if (bits == 128)
     {
@@ -191,7 +212,7 @@ static void test_decrypt_ecb(int bits)
     uint8_t out[]   = { 0x6b, 0xc1, 0xbe, 0xe2, 0x2e, 0x40, 0x9f, 0x96, 0xe9, 0x3d, 0x7e, 0x11, 0x73, 0x93, 0x17, 0x2a };
     uint8_t *in = NULL;
 
-    aes_t ctx = {0};
+    aes_t ctx;
 
     if (bits == 128)
     {
@@ -258,7 +279,7 @@ static void test_decrypt_cbc(int bits)
                       0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10 };
     uint8_t *in = NULL;
 
-    aes_t ctx = {0};
+    aes_t ctx;
 
     if (bits == 128)
     {
@@ -321,7 +342,7 @@ static void test_encrypt_cbc(int bits)
                       0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10 };
     uint8_t *out = NULL;
 
-    aes_t ctx = {0};
+    aes_t ctx;
 
     if (bits == 128)
     {
@@ -396,7 +417,7 @@ static void test_xcrypt_ctr(const int bits, const char* xcrypt)
                         0xf6, 0x9f, 0x24, 0x45, 0xdf, 0x4f, 0x9b, 0x17, 0xad, 0x2b, 0x41, 0x7b, 0xe6, 0x6c, 0x37, 0x10 };
     uint8_t *in = NULL;
 
-    aes_t ctx = {0};
+    aes_t ctx;
 
     if (bits == 128)
     {

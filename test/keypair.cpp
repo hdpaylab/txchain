@@ -1,4 +1,5 @@
 #include "keypair.h"
+#include "xserial.h"
 
 
 typedef unsigned char	uchar;
@@ -36,11 +37,11 @@ int	main(int ac, char *av[])
 
 	uchar pubkeybuf[66] = {0};
 	memcpy(pubkeybuf, (char *)pubkey.begin(), pubkey.size());
-	printf("Pubkey: "); dumpbin(pubkeybuf, pubkey.size());
+	printf("Pubkey: "); dumpbin((char *)pubkeybuf, pubkey.size());
 
 	uchar privkeybuf[32] = {0};
 	memcpy(privkeybuf, (char *)secret.begin(), secret.size());
-	printf("Privkey: "); dumpbin(privkeybuf, secret.size());
+	printf("Privkey: "); dumpbin((char *)privkeybuf, secret.size());
 
 	CBitcoinAddress addr(pubkey.GetID(), helper.addrHelper());
 	string privateKeyStr = CBitcoinSecret(secret, helper.privHelper()).ToString();
@@ -71,11 +72,11 @@ int	main(int ac, char *av[])
 
 	uchar newpubkeybuf[66] = {0};
 	memcpy(newpubkeybuf, (char *)newpubkey.begin(), newpubkey.size());
-	printf("Pubkey: "); dumpbin(newpubkeybuf, newpubkey.size());
+	printf("Pubkey: "); dumpbin((char *)newpubkeybuf, newpubkey.size());
 
 	uchar newprivkeybuf[32] = {0};
 	memcpy(newprivkeybuf, (char *)newsecret.begin(), newsecret.size());
-	printf("Privkey: "); dumpbin(newprivkeybuf, newsecret.size());
+	printf("Privkey: "); dumpbin((char *)newprivkeybuf, newsecret.size());
 
 	CBitcoinAddress newaddr(pubkey.GetID(), helper.addrHelper());
 	string newprivateKeyStr = CBitcoinSecret(newsecret, helper.privHelper()).ToString();

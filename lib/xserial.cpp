@@ -2,7 +2,7 @@
 // Performance: 300000/sec 
 //
 
-#include "xsz.h"
+#include "xserial.h"
 
 
 #define toliteral(v)	#v

@@ -24,7 +24,7 @@ string	bin2hex(const char *bin, const size_t binlen)
 {
 	char	*buf = (char *) calloc(1, binlen * 2);
 
-	for (int ii = 0; ii < binlen; ii++)
+	for (int ii = 0; ii < (ssize_t)binlen; ii++)
 	{
 		char	ch = bin[ii];
 		char	ch1 = (ch & 0x00F0) >> 4;
@@ -45,7 +45,7 @@ string	hex2bin(const char *hexstr, const size_t len)
 	char	*buf = (char *) calloc(1, len / 2);
 	const char *hp = hexstr;
 
-	for (int ii = 0; ii < len / 2; ii += 2)
+	for (int ii = 0; ii < (ssize_t)len / 2; ii += 2)
 	{
 		char	ch1 = hp[ii];
 		char	ch2 = hp[ii + 1];

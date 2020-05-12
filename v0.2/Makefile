@@ -34,10 +34,6 @@ tx2: $(OBJS2)
 cli: cli.o ../lib/params.cpp
 	$(CPP) $(CPPFLAGS) -o $@ cli.o ../lib/params.cpp $(ALIBS) $(SDKLIBS) $(LIBS) 
 
-bak:
-	tar cf ~/BAK/txchain-v0.2-`date +"%y%m%d"`.tar M* *.[hcy]* *.sh README 
-	gzip -f ~/BAK/txchain-v0.2-`date +"%y%m%d"`.tar
-
 clean:
 	rm -f tx2 cli $(OBJS) *.o *.out *.ver *.a *.log
 	rm -rf test.db
