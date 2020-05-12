@@ -21,7 +21,7 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed keypair_ex xsz_ex leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex
+all: speed keypair_ex xsz_ex leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex base64_ex
 
 keypair_ex: keypair_ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ keypair_ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
@@ -55,6 +55,9 @@ bigint: bigint_ex.cpp
 
 rapidjson_ex: rapidjson_ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ rapidjson_ex.cpp $(LIBS) $(SDKLIBS) 
+
+base64_ex: base64_ex.cpp
+	$(CPP) $(CPPFLAGS) -o $@ base64_ex.cpp $(LIBS) $(SDKLIBS) 
 
 clean:
 	rm -f $(OBJS) *.o *.out *.ver *.log \
