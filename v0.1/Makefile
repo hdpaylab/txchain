@@ -10,7 +10,7 @@ INCLUDE	= -I/usr/include/postgresql -I../HdacCSDK2/include -I../lib
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter
 
 SRCS	= xmain.cpp xpub.cpp xsub.cpp xverify.cpp xldbio.cpp \
-	../lib/params.cpp ../lib/leveldb.cpp ../lib/xsz.cpp ../lib/util.cpp
+	../lib/params.cpp ../lib/leveldb.cpp ../lib/xserial.cpp ../lib/util.cpp
 
 OBJS	= $(SRCS:.cpp=.o)
 

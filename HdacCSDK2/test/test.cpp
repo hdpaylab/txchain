@@ -2,6 +2,12 @@
 #include <keys/hs_keys_wrapper.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <string>
+#include <structs/base58.h>
+
+
+using namespace std;
 
 
 // private-key-version = 83                # Version bytes used for exporting private keys.
@@ -81,8 +87,29 @@ void test_verify_message(void)
 	printf("verify-Message: %s\n", verify_check? "true" : "false" );
 }
 
+
+void test_base58()
+{
+	const char	*data = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAX";
+	const char *end;
+
+	end = data + strlen(data);
+
+	string ss = EncodeBase58((const unsigned char *)data, (const unsigned char *)end);
+	printf("DATA = %s\nBASE58 = %s\n", data, ss.c_str());
+
+	for (int ii = 0; ii < 100000; ii++)
+	{
+		string ss = EncodeBase58((const unsigned char *)data, (const unsigned char *)end);
+	}
+	exit(0);
+}
+
+
 int main()
 {
+	test_base58();
+
 	test_create_stream_publish_tx();
 
 	test_create_key_pairs();

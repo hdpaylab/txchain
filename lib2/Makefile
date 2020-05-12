@@ -36,8 +36,8 @@ test_sha256: test_sha256.o hashlib.a
 test_sha512: test_sha512.o hashlib.a
 	$(CC) $(CFLAGS) $@.c -o $@ hashlib.a
 
-test_aes: test_aes.o aes.o ../lib/xsz.cpp
-	$(CC) $(CFLAGS) $@.c aes.o ../lib/xsz.cpp -o $@ 
+test_aes: test_aes.o aes.o ../lib/xserial.cpp
+	$(CC) $(CFLAGS) $@.c aes.o ../lib/xserial.cpp -o $@ 
 
 
 clean:

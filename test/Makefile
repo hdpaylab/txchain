@@ -24,11 +24,11 @@ ALIBS	= \
 all: speed keypair_ex xsz_ex leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr \
 	bigint rapidjson_ex 
 
-keypair_ex: keypair_ex.cpp ../lib/xsz.cpp
-	$(CPP) $(CPPFLAGS) -o $@ keypair_ex.cpp ../lib/xsz.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+keypair_ex: keypair_ex.cpp ../lib/xserial.cpp
+	$(CPP) $(CPPFLAGS) -o $@ keypair_ex.cpp ../lib/xserial.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
-keypair: keypair.cpp ../lib/xsz.cpp
-	$(CPP) $(CPPFLAGS) -o $@ keypair.cpp ../lib/xsz.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
+keypair: keypair.cpp ../lib/xserial.cpp
+	$(CPP) $(CPPFLAGS) -o $@ keypair.cpp ../lib/xserial.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
 leveldbex: leveldbex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ leveldbex.cpp $(LIBS) $(SDKLIBS) 
@@ -36,11 +36,11 @@ leveldbex: leveldbex.cpp
 speed: speed.cpp ../lib/util.cpp 
 	$(CPP) $(CPPFLAGS) -o $@ speed.cpp ../lib/util.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
 
-xsz_ex: xsz_ex.cpp ../lib/xsz.cpp
-	$(CPP) $(CPPFLAGS) -o $@ xsz_ex.cpp ../lib/xsz.cpp $(LIBS) $(SDKLIBS) 
+xsz_ex: xsz_ex.cpp ../lib/xserial.cpp
+	$(CPP) $(CPPFLAGS) -o $@ xsz_ex.cpp ../lib/xserial.cpp $(LIBS) $(SDKLIBS) 
 
-leveldb_test: ../lib/leveldb.cpp ../lib/xsz.cpp leveldb_test.cpp
-	$(CPP) $(CPPFLAGS) -o $@ ../lib/leveldb.cpp ../lib/xsz.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
+leveldb_test: ../lib/leveldb.cpp ../lib/xserial.cpp leveldb_test.cpp
+	$(CPP) $(CPPFLAGS) -o $@ ../lib/leveldb.cpp ../lib/xserial.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
 
 zmq_msvr: zmq_msvr.cpp
 	$(CPP) $(CPPFLAGS) -o $@ zmq_msvr.cpp $(LIBS) $(SDKLIBS) 
