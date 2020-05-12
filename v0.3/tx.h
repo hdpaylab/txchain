@@ -6,12 +6,13 @@
 
 
 enum {
-	TX_STATUS_SEND		= 0x00000000,
-	TX_STATUS_REPLY		= 0x00000001,
+	TX_STATUS_INIT		= 0x00000000,	// 0
+	TX_STATUS_REPLY		= 0x00000001,	
+	TX_STATUS_VERI		= 0x00010000,
+
+	TX_STATUS_VERI_REQ	= 0x00080000,
 	TX_STATUS_READY		= 0x00010000,
 	TX_STATUS_RECV		= 0x00020000,
-	TX_STATUS_VERI		= 0x00040000,
-	TX_STATUS_VERI_REQ	= 0x00080000,
 	TX_STATUS_VERI_RESULT	= 0x00100000,
 	TX_STATUS_ERROR		= 0xFFFFFFFF,
 	TX_STATUS_VALID		= 0x61206120,
@@ -55,7 +56,6 @@ typedef struct {
 
 typedef struct {
 	uint32_t        type;		// TX_xxx
-	uint32_t	status;		// TX_STATUS_xxx
 	uint32_t        seq;
 
 	string          from_addr;
@@ -76,8 +76,7 @@ typedef struct {
 
 
 typedef struct {
-	uint32_t        type;
-	uint32_t	status;		// TX_STATUS_xxx
+	uint32_t        type;		// TX_xxx
 	uint32_t        seq;
 
 	string          from_addr;

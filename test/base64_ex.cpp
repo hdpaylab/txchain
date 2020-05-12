@@ -6,9 +6,9 @@
 using namespace std;
 
 vector<unsigned char> DecodeBase64(const char* p, bool* pfInvalid = NULL);
-string DecodeBase64(const std::string& str);
+string DecodeBase64(const string& str);
 string EncodeBase64(const unsigned char* pch, size_t len);
-string EncodeBase64(const std::string& str);
+string EncodeBase64(const string& str);
 
 void encodetest(string a)
 {

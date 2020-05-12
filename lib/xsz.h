@@ -42,7 +42,7 @@ uint32_t size2hdrlen(size_t sz);
 uint32_t size2hdrbytes(size_t sz);
 void	setdatasize(void *buf, size_t sz, int hdrbytes);
 uint64_t getdatasize(void *buf, int hdrbytes);
-void	dumpbin(char *buf, size_t bufsz, int nthnl = 0, int spc = 1);
+void	dumpbin(const char *buf, const size_t bufsz, const int spc = 0, const int nthnl = 0);
 
 
 size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz);

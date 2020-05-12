@@ -13,20 +13,6 @@
 typedef unsigned char	uchar;
 
 
-void	dumpbin(char *buf, size_t bufsz)
-{
-	printf("DUMP:	");
-	for (size_t ii = 0; ii < bufsz; ii++)
-	{
-		printf("%02X ", buf[ii] & 0x00FF);
-	}
-	printf("\n");
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-
 // private-key-version = 83                # Version bytes used for exporting private keys.
 // address-checksum-value = 48444143       # Bytes used for XOR in address checksum calculation.
 struct PrivateKeyHelpInfo privinfo = {

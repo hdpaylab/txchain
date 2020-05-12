@@ -4,20 +4,6 @@
 typedef unsigned char	uchar;
 
 
-static	void	dumpbin(const char *name, uchar *buf, size_t bufsz)
-{
-	printf("DUMP %s(%ld):	", name, bufsz);
-	for (size_t ii = 0; ii < bufsz; ii++)
-	{
-		printf("%02X ", buf[ii] & 0x00FF);
-	}
-	printf("\n");
-}
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-
 // private-key-version = 83                # Version bytes used for exporting private keys.
 // address-checksum-value = 48444143       # Bytes used for XOR in address checksum calculation.
 struct PrivateKeyHelpInfo privinfo = {
@@ -50,11 +36,11 @@ int	main(int ac, char *av[])
 
 	uchar pubkeybuf[66] = {0};
 	memcpy(pubkeybuf, (char *)pubkey.begin(), pubkey.size());
-	dumpbin("PubKey", pubkeybuf, pubkey.size());
+	printf("Pubkey: "); dumpbin(pubkeybuf, pubkey.size());
 
 	uchar privkeybuf[32] = {0};
 	memcpy(privkeybuf, (char *)secret.begin(), secret.size());
-	dumpbin("PrivKey", privkeybuf, secret.size());
+	printf("Privkey: "); dumpbin(privkeybuf, secret.size());
 
 	CBitcoinAddress addr(pubkey.GetID(), helper.addrHelper());
 	string privateKeyStr = CBitcoinSecret(secret, helper.privHelper()).ToString();
@@ -85,11 +71,11 @@ int	main(int ac, char *av[])
 
 	uchar newpubkeybuf[66] = {0};
 	memcpy(newpubkeybuf, (char *)newpubkey.begin(), newpubkey.size());
-	dumpbin("PubKey", newpubkeybuf, newpubkey.size());
+	printf("Pubkey: "); dumpbin(newpubkeybuf, newpubkey.size());
 
 	uchar newprivkeybuf[32] = {0};
 	memcpy(newprivkeybuf, (char *)newsecret.begin(), newsecret.size());
-	dumpbin("PrivKey", newprivkeybuf, newsecret.size());
+	printf("Privkey: "); dumpbin(newprivkeybuf, newsecret.size());
 
 	CBitcoinAddress newaddr(pubkey.GetID(), helper.addrHelper());
 	string newprivateKeyStr = CBitcoinSecret(newsecret, helper.privHelper()).ToString();

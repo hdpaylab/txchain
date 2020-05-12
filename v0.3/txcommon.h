@@ -73,9 +73,9 @@ typedef struct {
 
 	uint32_t	seq;		// TX sequence
 	uint32_t	valid;		// 0=invalid 1=valid -1=none
-	int		verified;	// 0=fail 1=success -1=none 
-					// WARNING: DO NOT MOVE status position!
-	uint32_t	status;		// see above TX_STATUS_xxx
+
+	uint32_t        nverified;
+	uint32_t	status;		// TX_STATUS_xxx
 }	txdata_t;
 
 

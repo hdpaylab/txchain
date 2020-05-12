@@ -52,8 +52,7 @@ void	*thread_send_test(void *info_p)
 		txdata.data = data;
 		txdata.seq = ii + 1;
 		txdata.valid = -1;
-		txdata.verified = -1;
-		txdata.status = TX_STATUS_SEND;
+		txdata.status = TX_STATUS_INIT;
 
 		_sendq.push(txdata);
 
@@ -73,8 +72,8 @@ void	*thread_send_test(void *info_p)
 	txdata_t txdata;
 	txdata.data = data;
 	txdata.seq = MAX_SEQ;
-	txdata.verified = -1;
-	txdata.status = TX_STATUS_REPLY;
+	txdata.valid = -1;
+	txdata.status = TX_STATUS_INIT;
 
 	_sendq.push(txdata);
 

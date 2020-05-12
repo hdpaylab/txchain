@@ -42,12 +42,12 @@ public:
 		{ return init(dbname); }
 	void close();
 
-	char *get(const char *key, size_t keylen, char **val, size_t *vallen);	// for binary
-	bool put(const char *key, size_t keylen, const char *val, size_t vallen);	// for binary
+	string get(const char *key, size_t keylen);
+	string get(string key);	
 
-	string get(string key);		// return value string
+	bool put(const char *key, size_t keylen, const char *val, size_t vallen);
 	bool put(string key, string value)
-		{ return put(key.c_str(), key.length() + 1, value.c_str(), value.length() + 1); }
+		{ return put(key.c_str(), key.length(), value.c_str(), value.length()); }
 	bool put(string key, int value)
 		{ return put(key.c_str(), key.length(), (const char *)&value, sizeof(value)); }
 	bool put(string key, double value)

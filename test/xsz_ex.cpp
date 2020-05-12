@@ -29,7 +29,7 @@ int	stcmp(seriz_test_t *tx1, seriz_test_t *tx2);
 int	_debug = 0;
 
 
-main()
+main(int ac, char *av[])
 {
 	seriz_test_t	tx;
 	int	ii = 0, ok = 0;
@@ -203,7 +203,7 @@ int	test_cpp(seriz_test_t& tx)
 	xsz << tx.str2;
 
 	len = xsz.getsize();
-	bp = xsz.getbuf();
+	bp = xsz.getdata();
 	if (_debug) printf("Total length=%d\n", len);
 	for (int ii = 0; ii < len; ii++)
 	{

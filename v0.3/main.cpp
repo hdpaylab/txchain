@@ -164,7 +164,7 @@ void	create_main_threads()
 void	create_subscriber_threads()
 {
 	pthread_t cthrid, thrid[100];
-	int	ret = 0, idx = 0;
+	int	ret = 0;
 
 	// Client thread
 	if (_automode == 0)
@@ -181,7 +181,7 @@ void	create_subscriber_threads()
 	}
 
 	// Subscriber threads
-	for (idx = 0; idx < _npeer; idx ++)
+	for (int idx = 0; idx < _npeer; idx ++)
 	{
 		char	*peer = _peerlist[idx];
 
@@ -217,13 +217,12 @@ void	create_subscriber_threads()
 void	create_verifier_threads(int nverifiers)
 {
 	pthread_t thrid[100];
-	int	ret = 0, idx = 0;
 
 	// Verifier thread creation
 	for (int idx = 0; idx < nverifiers; idx++)
 	{
-		int	id = idx;
-	        ret = pthread_create(&thrid[idx], NULL, thread_verifier, (void *)&id);
+		int id = idx;
+	        int ret = pthread_create(&thrid[idx], NULL, thread_verifier, (void *)&id);
                 if (ret < 0) {
 			perror("thread_verifier() thread creation error");
                         exit(-1);

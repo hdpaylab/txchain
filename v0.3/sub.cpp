@@ -1,6 +1,12 @@
 #include "txcommon.h"
 
 
+string	process_tx(txdata_t& txdata);
+
+
+Params_type_t _params;
+
+
 //
 // thread for VECTOR model
 //
@@ -68,8 +74,8 @@ void	*thread_subscriber(void *info_p)
 			printf("SUB : Recv %7d recvq=%5ld\n", count, _recvq.size());
 
 		txdata.seq = count;
-		txdata.verified = -1;
-		txdata.status = TX_STATUS_SEND;
+		txdata.valid = -1;
+		txdata.status = TX_STATUS_INIT;
 
 		_recvq.push(txdata);
 	}
@@ -104,7 +110,7 @@ void	*thread_client(void *info_p)
 	printf("CLIENT: client port=%d START!\n", clientport);
 
 	// params set
-	Params_type_t params = paramsget("../lib/params.dat");
+	_params = paramsget("../lib/params.dat");
 
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
 	FILE *outfp = fopen(tmp, "w+b");	// output file
@@ -127,40 +133,16 @@ void	*thread_client(void *info_p)
 	while(1)
 	{
 		txdata_t txdata;
-		tx_send_token_t txsend;
-		xserial txsz(4 * 1024);
-		char	retbuf[256] = {0};
 
 		//  Wait for next request from client
 		txdata.data = s_recv(responder);
 
 		count++;
 
-		txsz.setstring(txdata.data);
-
-		txsz >> txsend.type;
-		txsz >> txsend.status;
-		txsz.rewind();
-
-		printf("\n");
-		printf("SUB:\n");
-		deseriz(txsz, txsend, 1);
-		deseriz(txsz, txdata.sign, 1);
-
-		txdata.verified = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
-					txdata.data.c_str(), txdata.sign.data_length, &params.AddrHelper);
-
-		printf("	VERITY	: %d\n", txdata.verified);
-sleep(1);
-		CSHA256 sha;
-		unsigned char hash[CSHA256::OUTPUT_SIZE];	// 32B
-		sha.Write(reinterpret_cast<const unsigned char*>(txdata.sign.signature.c_str()), txdata.sign.signature.length()).Finalize(hash);
-		txdata.txid = bin2hex((const char *)hash, sizeof(hash));
-	//	printf("HASH=%s\nDUMP:", txdata.txid.c_str()); 
-	//	dumpbin((char *)hash, sizeof(hash), 0);
+		process_tx(txdata);
 
 		txdata.valid = -1;
-		txdata.status = TX_STATUS_READY;
+		txdata.status = TX_STATUS_INIT;
 
 		_recvq.push(txdata);	// send to verify.cpp
 
@@ -170,13 +152,8 @@ sleep(1);
 #endif
 			cout << "Client request: count=" << count << " sign=" << txdata.sign.signature << endl;
 
-		if (txdata.verified)
-			snprintf(retbuf, sizeof(retbuf) - 1, "%s", txdata.txid.c_str());
-		else
-			snprintf(retbuf, sizeof(retbuf) - 1, "Transaction verification failed!\n");
-
 		// Send reply back to client
-		s_send(responder, retbuf);
+		s_send(responder, txdata.txid);
 	}
 
 	fclose(outfp);
@@ -189,3 +166,60 @@ sleep(1);
 }
 
 
+string	process_tx(txdata_t& txdata)
+{
+	tx_create_token_t create_token;
+	tx_send_token_t send_token;
+	xserial txsz(4 * 1024);
+	string	from_addr, retstr;
+	uint32_t type, status;
+
+	txsz.setstring(txdata.data);
+
+	txsz >> type;
+	txsz >> status;
+	txsz.rewind();
+
+	printf("\n");
+	printf("SUB:\n");
+	switch (type)
+	{
+	case TX_CREATE_TOKEN:
+	//	deseriz(txsz, create_token, 1);
+		deseriz(txsz, txdata.sign, 1);
+		from_addr = send_token.from_addr;
+		break;
+
+	case TX_SEND_TOKEN:
+		deseriz(txsz, send_token, 1);
+		deseriz(txsz, txdata.sign, 1);
+		from_addr = send_token.from_addr;
+		break;
+
+	default:
+		printf("ERROR: Unknown TX type=%08X\n", type);
+		return retstr;
+	}
+
+	txdata.valid = verify_message_bin(from_addr.c_str(), txdata.sign.signature.c_str(), 
+				txdata.data.c_str(), txdata.sign.data_length, &_params.AddrHelper);
+
+	printf("	VERITY	: %d\n", txdata.valid);
+
+	if (txdata.valid)
+	{
+		CSHA256 sha;
+		unsigned char hash[CSHA256::OUTPUT_SIZE];	// 32B
+		sha.Write(reinterpret_cast<const unsigned char*>(txdata.sign.signature.c_str()), txdata.sign.signature.length()).Finalize(hash);
+		txdata.txid = bin2hex((const char *)hash, sizeof(hash));
+
+		printf("HASH=%s\nDUMP:", txdata.txid.c_str()); 
+		dumpbin((char *)hash, sizeof(hash));
+	}
+	else
+	{
+		txdata.txid = "ERROR: Transaction verification failed!";
+	}
+
+	return txdata.txid;
+}

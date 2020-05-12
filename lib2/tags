@@ -1,0 +1,161 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+BLOCK_SIZE	sha256.c	54;"	d	file:
+BLOCK_SIZE	sha512.c	57;"	d	file:
+BUFFER_SIZE	test_rc4.c	22;"	d	file:
+Buffer	sha1.h	/^    uint8_t         Buffer[64];$/;"	m	struct:__anon5
+CHAR64LONG16	sha1.c	/^} CHAR64LONG16;$/;"	t	typeref:union:__anon4	file:
+Ch	sha256.c	58;"	d	file:
+Ch	sha512.c	65;"	d	file:
+Count	sha1.h	/^    uint32_t        Count[2];$/;"	m	struct:__anon5
+F	md5.c	22;"	d	file:
+G	md5.c	23;"	d	file:
+GET	md5.c	40;"	d	file:
+Gamma0	sha256.c	64;"	d	file:
+Gamma0	sha512.c	71;"	d	file:
+Gamma1	sha256.c	65;"	d	file:
+Gamma1	sha512.c	72;"	d	file:
+H	md5.c	24;"	d	file:
+I	md5.c	25;"	d	file:
+K	sha256.c	/^static const uint32_t K[64] = {$/;"	v	file:
+K	sha512.c	/^static const uint64_t K[80] = {$/;"	v	file:
+LIBBASE58_H	base58.h	2;"	d
+LOAD32H	sha256.c	24;"	d	file:
+LOAD64H	sha512.c	20;"	d	file:
+MAX_PLAINTEXT_SIZE	test_hashlib.c	26;"	d	file:
+MD5_H	md5.h	11;"	d
+MD5_HASH	md5.h	/^} MD5_HASH;$/;"	t	typeref:struct:__anon2
+MD5_HASH_SIZE	md5.h	37;"	d
+MIN	sha256.c	18;"	d	file:
+MIN	sha512.c	18;"	d	file:
+Maj	sha256.c	59;"	d	file:
+Maj	sha512.c	66;"	d	file:
+Md5Context	md5.h	/^} Md5Context;$/;"	t	typeref:struct:__anon1
+Md5Finalise	md5.c	/^void	Md5Finalise(Md5Context *Context, MD5_HASH *Digest)$/;"	f
+Md5Hash	test_hashlib.c	/^    MD5_HASH        Md5Hash;$/;"	m	struct:__anon11	file:
+Md5Initialise	md5.c	/^void	Md5Initialise(Md5Context *Context)$/;"	f
+Md5Update	md5.c	/^void	Md5Update(Md5Context *Context, void *Buffer, uint32_t BufferSize)$/;"	f
+NUM_TEST_VECTORS	test_hashlib.c	167;"	d	file:
+PlainText	test_hashlib.c	/^    char            PlainText [MAX_PLAINTEXT_SIZE];$/;"	m	struct:__anon11	file:
+PlainTextSize	test_hashlib.c	/^    int             PlainTextSize;                      \/\/ 0 to use (int)strlen$/;"	m	struct:__anon11	file:
+R	sha256.c	61;"	d	file:
+R	sha512.c	68;"	d	file:
+R0	sha1.c	37;"	d	file:
+R1	sha1.c	38;"	d	file:
+R2	sha1.c	39;"	d	file:
+R3	sha1.c	40;"	d	file:
+R4	sha1.c	41;"	d	file:
+RC4_H	rc4.h	10;"	d
+ROR64	sha512.c	16;"	d	file:
+Rc4Context	rc4.h	/^} Rc4Context;$/;"	t	typeref:struct:__anon3
+Rc4Initialise	rc4.c	/^void	Rc4Initialise(Rc4Context *Context, void *Key, uint32_t KeySize, uint32_t DropN)$/;"	f
+Rc4Output	rc4.c	/^void	Rc4Output(Rc4Context *Context, void *Buffer, uint32_t Size)$/;"	f
+Rc4Xor	rc4.c	/^void	Rc4Xor(Rc4Context *Context, void *InBuffer, void *OutBuffer, uint32_t Size)$/;"	f
+S	rc4.h	/^    uint8_t      S[256];$/;"	m	struct:__anon3
+S	sha256.c	60;"	d	file:
+S	sha512.c	67;"	d	file:
+SET	md5.c	39;"	d	file:
+SHA1_H	sha1.h	14;"	d
+SHA1_HASH	sha1.h	/^}	SHA1_HASH;$/;"	t	typeref:struct:__anon6
+SHA1_HASH_SIZE	sha1.h	30;"	d
+SHA256_H	sha256.h	12;"	d
+SHA256_HASH	sha256.h	/^} SHA256_HASH;$/;"	t	typeref:struct:__anon8
+SHA256_HASH_SIZE	sha256.h	26;"	d
+SHA512_H	sha512.h	12;"	d
+SHA512_HASH	sha512.h	/^}	SHA512_HASH;$/;"	t	typeref:struct:__anon10
+SHA512_HASH_SIZE	sha512.h	27;"	d
+STEP	md5.c	31;"	d	file:
+STORE32H	sha256.c	20;"	d	file:
+STORE64H	sha256.c	30;"	d	file:
+STORE64H	sha512.c	26;"	d	file:
+Sha1Context	sha1.h	/^}	Sha1Context;$/;"	t	typeref:struct:__anon5
+Sha1Finalise	sha1.c	/^void	Sha1Finalise(Sha1Context *Context, SHA1_HASH *Digest)$/;"	f
+Sha1Hash	test_hashlib.c	/^    SHA1_HASH       Sha1Hash;$/;"	m	struct:__anon11	file:
+Sha1Initialise	sha1.c	/^void	Sha1Initialise(Sha1Context *Context)$/;"	f
+Sha1Update	sha1.c	/^void	Sha1Update(Sha1Context *Context, const void *Buffer, const uint32_t BufferSize)$/;"	f
+Sha256Context	sha256.h	/^} Sha256Context;$/;"	t	typeref:struct:__anon7
+Sha256Finalise	sha256.c	/^void	Sha256Finalise(Sha256Context *Context, SHA256_HASH *Digest)$/;"	f
+Sha256Hash	test_hashlib.c	/^    SHA256_HASH     Sha256Hash;$/;"	m	struct:__anon11	file:
+Sha256Initialise	sha256.c	/^void	Sha256Initialise(Sha256Context *Context)$/;"	f
+Sha256Round	sha256.c	67;"	d	file:
+Sha256Update	sha256.c	/^void	Sha256Update(Sha256Context *Context, const void *Buffer, uint32_t BufferSize)$/;"	f
+Sha512Context	sha512.h	/^}	Sha512Context;$/;"	t	typeref:struct:__anon9
+Sha512Finalise	sha512.c	/^void	Sha512Finalise(Sha512Context *Context, SHA512_HASH *Digest)$/;"	f
+Sha512Hash	test_hashlib.c	/^    SHA512_HASH     Sha512Hash;$/;"	m	struct:__anon11	file:
+Sha512Initialise	sha512.c	/^void	Sha512Initialise(Sha512Context *Context)$/;"	f
+Sha512Round	sha512.c	74;"	d	file:
+Sha512Update	sha512.c	/^void	Sha512Update(Sha512Context *Context, void *Buffer, uint32_t BufferSize)$/;"	f
+Sigma0	sha256.c	62;"	d	file:
+Sigma0	sha512.c	69;"	d	file:
+Sigma1	sha256.c	63;"	d	file:
+Sigma1	sha512.c	70;"	d	file:
+State	sha1.h	/^    uint32_t        State[5];$/;"	m	struct:__anon5
+SwapBytes	rc4.c	16;"	d	file:
+TOHEXDIGIT	libapi.h	22;"	d
+TestMd5	test_hashlib.c	/^static	bool	TestMd5 (void)$/;"	f	file:
+TestRc4	test_hashlib.c	/^static	bool	TestRc4(void)$/;"	f	file:
+TestSha1	test_hashlib.c	/^static	bool	TestSha1(void)$/;"	f	file:
+TestSha256	test_hashlib.c	/^static	bool	TestSha256(void)$/;"	f	file:
+TestSha512	test_hashlib.c	/^static	bool	TestSha512(void)$/;"	f	file:
+TestVector	test_hashlib.c	/^} TestVector;$/;"	t	typeref:struct:__anon11	file:
+TransformFunction	md5.c	/^static	void	*TransformFunction(Md5Context *ctx, void *data, uintmax_t size)$/;"	f	file:
+TransformFunction	sha1.c	/^static	void	TransformFunction(uint32_t state[5], const uint8_t buffer[64])$/;"	f	file:
+TransformFunction	sha256.c	/^static	void	TransformFunction(Sha256Context *Context, uint8_t *Buffer)$/;"	f	file:
+TransformFunction	sha512.c	/^static	void	TransformFunction(Sha512Context *Context, uint8_t *Buffer)$/;"	f	file:
+__LIBAPI_H__	libapi.h	2;"	d
+__min	test_rc4.c	18;"	d	file:
+a	md5.h	/^    uint32_t     a;$/;"	m	struct:__anon1
+b	md5.h	/^    uint32_t     b;$/;"	m	struct:__anon1
+b58digits_map	base58.c	/^static const int8_t b58digits_map[] = {$/;"	v	file:
+b58digits_ordered	base58.c	/^static const char b58digits_ordered[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";$/;"	v	file:
+base58_check	base58.c	/^int	base58_check(const void *bin, size_t binsz, const char *base58str, size_t b58sz)$/;"	f
+base58_check_encode	base58.c	/^bool	base58_check_encode(char *b58c, size_t *b58c_sz, uint8_t ver, const void *data, size_t datasz)$/;"	f
+base58_decode	base58.c	/^bool base58_decode(void *bin, size_t *binszp, const char *b58, size_t b58sz)$/;"	f
+base58_encode	base58.c	/^bool	base58_encode(char *b58, size_t *b58sz, const void *data, size_t binsz)$/;"	f
+bin2hex	libapi.c	/^char	*bin2hex(char *hexbuf, const void *binbuf, const size_t binbuflen)$/;"	f
+blk	sha1.c	33;"	d	file:
+blk0	sha1.c	30;"	d	file:
+block	md5.h	/^    uint32_t     block[16];$/;"	m	struct:__anon1
+buf	sha256.h	/^    uint8_t     buf[64];$/;"	m	struct:__anon7
+buf	sha512.h	/^    uint8_t     buf[128];$/;"	m	struct:__anon9
+buffer	md5.h	/^    uint8_t      buffer[64];$/;"	m	struct:__anon1
+bytes	md5.h	/^    uint8_t      bytes [MD5_HASH_SIZE];$/;"	m	struct:__anon2
+bytes	sha1.h	/^    uint8_t      bytes [SHA1_HASH_SIZE];$/;"	m	struct:__anon6
+bytes	sha256.h	/^    uint8_t      bytes [SHA256_HASH_SIZE];$/;"	m	struct:__anon8
+bytes	sha512.h	/^    uint8_t      bytes [SHA512_HASH_SIZE];$/;"	m	struct:__anon10
+c	md5.h	/^    uint32_t     c;$/;"	m	struct:__anon1
+c	sha1.c	/^    uint8_t     c [64];$/;"	m	union:__anon4	file:
+curlen	sha256.h	/^    uint32_t    curlen;$/;"	m	struct:__anon7
+curlen	sha512.h	/^    uint32_t    curlen;$/;"	m	struct:__anon9
+d	md5.h	/^    uint32_t     d;$/;"	m	struct:__anon1
+gTestVectors	test_hashlib.c	/^static TestVector gTestVectors [] = $/;"	v	file:
+hex2bin	libapi.c	/^void	*hex2bin(void *binbuf, const char *hexbuf, const size_t hexbuflen)$/;"	f
+hi	md5.h	/^    uint32_t     hi;$/;"	m	struct:__anon1
+i	rc4.h	/^    uint32_t     i;$/;"	m	struct:__anon3
+isnumstr	libapi.c	/^int	isnumstr(const char *data)$/;"	f
+j	rc4.h	/^    uint32_t     j;$/;"	m	struct:__anon3
+l	sha1.c	/^    uint32_t    l [16];$/;"	m	union:__anon4	file:
+length	sha256.h	/^    uint64_t    length;$/;"	m	struct:__anon7
+length	sha512.h	/^    uint64_t    length;$/;"	m	struct:__anon9
+lo	md5.h	/^    uint32_t     lo;$/;"	m	struct:__anon1
+main	test_base58.c	/^int	main(int ac, char **av)$/;"	f
+main	test_hashlib.c	/^int	main(void)$/;"	f
+main	test_md5.c	/^int	main(int ac, char **av)$/;"	f
+main	test_rc4.c	/^int	main(int ac, char **av)$/;"	f
+main	test_sha1.c	/^int	main(int ac, char **av)$/;"	f
+main	test_sha256.c	/^int	main(int ac, char **av)$/;"	f
+main	test_sha512.c	/^int	main(int ac, char **av)$/;"	f
+md5	libapi.c	/^char	*md5(char *outhash, const char *str, const size_t len)$/;"	f
+my_dblsha256	base58.c	/^static	bool	my_dblsha256(void *hash, const void *data, size_t datasz)$/;"	f	file:
+rol	sha1.c	27;"	d	file:
+ror	sha256.c	16;"	d	file:
+sha1	libapi.c	/^char	*sha1(char *outhash, const char *str, const size_t len)$/;"	f
+sha256	libapi.c	/^char	*sha256(char *outhash, const char *str, const size_t len)$/;"	f
+sha256_impl	base58.c	/^bool (*sha256_impl)(void *, const void *, size_t) = NULL;$/;"	v
+sha512	libapi.c	/^char	*sha512(char *outhash, const char *str, const size_t len)$/;"	f
+state	sha256.h	/^    uint32_t    state[8];$/;"	m	struct:__anon7
+state	sha512.h	/^    uint64_t    state[8];$/;"	m	struct:__anon9

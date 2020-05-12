@@ -81,14 +81,13 @@ bool	leveldb::destroy(string dbname)
 }
 
 
-char	*leveldb::get(const char *key, size_t keylen, char **val, size_t *vallen)	// for binary
+string	leveldb::get(const char *key, size_t keylen)
 {
 	char	*err = NULL;
 	char	*readval = NULL;
+	size_t	vallen = 0;
 
-	*val = NULL;
-
-	readval = leveldb_get(ldb_, ropt_, key, keylen, vallen, &err);
+	readval = leveldb_get(ldb_, ropt_, key, keylen, &vallen, &err);
 
 	if (err != NULL) 
 	{
@@ -97,28 +96,15 @@ char	*leveldb::get(const char *key, size_t keylen, char **val, size_t *vallen)	/
 	}
 	leveldb_free(err); 
 
-	if (readval)
-		*val = readval;
+	string retval(readval, vallen);
 
-	return *val;
+	return retval;
 }
 
 
 string	leveldb::get(string key)
 {
-	char	*readval = NULL;
-	size_t	vallen = 0;
-	string	retval;
-
-	get(key.c_str(), key.length() + 1, &readval, &vallen);
-
-	if (readval)
-	{
-		retval = readval;
-		free(readval);
-	}
-
-	return retval;
+	return get(key.c_str(), key.length());
 }
 
 
@@ -143,7 +129,7 @@ bool	leveldb::remove(string key)
 {
 	char	*err = NULL;
 
-	leveldb_delete(ldb_, wopt_, key.c_str(), key.length() + 1, &err);
+	leveldb_delete(ldb_, wopt_, key.c_str(), key.length(), &err);
 
 	if (err != NULL) 
 	{

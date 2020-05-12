@@ -21,7 +21,8 @@ ALIBS	= \
 	$(CSDKDIR)/lib/libcrypto.a \
 
 
-all: speed keypair_ex xsz_ex leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint rapidjson_ex base64_ex
+all: speed keypair_ex xsz_ex leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr \
+	bigint rapidjson_ex base64_ex
 
 keypair_ex: keypair_ex.cpp
 	$(CPP) $(CPPFLAGS) -o $@ keypair_ex.cpp $(ALIBS) $(SDKLIBS) $(LIBS)
@@ -38,8 +39,8 @@ speed: speed.cpp ../lib/util.cpp
 xsz_ex: xsz_ex.cpp ../lib/xsz.cpp
 	$(CPP) $(CPPFLAGS) -o $@ xsz_ex.cpp ../lib/xsz.cpp $(LIBS) $(SDKLIBS) 
 
-leveldb_test: ../lib/leveldb.cpp leveldb_test.cpp
-	$(CPP) $(CPPFLAGS) -o $@ ../lib/leveldb.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
+leveldb_test: ../lib/leveldb.cpp ../lib/xsz.cpp leveldb_test.cpp
+	$(CPP) $(CPPFLAGS) -o $@ ../lib/leveldb.cpp ../lib/xsz.cpp leveldb_test.cpp $(LIBS) $(SDKLIBS) 
 
 zmq_msvr: zmq_msvr.cpp
 	$(CPP) $(CPPFLAGS) -o $@ zmq_msvr.cpp $(LIBS) $(SDKLIBS) 
@@ -61,5 +62,6 @@ base64_ex: base64_ex.cpp
 
 clean:
 	rm -f $(OBJS) *.o *.out *.ver *.log \
-	speed ex xsz leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr bigint \
-	keypair_ex rapidjson_ex
+	speed keypair_ex xsz_ex leveldbex keypair leveldb_test zmq_svr zmq_cli zmq_msvr \
+	bigint rapidjson_ex base64_ex 
+	rm -rf level.db

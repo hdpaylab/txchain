@@ -102,7 +102,7 @@ uint64_t getdatasize(void *buf, int hdrbytes)
 }
 
 
-void	dumpbin(char *buf, size_t bufsz, int nthnl, int spc)
+void	dumpbin(const char *buf, const size_t bufsz, const int nthnl, const int spc)
 {
 	for (size_t ii = 0; ii < bufsz; ii++)
 	{
@@ -156,7 +156,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 
 		// data body copy
 		memcpy(bp, data, datasz);
-	//	dumpbin(sp, datasz + 1 + hdrbytes);
+	//	dumpbin(sp, datasz + 1 + hdrbytes, 1, 10);
 		return datasz + 1 + hdrbytes;
 
 	case XSZ_TYPE_STRING:
@@ -176,7 +176,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 		if (bufsz >= datasz + 2 + hdrbytes)
 			bp[datasz] = 0;
 
-	//	dumpbin(sp, datasz + 2 + hdrbytes);
+	//	dumpbin(sp, datasz + 2 + hdrbytes, 1, 10);
 		return datasz + 2 + hdrbytes;
 
 
@@ -200,7 +200,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 
 		memcpy(bp, data, datasz);
 		bp += datasz;
-	//	dumpbin(sp, datasz + 1);
+	//	dumpbin(sp, datasz + 1, 1, 10);
 		return datasz + 1;
 
 	default:
@@ -237,11 +237,11 @@ size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t da
 		}
 		else
 			memcpy(data, bp, sz);
-	//	dumpbin((char *)data, sz);
+	//	dumpbin((char *)data, sz, 1, 10);
 		return sz + 1 + hdrbytes;
 
 	case XSZ_TYPE_STRING:
-	//	dumpbin(buf, hdrbytes + 1);
+	//	dumpbin(buf, hdrbytes + 1, 1, 10);
 		sz = getdatasize(bp, hdrbytes);
 		bp += hdrbytes;
 		if (datasz < sz + 1)
@@ -253,7 +253,7 @@ size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t da
 		else
 			memcpy(data, bp, sz); dp[sz] = 0;
 		bp++;
-	//	dumpbin((char *)data, sz + 1);
+	//	dumpbin((char *)data, sz + 1, 1, 10);
 		return sz + 2 + hdrbytes;
 
 	case XSZ_TYPE_UINT8:
@@ -269,7 +269,7 @@ size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t da
 	case XSZ_TYPE_FLOAT:
 	case XSZ_TYPE_DOUBLE:
 		memcpy(data, bp, datasz);
-	//	dumpbin((char *)data, datasz);
+	//	dumpbin((char *)data, datasz, 1, 10);
 		return datasz + 1;
 
 	default:

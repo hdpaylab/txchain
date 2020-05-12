@@ -24,8 +24,10 @@
 //	db.sync(false)	: 24.5 sec (40.6k iops)
 //
 
-#include "leveldb.h"
 #include <assert.h>
+#include <unistd.h>
+#include "leveldb.h"
+#include "xsz.h"
 
 
 int	main(int ac, char *av[])
@@ -41,24 +43,37 @@ int	main(int ac, char *av[])
 		sprintf(key, "key %08d", ii);
 		sprintf(value, "value %08d", ii);
 
-		string kk = key;
-		string vv = value;
+		// binary data get/put test
+		for (int nn = 0; nn < 64; nn++)
+		{
+			if (nn % 2 == 0)
+				value[nn] = nn;
+		}
 
-	//	printf("---PUT KEY=%s VALUE=%s\n", kk.c_str(), vv.c_str());
+		string kk = key;
+		string vv(value, sizeof(value));
+
+		printf("---PUT KEY=%s VALUE len=%d\n", kk.c_str(), vv.length());
 		db.put(kk, vv);
 
 		string value2 = db.get(kk);
-	//	printf("---GET KEY=%s VALUE=%s\n", kk.c_str(), value2.c_str());
+		printf("---GET KEY=%s VALUE2 len=%d\n", kk.c_str(), value2.length());
 
-		if (value != value2)
-			printf("ERROR: value=%s(%ld)\nvalue2=%s(%ld)\n", 
-				value, strlen(value), value2.c_str(), value2.length());
+		dumpbin(value2.c_str(), value2.length(), 1, 10);
+
+		if (sizeof(value) != value2.length())
+			printf("ERROR: value len=%ld  value2 len=%ld\n", sizeof(value), value2.length());
+		else if (memcmp(value, value2.c_str(), sizeof(value)) != 0)
+			printf("ERROR: memcmp(value, value2) failed!\n");
+		else
+			printf("OK: value == value2\n");
 
 		if (ii % 100 == 0)
 		{
 			printf("%d...    \r", ii);
 			fflush(stdout);
 		}
+		sleep(1);
 	}
 	printf("\n");
 
