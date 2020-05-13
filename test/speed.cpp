@@ -88,6 +88,7 @@ void	test_queue()
 	pthread_t tidsend, tidrecv[4];
 
 	int ret = pthread_create(&tidsend, NULL, thread_queue_send, NULL);
+	assert(ret == 0);
 
 	ret = pthread_create(&tidrecv[0], NULL, thread_queue_recv, NULL);
 	ret = pthread_create(&tidrecv[1], NULL, thread_queue_recv, NULL);
@@ -177,7 +178,7 @@ void	mutex_test_vector()
 	double	tmstart = 0, tmend = 0;
 	pthread_t	tid[10];
 
-	for (int ii = 0; ii < myv.size(); ii++)
+	for (int ii = 0; ii < (ssize_t)myv.size(); ii++)
 	{
 		myv[ii].verified = -1;
 		myv[ii].status = STATUS_EMPTY;

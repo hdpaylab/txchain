@@ -1,0 +1,236 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+AES_BLOCKLEN	aes.h	26;"	d
+AES_CBC	aes.h	/^	AES_CBC	= 1,	\/\/ AES encryption in CBC-mode of operation$/;"	e	enum:__anon1
+AES_CBC_decrypt	aes.c	/^void AES_CBC_decrypt(aes_t *aesp, uint8_t* buf,  uint32_t length)$/;"	f
+AES_CBC_encrypt	aes.c	/^void AES_CBC_encrypt(aes_t *aesp,uint8_t* buf, uint32_t length)$/;"	f
+AES_CTR	aes.h	/^	AES_CTR,	\/\/ encryption in counter-mode$/;"	e	enum:__anon1
+AES_CTR_xcrypt	aes.c	/^void AES_CTR_xcrypt(aes_t *aesp, uint8_t* buf, uint32_t length)$/;"	f
+AES_ECB	aes.h	/^	AES_ECB		\/\/ basic ECB 16-byte block algorithm. All can be enabled simultaneously$/;"	e	enum:__anon1
+AES_ECB_decrypt	aes.c	/^void AES_ECB_decrypt(aes_t *aesp, uint8_t* buf)$/;"	f
+AES_ECB_encrypt	aes.c	/^void AES_ECB_encrypt(aes_t *aesp, uint8_t* buf)$/;"	f
+AddRoundKey	aes.c	/^static void AddRoundKey(aes_t *aesp, uint8_t round, state_t* state, uint8_t* RoundKey)$/;"	f	file:
+BLOCK_SIZE	sha256.c	54;"	d	file:
+BLOCK_SIZE	sha512.c	57;"	d	file:
+BUFFER_SIZE	test_rc4.c	22;"	d	file:
+Buffer	sha1.h	/^    uint8_t         Buffer[64];$/;"	m	struct:__anon7
+CBC	test_aes.c	17;"	d	file:
+CHAR64LONG16	sha1.c	/^} CHAR64LONG16;$/;"	t	typeref:union:__anon6	file:
+CTR	test_aes.c	18;"	d	file:
+Ch	sha256.c	58;"	d	file:
+Ch	sha512.c	65;"	d	file:
+Cipher	aes.c	/^static void Cipher(aes_t *aesp, state_t* state, uint8_t* RoundKey)$/;"	f	file:
+Count	sha1.h	/^    uint32_t        Count[2];$/;"	m	struct:__anon7
+ECB	test_aes.c	19;"	d	file:
+F	md5.c	22;"	d	file:
+G	md5.c	23;"	d	file:
+GET	md5.c	40;"	d	file:
+Gamma0	sha256.c	64;"	d	file:
+Gamma0	sha512.c	71;"	d	file:
+Gamma1	sha256.c	65;"	d	file:
+Gamma1	sha512.c	72;"	d	file:
+H	md5.c	24;"	d	file:
+I	md5.c	25;"	d	file:
+InvCipher	aes.c	/^static void InvCipher(aes_t *aesp, state_t* state,uint8_t* RoundKey)$/;"	f	file:
+InvMixColumns	aes.c	/^static void InvMixColumns(state_t* state)$/;"	f	file:
+InvShiftRows	aes.c	/^static void InvShiftRows(state_t* state)$/;"	f	file:
+InvSubBytes	aes.c	/^static void InvSubBytes(state_t* state)$/;"	f	file:
+K	sha256.c	/^static const uint32_t K[64] = {$/;"	v	file:
+K	sha512.c	/^static const uint64_t K[80] = {$/;"	v	file:
+KeyExpansion	aes.c	/^static void KeyExpansion(const aes_t *aesp, uint8_t* RoundKey, const uint8_t* Key)$/;"	f	file:
+LOAD32H	sha256.c	24;"	d	file:
+LOAD64H	sha512.c	20;"	d	file:
+MAX_PLAINTEXT_SIZE	test_hashlib.c	22;"	d	file:
+MD5_H	md5.h	11;"	d
+MD5_HASH	md5.h	/^} MD5_HASH;$/;"	t	typeref:struct:__anon4
+MD5_HASH_SIZE	md5.h	32;"	d
+MIN	sha256.c	18;"	d	file:
+MIN	sha512.c	18;"	d	file:
+MULTIPLY_AS_A_FUNCTION	aes.c	45;"	d	file:
+Maj	sha256.c	59;"	d	file:
+Maj	sha512.c	66;"	d	file:
+Md5Context	md5.h	/^} Md5Context;$/;"	t	typeref:struct:__anon3
+Md5Finalise	md5.c	/^void	Md5Finalise(Md5Context *Context, MD5_HASH *Digest)$/;"	f
+Md5Hash	test_hashlib.c	/^    MD5_HASH        Md5Hash;$/;"	m	struct:__anon13	file:
+Md5Initialise	md5.c	/^void	Md5Initialise(Md5Context *Context)$/;"	f
+Md5Update	md5.c	/^void	Md5Update(Md5Context *Context, const void *Buffer, uint32_t BufferSize)$/;"	f
+MixColumns	aes.c	/^static void MixColumns(state_t* state)$/;"	f	file:
+Multiply	aes.c	/^static uint8_t Multiply(uint8_t x, uint8_t y)$/;"	f	file:
+Multiply	aes.c	468;"	d	file:
+NUM_TEST_VECTORS	test_hashlib.c	163;"	d	file:
+PlainText	test_hashlib.c	/^    char            PlainText [MAX_PLAINTEXT_SIZE];$/;"	m	struct:__anon13	file:
+PlainTextSize	test_hashlib.c	/^    int             PlainTextSize;                      \/\/ 0 to use (int)strlen$/;"	m	struct:__anon13	file:
+R	sha256.c	61;"	d	file:
+R	sha512.c	68;"	d	file:
+R0	sha1.c	37;"	d	file:
+R1	sha1.c	38;"	d	file:
+R2	sha1.c	39;"	d	file:
+R3	sha1.c	40;"	d	file:
+R4	sha1.c	41;"	d	file:
+RC4_H	rc4.h	10;"	d
+ROR64	sha512.c	16;"	d	file:
+Rc4Context	rc4.h	/^} Rc4Context;$/;"	t	typeref:struct:__anon5
+Rc4Initialise	rc4.c	/^void	Rc4Initialise(Rc4Context *Context, void *Key, uint32_t KeySize, uint32_t DropN)$/;"	f
+Rc4Output	rc4.c	/^void	Rc4Output(Rc4Context *Context, void *Buffer, uint32_t Size)$/;"	f
+Rc4Xor	rc4.c	/^void	Rc4Xor(Rc4Context *Context, void *InBuffer, void *OutBuffer, uint32_t Size)$/;"	f
+Rcon	aes.c	/^static const uint8_t Rcon[11] = {$/;"	v	file:
+S	rc4.h	/^    uint8_t      S[256];$/;"	m	struct:__anon5
+S	sha256.c	60;"	d	file:
+S	sha512.c	67;"	d	file:
+SET	md5.c	39;"	d	file:
+SHA1_H	sha1.h	14;"	d
+SHA1_HASH	sha1.h	/^}	SHA1_HASH;$/;"	t	typeref:struct:__anon8
+SHA1_HASH_SIZE	sha1.h	30;"	d
+SHA256_H	sha256.h	12;"	d
+SHA256_HASH	sha256.h	/^} SHA256_HASH;$/;"	t	typeref:struct:__anon10
+SHA256_HASH_SIZE	sha256.h	26;"	d
+SHA512_H	sha512.h	12;"	d
+SHA512_HASH	sha512.h	/^}	SHA512_HASH;$/;"	t	typeref:struct:__anon12
+SHA512_HASH_SIZE	sha512.h	27;"	d
+STEP	md5.c	31;"	d	file:
+STORE32H	sha256.c	20;"	d	file:
+STORE64H	sha256.c	30;"	d	file:
+STORE64H	sha512.c	26;"	d	file:
+Sha1Context	sha1.h	/^}	Sha1Context;$/;"	t	typeref:struct:__anon7
+Sha1Finalise	sha1.c	/^void	Sha1Finalise(Sha1Context *Context, SHA1_HASH *Digest)$/;"	f
+Sha1Hash	test_hashlib.c	/^    SHA1_HASH       Sha1Hash;$/;"	m	struct:__anon13	file:
+Sha1Initialise	sha1.c	/^void	Sha1Initialise(Sha1Context *Context)$/;"	f
+Sha1Update	sha1.c	/^void	Sha1Update(Sha1Context *Context, const void *Buffer, const uint32_t BufferSize)$/;"	f
+Sha256Context	sha256.h	/^} Sha256Context;$/;"	t	typeref:struct:__anon9
+Sha256Finalise	sha256.c	/^void	Sha256Finalise(Sha256Context *Context, SHA256_HASH *Digest)$/;"	f
+Sha256Hash	test_hashlib.c	/^    SHA256_HASH     Sha256Hash;$/;"	m	struct:__anon13	file:
+Sha256Initialise	sha256.c	/^void	Sha256Initialise(Sha256Context *Context)$/;"	f
+Sha256Round	sha256.c	67;"	d	file:
+Sha256Update	sha256.c	/^void	Sha256Update(Sha256Context *Context, const void *Buffer, uint32_t BufferSize)$/;"	f
+Sha512Context	sha512.h	/^}	Sha512Context;$/;"	t	typeref:struct:__anon11
+Sha512Finalise	sha512.c	/^void	Sha512Finalise(Sha512Context *Context, SHA512_HASH *Digest)$/;"	f
+Sha512Hash	test_hashlib.c	/^    SHA512_HASH     Sha512Hash;$/;"	m	struct:__anon13	file:
+Sha512Initialise	sha512.c	/^void	Sha512Initialise(Sha512Context *Context)$/;"	f
+Sha512Round	sha512.c	74;"	d	file:
+Sha512Update	sha512.c	/^void	Sha512Update(Sha512Context *Context, const void *Buffer, uint32_t BufferSize)$/;"	f
+ShiftRows	aes.c	/^static void ShiftRows(state_t* state)$/;"	f	file:
+Sigma0	sha256.c	62;"	d	file:
+Sigma0	sha512.c	69;"	d	file:
+Sigma1	sha256.c	63;"	d	file:
+Sigma1	sha512.c	70;"	d	file:
+State	sha1.h	/^    uint32_t        State[5];$/;"	m	struct:__anon7
+SubBytes	aes.c	/^static void SubBytes(state_t* state)$/;"	f	file:
+SwapBytes	rc4.c	16;"	d	file:
+TOHEXDIGIT	libhash.c	16;"	d	file:
+TestMd5	test_hashlib.c	/^static	bool	TestMd5 (void)$/;"	f	file:
+TestRc4	test_hashlib.c	/^static	bool	TestRc4(void)$/;"	f	file:
+TestSha1	test_hashlib.c	/^static	bool	TestSha1(void)$/;"	f	file:
+TestSha256	test_hashlib.c	/^static	bool	TestSha256(void)$/;"	f	file:
+TestSha512	test_hashlib.c	/^static	bool	TestSha512(void)$/;"	f	file:
+TestVector	test_hashlib.c	/^} TestVector;$/;"	t	typeref:struct:__anon13	file:
+TransformFunction	md5.c	/^static	void	*TransformFunction(Md5Context *ctx, const void *data, uintmax_t size)$/;"	f	file:
+TransformFunction	sha1.c	/^static	void	TransformFunction(uint32_t state[5], const uint8_t buffer[64])$/;"	f	file:
+TransformFunction	sha256.c	/^static	void	TransformFunction(Sha256Context *Context, uint8_t *Buffer)$/;"	f	file:
+TransformFunction	sha512.c	/^static	void	TransformFunction(Sha512Context *Context, uint8_t *Buffer)$/;"	f	file:
+XorWithIv	aes.c	/^static void XorWithIv(uint8_t* buf, uint8_t* Iv)$/;"	f	file:
+__AES_H	aes.h	2;"	d
+__BASE58_H	base58.h	2;"	d
+__LIBHASH_H__	libhash.h	6;"	d
+__min	test_rc4.c	18;"	d	file:
+__xtime	aes.c	/^static uint8_t __xtime(uint8_t x)$/;"	f	file:
+a	md5.h	/^    uint32_t     a;$/;"	m	struct:__anon3
+aes256_decrypt	aes.c	/^string	aes256_decrypt(const string key, const string instr)	\/\/ AES_CBC$/;"	f
+aes256_encrypt	aes.c	/^string	aes256_encrypt(const string key, const string instr)	\/\/ AES_CBC$/;"	f
+aes_decrypt	aes.c	/^void	aes_decrypt(aes_t *aesp, uint8_t *buf, size_t buflen)$/;"	f
+aes_encrypt	aes.c	/^void	aes_encrypt(aes_t *aesp, uint8_t *buf, size_t buflen)$/;"	f
+aes_exit	aes.c	/^void	aes_exit(aes_t *aesp)$/;"	f
+aes_init	aes.c	/^aes_t	*aes_init(aes_t *aesp, const int type, const int bits, const uint8_t *key, const uint8_t *iv)$/;"	f
+aes_set_key_iv	aes.c	/^aes_t	*aes_set_key_iv(aes_t *aesp, const uint8_t *key, const uint8_t *iv)$/;"	f
+aes_t	aes.h	/^} aes_t;$/;"	t	typeref:struct:__anon2
+b	md5.h	/^    uint32_t     b;$/;"	m	struct:__anon3
+b58digits_map	base58.c	/^static const int8_t b58digits_map[] = {$/;"	v	file:
+b58digits_ordered	base58.c	/^static const char b58digits_ordered[] = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";$/;"	v	file:
+base58_check	base58.c	/^int	base58_check(const void *outbin, size_t binsz, const char *base58str, size_t b58sz)$/;"	f
+base58_check_encode	base58.c	/^bool	base58_check_encode(char *outb58c, size_t *outb58c_sz, uint8_t ver, const void *data, size_t datasz)$/;"	f
+base58_decode	base58.c	/^bool base58_decode(void *outbin, size_t *outbinszp, const char *b58, size_t b58sz)$/;"	f
+base58_decode	base58.c	/^string base58_decode(string instr)$/;"	f
+base58_encode	base58.c	/^bool	base58_encode(char *outb58, size_t *outb58sz, const void *data, size_t binsz)$/;"	f
+base58_encode	base58.c	/^string base58_encode(string instr)$/;"	f
+base64_decode	base64.cpp	/^string base64_decode(const string& str)$/;"	f
+base64_decode	base64.cpp	/^vector<unsigned char> base64_decode(const char* p, bool* pfInvalid)$/;"	f
+base64_encode	base64.cpp	/^string base64_encode(const string& str)$/;"	f
+base64_encode	base64.cpp	/^string base64_encode(const unsigned char* pch, size_t len)$/;"	f
+bin2hex	libhash.c	/^char	*bin2hex(char *hexbuf, const void *binbuf, const size_t binbuflen)$/;"	f
+bits	aes.h	/^	int	bits;			\/\/ 0 == 128, 192, 256$/;"	m	struct:__anon2
+blk	sha1.c	33;"	d	file:
+blk0	sha1.c	30;"	d	file:
+block	md5.h	/^    uint32_t     block[16];$/;"	m	struct:__anon3
+buf	sha256.h	/^    uint8_t     buf[64];$/;"	m	struct:__anon9
+buf	sha512.h	/^    uint8_t     buf[128];$/;"	m	struct:__anon11
+buffer	md5.h	/^    uint8_t      buffer[64];$/;"	m	struct:__anon3
+bytes	md5.h	/^    uint8_t      bytes [MD5_HASH_SIZE];$/;"	m	struct:__anon4
+bytes	sha1.h	/^    uint8_t      bytes [SHA1_HASH_SIZE];$/;"	m	struct:__anon8
+bytes	sha256.h	/^    uint8_t      bytes [SHA256_HASH_SIZE];$/;"	m	struct:__anon10
+bytes	sha512.h	/^    uint8_t      bytes [SHA512_HASH_SIZE];$/;"	m	struct:__anon12
+c	md5.h	/^    uint32_t     c;$/;"	m	struct:__anon3
+c	sha1.c	/^    uint8_t     c [64];$/;"	m	union:__anon6	file:
+curlen	sha256.h	/^    uint32_t    curlen;$/;"	m	struct:__anon9
+curlen	sha512.h	/^    uint32_t    curlen;$/;"	m	struct:__anon11
+d	md5.h	/^    uint32_t     d;$/;"	m	struct:__anon3
+gTestVectors	test_hashlib.c	/^static TestVector gTestVectors [] = $/;"	v	file:
+getSBoxInvert	aes.c	292;"	d	file:
+getSBoxValue	aes.c	290;"	d	file:
+hex2bin	libhash.c	/^void	*hex2bin(void *binbuf, const char *hexbuf, const size_t hexbuflen)$/;"	f
+hi	md5.h	/^    uint32_t     hi;$/;"	m	struct:__anon3
+i	rc4.h	/^    uint32_t     i;$/;"	m	struct:__anon5
+iv	aes.h	/^	uint8_t iv[AES_BLOCKLEN];	\/\/ for CBC & CTR $/;"	m	struct:__anon2
+j	rc4.h	/^    uint32_t     j;$/;"	m	struct:__anon5
+keyexpsize	aes.h	/^	int	keyexpsize;		\/\/ $/;"	m	struct:__anon2
+keylen	aes.h	/^	int	keylen;			\/\/$/;"	m	struct:__anon2
+l	sha1.c	/^    uint32_t    l [16];$/;"	m	union:__anon6	file:
+length	sha256.h	/^    uint64_t    length;$/;"	m	struct:__anon9
+length	sha512.h	/^    uint64_t    length;$/;"	m	struct:__anon11
+lo	md5.h	/^    uint32_t     lo;$/;"	m	struct:__anon3
+main	test_aes.c	/^int main(void)$/;"	f
+main	test_base58.c	/^int	main(int ac, char **av)$/;"	f
+main	test_base64.c	/^int	main(int ac, char **av)$/;"	f
+main	test_hashlib.c	/^int	main(void)$/;"	f
+main	test_md5.c	/^int	main(int ac, char **av)$/;"	f
+main	test_rc4.c	/^int	main(int ac, char **av)$/;"	f
+main	test_sha1.c	/^int	main(int ac, char **av)$/;"	f
+main	test_sha256.c	/^int	main(int ac, char **av)$/;"	f
+main	test_sha512.c	/^int	main(int ac, char **av)$/;"	f
+md5	libhash.c	/^char	*md5(char *outhash, const char *str, const size_t len)$/;"	f
+my_dblsha256	base58.c	/^static	bool	my_dblsha256(void *hash, const void *data, size_t datasz)$/;"	f	file:
+nb	aes.h	/^	int	nb, nk, nr;		\/\/ local$/;"	m	struct:__anon2
+nk	aes.h	/^	int	nb, nk, nr;		\/\/ local$/;"	m	struct:__anon2
+nr	aes.h	/^	int	nb, nk, nr;		\/\/ local$/;"	m	struct:__anon2
+print_hex	test_aes.c	/^static void print_hex(uint8_t* str, size_t len)$/;"	f	file:
+rol	sha1.c	27;"	d	file:
+ror	sha256.c	16;"	d	file:
+roundkey	aes.h	/^	uint8_t roundkey[256];		\/\/ 256bits==240 \/ 192bits==208 \/ 128bits==176 $/;"	m	struct:__anon2
+rsbox	aes.c	/^static const uint8_t rsbox[256] = {$/;"	v	file:
+sbox	aes.c	/^static const uint8_t sbox[256] = {$/;"	v	file:
+sha1	libhash.c	/^char	*sha1(char *outhash, const char *str, const size_t len)$/;"	f
+sha1	libhash.c	/^string	sha1(string instr, bool tohex)$/;"	f
+sha1bin	libhash.c	/^int	sha1bin(char *outhash, const char *str, const size_t len)$/;"	f
+sha256	libhash.c	/^char	*sha256(char *outhash, const char *str, const size_t len)$/;"	f
+sha256	libhash.c	/^string	sha256(string instr, bool tohex)$/;"	f
+sha256_impl	base58.c	/^bool (*sha256_impl)(void *, const void *, size_t) = NULL;$/;"	v
+sha256bin	libhash.c	/^int	sha256bin(char *outhash, const char *str, const size_t len)$/;"	f
+sha512	libhash.c	/^char	*sha512(char *outhash, const char *str, const size_t len)$/;"	f
+sha512	libhash.c	/^string	sha512(string instr, bool tohex)$/;"	f
+sha512bin	libhash.c	/^int	sha512bin(char *outhash, const char *str, const size_t len)$/;"	f
+state	sha256.h	/^    uint32_t    state[8];$/;"	m	struct:__anon9
+state	sha512.h	/^    uint64_t    state[8];$/;"	m	struct:__anon11
+state_t	aes.c	/^typedef uint8_t state_t[4][4];$/;"	t	file:
+test_c	test_base58.c	/^void	test_c()$/;"	f
+test_cpp	test_base58.c	/^void	test_cpp()$/;"	f
+test_decrypt_cbc	test_aes.c	/^static void test_decrypt_cbc(int bits)$/;"	f	file:
+test_decrypt_ctr	test_aes.c	/^static void test_decrypt_ctr(int bits)$/;"	f	file:
+test_decrypt_ecb	test_aes.c	/^static void test_decrypt_ecb(int bits)$/;"	f	file:
+test_encrypt_cbc	test_aes.c	/^static void test_encrypt_cbc(int bits)$/;"	f	file:
+test_encrypt_ctr	test_aes.c	/^static void test_encrypt_ctr(int bits)$/;"	f	file:
+test_encrypt_ecb	test_aes.c	/^static void test_encrypt_ecb(int bits)$/;"	f	file:
+test_encrypt_ecb_verbose	test_aes.c	/^static void test_encrypt_ecb_verbose(int bits)$/;"	f	file:
+test_xcrypt_ctr	test_aes.c	/^static void test_xcrypt_ctr(const int bits, const char* xcrypt)$/;"	f	file:
+type	aes.h	/^	int	type;			\/\/ 0 == AES_CBC \/ AES_CTR \/ AES_ECB$/;"	m	struct:__anon2

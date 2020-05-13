@@ -4,132 +4,91 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+A	serialize_ex.cpp	/^typedef struct A {$/;"	s	file:
 BUFF_SIZE	xmsq.h	5;"	d
-MAX_NODE	../txcommon.h	28;"	d
-MAX_RECV_QUEUE_SIZE	../txcommon.h	33;"	d
-MAX_SEND_QUEUE_SIZE	../txcommon.h	32;"	d
-MAX_VECTOR_SIZE	../txcommon.h	103;"	d
-MAX_VERIFIER	../txcommon.h	30;"	d
-MAX_VERIFY_QUEUE_SIZE	../txcommon.h	34;"	d
-STATUS_EMPTY	speed.cpp	94;"	d	file:
-STATUS_PROCESSED	speed.cpp	96;"	d	file:
-STATUS_READY	speed.cpp	95;"	d	file:
-SUBSCRIBER_MSGQ_ID	../txcommon.h	114;"	d
-TXCHAIN_STATUS_EMPTY	../txcommon.h	/^	TXCHAIN_STATUS_EMPTY	= 0x00000000,$/;"	e	enum:__anon4
-TXCHAIN_STATUS_READY	../txcommon.h	/^	TXCHAIN_STATUS_READY	= 0x10000000,$/;"	e	enum:__anon4
-TXCHAIN_STATUS_VERIFIED	../txcommon.h	/^	TXCHAIN_STATUS_VERIFIED	= 0x20000000,$/;"	e	enum:__anon4
-TXCHAIN_VERIFY_MODEL_VECTOR	../txcommon.h	25;"	d
-VERIFIER_MSGQ_ID	../txcommon.h	115;"	d
-__COMMON_H	../txcommon.h	2;"	d
-__ZHELPERS_HPP_INCLUDED__	../zhelpers.hpp	3;"	d
-_maxnode	../main.cpp	/^int	_maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
-_maxnode	../xmain.cpp	/^int	_maxnode = 1;		\/\/ 나중에 설정으로 뺄 것 $/;"	v
-_npeer	../main.cpp	/^int	_npeer = 0;$/;"	v
-_npeer	../xmain.cpp	/^int	_npeer = 0;$/;"	v
-_nverifier	../main.cpp	/^int	_nverifier = MAX_VERIFIER;$/;"	v
-_nverifier	../xmain.cpp	/^int	_nverifier = MAX_VERIFIER;$/;"	v
-_peerlist	../main.cpp	/^char	_peerlist[MAX_NODE + 1][40] = {0};$/;"	v
-_peerlist	../xmain.cpp	/^char	_peerlist[MAX_NODE + 1][40] = {0};$/;"	v
-_pop_count	../main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
-_pop_count	../xmain.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
-_push_count	../main.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
-_push_count	../xmain.cpp	/^int	_push_count = 0, _pop_count = 0;$/;"	v
-_recvmtx	../queue.cpp	/^pthread_mutex_t _recvmtx;	\/\/ for _recvq$/;"	v
-_recvq	../queue.cpp	/^queue<txdata_t>	_recvq;		\/\/ receive queue for subscriber$/;"	v
-_sendmtx	../queue.cpp	/^pthread_mutex_t _sendmtx;	\/\/ for _sendq$/;"	v
-_sendport	../main.cpp	/^int	_sendport = 7000;$/;"	v
-_sendport	../xmain.cpp	/^int	_sendport = 7000;$/;"	v
-_sendq	../queue.cpp	/^queue<txdata_t>	_sendq;		\/\/ send queue for publisher$/;"	v
-_vermtx	../queue.cpp	/^pthread_mutex_t _vermtx;	\/\/ for _verq$/;"	v
-_verq	../queue.cpp	/^queue<txdata_t>	_verq;		\/\/ receive queue for verifier$/;"	v
+STATUS_EMPTY	speed.cpp	118;"	d	file:
+STATUS_PROCESSED	speed.cpp	120;"	d	file:
+STATUS_READY	speed.cpp	119;"	d	file:
+__KEYPAIR_H	keypair.h	2;"	d
+_debug	xsz_ex.cpp	/^int	_debug = 0;$/;"	v
+_safeq	speed.cpp	/^safe_queue<mydata_t>	_safeq;		\/\/ send queue for publisher$/;"	v
+a	serialize_ex.cpp	/^	int a;$/;"	m	struct:A	file:
+addrinfo	keypair.cpp	/^struct WalletAddrHelpInfo addrinfo = {$/;"	v	typeref:struct:WalletAddrHelpInfo
+addrinfo	keypair_ex.cpp	/^struct WalletAddrHelpInfo addrinfo = {$/;"	v	typeref:struct:WalletAddrHelpInfo
 ai_msq_open	xmsq.cpp	/^int ai_msq_open(int key, int queue_size)$/;"	f
-c99_snprintf	../zhelpers.hpp	/^	inline int c99_snprintf(char *outBuf, size_t size, const char *format, ...)$/;"	f
-c99_vsnprintf	../zhelpers.hpp	/^	inline int c99_vsnprintf(char *outBuf, size_t size, const char *format, va_list ap)$/;"	f
-common_queue_pop	../queue.cpp	/^txdata_t common_queue_pop(const char *name, queue<txdata_t> myq, pthread_mutex_t *mtx)$/;"	f
-common_queue_push	../queue.cpp	/^int	common_queue_push(const char *name, queue<txdata_t> myq, txdata_t data, pthread_mutex_t *mtx, int max_queue_size)$/;"	f
-data	../txcommon.h	/^	string		data;$/;"	m	struct:__anon5
-data_t	xmsq.h	/^} data_t;$/;"	t	typeref:struct:__anon2
-int64_t	../zhelpers.hpp	/^    typedef __int64 int64_t;$/;"	t
-main	../main.cpp	/^int	main(int ac, char *av[])$/;"	f
-main	../xmain.cpp	/^int	main(int ac, char *av[])$/;"	f
-main	ex.cpp	/^int	main()$/;"	f
-main	leveldbex.cpp	/^int main() {$/;"	f
+data	speed.cpp	/^	string data;$/;"	m	struct:__anon1	file:
+data_t	xmsq.h	/^} data_t;$/;"	t	typeref:struct:__anon3
+dd	xsz_ex.cpp	/^	double dd;$/;"	m	struct:__anon4	file:
+deserialize	serialize_ex.cpp	/^test_struct_t deserialize(char *buf) {$/;"	f
+ff	xsz_ex.cpp	/^	float ff;$/;"	m	struct:__anon4	file:
+file_get	rapidjson_ex.cpp	/^char	*file_get(char *path)$/;"	f
+i16	xsz_ex.cpp	/^	int16_t i16;$/;"	m	struct:__anon4	file:
+i32	xsz_ex.cpp	/^	int32_t i32;$/;"	m	struct:__anon4	file:
+i64	xsz_ex.cpp	/^	int64_t i64;$/;"	m	struct:__anon4	file:
+i8	xsz_ex.cpp	/^	int8_t i8;$/;"	m	struct:__anon4	file:
+main	bigint_ex.cpp	/^int main(){$/;"	f
+main	keypair.cpp	/^int	main(int ac, char *av[])$/;"	f
+main	keypair_ex.cpp	/^int	main()$/;"	f
+main	leveldb_test.cpp	/^int	main(int ac, char *av[])$/;"	f
+main	leveldbex.cpp	/^int main()$/;"	f
+main	rapidjson_ex.cpp	/^int	main(int ac, char *av[])$/;"	f
+main	serialize_ex.cpp	/^int main() {$/;"	f
 main	speed.cpp	/^int	main(int ac, char *av[])$/;"	f
+main	xsz_ex.cpp	/^main(int ac, char *av[])$/;"	f
+main	zmq_cli.cpp	/^int	main(int ac, char *av[])$/;"	f
+main	zmq_msvr.cpp	/^int	main(int ac, char *av[])$/;"	f
+main	zmq_svr.cpp	/^int	main(int ac, char *av[])$/;"	f
+max_value	bigint_ex.cpp	/^void max_value(void) $/;"	f
 memory_test	speed.cpp	/^void	memory_test()$/;"	f
-message	../txcommon.h	/^	char	*message;$/;"	m	struct:__anon3
-message	speed.cpp	/^	char	message[256];$/;"	m	struct:__anon1	file:
-mtext	xmsq.h	/^	char    mtext[BUFF_SIZE];$/;"	m	struct:__anon2
+message	speed.cpp	/^	char	message[256];$/;"	m	struct:__anon2	file:
+mtext	xmsq.h	/^	char    mtext[BUFF_SIZE];$/;"	m	struct:__anon3
 mtx	speed.cpp	/^pthread_mutex_t mtx;$/;"	v
-mtype	xmsq.h	/^	long    mtype;$/;"	m	struct:__anon2
+mtype	xmsq.h	/^	long    mtype;$/;"	m	struct:__anon3
 mutex_test_queue	speed.cpp	/^void	mutex_test_queue()$/;"	f
 mutex_test_vector	speed.cpp	/^void	mutex_test_vector()$/;"	f
+mydata_t	speed.cpp	/^} mydata_t;$/;"	t	typeref:struct:__anon1	file:
 myq	speed.cpp	/^queue<string> myq;$/;"	v
-mytxdata_t	speed.cpp	/^}	mytxdata_t;$/;"	t	typeref:struct:__anon1	file:
+mytxdata_t	speed.cpp	/^}	mytxdata_t;$/;"	t	typeref:struct:__anon2	file:
+not_secure_random	bigint_ex.cpp	/^void not_secure_random(uint8_t *dst, int n){$/;"	f
 nthread	speed.cpp	/^int	nthread = 4;$/;"	v
-paramsget	../params.cpp	/^Params_type_t paramsget(const string& Path)$/;"	f
-parse_command_line	../main.cpp	/^void	parse_command_line(int ac, char *av[])$/;"	f
-parse_command_line	../xmain.cpp	/^void	parse_command_line(int ac, char *av[])$/;"	f
 pop_count	speed.cpp	/^int	pop_count = 0;$/;"	v
-pubkey	../txcommon.h	/^	char	*pubkey;$/;"	m	struct:__anon3
-pubkey	speed.cpp	/^	char	pubkey[64];$/;"	m	struct:__anon1	file:
+privinfo	keypair.cpp	/^struct PrivateKeyHelpInfo privinfo = {$/;"	v	typeref:struct:PrivateKeyHelpInfo
+privinfo	keypair_ex.cpp	/^struct PrivateKeyHelpInfo privinfo = {$/;"	v	typeref:struct:PrivateKeyHelpInfo
+pubkey	speed.cpp	/^	char	pubkey[64];$/;"	m	struct:__anon2	file:
 push_count	speed.cpp	/^int	push_count = 0;$/;"	v
-random	../zhelpers.hpp	37;"	d
-recv_queue_pop	../queue.cpp	/^txdata_t recv_queue_pop()$/;"	f
-recv_queue_push	../queue.cpp	/^int	recv_queue_push(txdata_t data)$/;"	f
-s_catch_signals	../zhelpers.hpp	/^inline static void s_catch_signals ()$/;"	f
-s_clock	../zhelpers.hpp	/^s_clock (void)$/;"	f
-s_console	../zhelpers.hpp	/^s_console (const char *format, ...)$/;"	f
-s_dump	../zhelpers.hpp	/^s_dump (zmq::socket_t & socket)$/;"	f
-s_interrupted	../zhelpers.hpp	/^static int s_interrupted = 0;$/;"	v
-s_recv	../zhelpers.hpp	/^inline static bool s_recv(zmq::socket_t & socket, std::string & ostring, int flags = 0)$/;"	f
-s_recv	../zhelpers.hpp	/^s_recv (zmq::socket_t & socket, int flags = 0) {$/;"	f
-s_recv	../zhelpers.hpp	/^s_recv(void *socket, int flags = 0) {$/;"	f
-s_send	../zhelpers.hpp	/^s_send (zmq::socket_t & socket, const std::string & string, int flags = 0) {$/;"	f
-s_send	../zhelpers.hpp	/^s_send(void *socket, const char *string, int flags = 0) {$/;"	f
-s_sendmore	../zhelpers.hpp	/^s_sendmore (zmq::socket_t & socket, const std::string & string) {$/;"	f
-s_sendmore	../zhelpers.hpp	/^s_sendmore(void *socket, char *string) {$/;"	f
-s_set_id	../zhelpers.hpp	/^s_set_id (zmq::socket_t & socket)$/;"	f
-s_set_id	../zhelpers.hpp	/^s_set_id(zmq::socket_t & socket, intptr_t id)$/;"	f
-s_signal_handler	../zhelpers.hpp	/^inline static void s_signal_handler (int sig_handler)$/;"	f
-s_sleep	../zhelpers.hpp	/^s_sleep (int msecs)$/;"	f
-s_version	../zhelpers.hpp	/^s_version (void)$/;"	f
-s_version_assert	../zhelpers.hpp	/^s_version_assert (int want_major, int want_minor)$/;"	f
-send_queue_pop	../queue.cpp	/^txdata_t send_queue_pop()$/;"	f
-send_queue_push	../queue.cpp	/^int	send_queue_push(txdata_t data)$/;"	f
-seq	../txcommon.h	/^	uint32_t	seq;		\/\/ TX sequence$/;"	m	struct:__anon5
-sign	speed.cpp	/^	char	sign[128];$/;"	m	struct:__anon1	file:
-signature	../txcommon.h	/^	char	*signature;$/;"	m	struct:__anon3
-snprintf	../zhelpers.hpp	44;"	d
-srandom	../zhelpers.hpp	36;"	d
-status	../txcommon.h	/^	uint32_t	status;		\/\/ see above TXCHAIN_STATUS_xxx$/;"	m	struct:__anon5
-status	speed.cpp	/^	int	status;		\/\/ 1=ready 2=processed$/;"	m	struct:__anon1	file:
-test_create_asset_send_tx	ex.cpp	/^void	test_create_asset_send_tx(void)$/;"	f
-test_create_key_pairs	ex.cpp	/^void	test_create_key_pairs(void)$/;"	f
-test_create_stream_publish_tx	ex.cpp	/^void	test_create_stream_publish_tx(void)$/;"	f
+push_pull	zmq_cli.cpp	/^void	push_pull(int direc)$/;"	f
+push_pull	zmq_svr.cpp	/^void	push_pull(int direc)$/;"	f
+req_rep	zmq_cli.cpp	/^void	req_rep(int ac, char *av[])$/;"	f
+req_rep	zmq_svr.cpp	/^void	req_rep(int ac, char *av[])$/;"	f
+seq	speed.cpp	/^	uint32_t	seq;		\/\/ TX sequence$/;"	m	struct:__anon1	file:
+serialize	serialize_ex.cpp	/^char *serialize(test_struct_t t) {$/;"	f
+seriz_test_t	xsz_ex.cpp	/^} seriz_test_t;$/;"	t	typeref:struct:__anon4	file:
+set_struct	xsz_ex.cpp	/^void	set_struct(seriz_test_t& tx)$/;"	f
+sign	speed.cpp	/^	char	sign[128];$/;"	m	struct:__anon2	file:
+status	speed.cpp	/^	int	status;		\/\/ 1=ready 2=processed$/;"	m	struct:__anon2	file:
+status	speed.cpp	/^	uint32_t	status;		\/\/ see above TXCHAIN_STATUS_xxx$/;"	m	struct:__anon1	file:
+stcmp	xsz_ex.cpp	/^int	stcmp(seriz_test_t *tx1, seriz_test_t *tx2)$/;"	f
+str	serialize_ex.cpp	/^	char *str;$/;"	m	struct:A	file:
+str1	xsz_ex.cpp	/^	string str1;$/;"	m	struct:__anon4	file:
+str2	xsz_ex.cpp	/^	string str2;$/;"	m	struct:__anon4	file:
+test_c	xsz_ex.cpp	/^int	test_c(seriz_test_t& tx)$/;"	f
+test_cpp	xsz_ex.cpp	/^int	test_cpp(seriz_test_t& tx)$/;"	f
+test_create_key_pairs	keypair_ex.cpp	/^void	test_create_key_pairs(void)$/;"	f
+test_create_pub_key_binarys	keypair_ex.cpp	/^void	test_create_pub_key_binarys(void)$/;"	f
 test_queue	speed.cpp	/^void	test_queue()$/;"	f
-test_sign_message	ex.cpp	/^void	test_sign_message(void)$/;"	f
-test_verify_message	ex.cpp	/^void	test_verify_message(void)$/;"	f
-thread_levledb	../leveldb.cpp	/^void	*thread_levledb(void *info_p)$/;"	f
-thread_levledb	../xleveldb.cpp	/^void	*thread_levledb(void *info_p)$/;"	f
+test_struct_t	serialize_ex.cpp	/^} test_struct_t;$/;"	t	typeref:struct:A	file:
 thread_mutex_test_queue	speed.cpp	/^void	*thread_mutex_test_queue(void *arg)$/;"	f
 thread_mutex_test_vector	speed.cpp	/^void	*thread_mutex_test_vector(void *arg)$/;"	f
-thread_publisher	../pub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
-thread_publisher	../xpub.cpp	/^void	*thread_publisher(void *info_p)$/;"	f
 thread_queue_recv	speed.cpp	/^void	*thread_queue_recv(void *arg)$/;"	f
 thread_queue_send	speed.cpp	/^void	*thread_queue_send(void *arg)$/;"	f
-thread_subscriber	../sub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
-thread_subscriber	../xsub.cpp	/^void	*thread_subscriber(void *info_p)$/;"	f
-thread_verifier	../verify.cpp	/^void	*thread_verifier(void *info_p)$/;"	f
-thread_verifier	../xverify.cpp	/^void	*thread_verifier(void *info_p)$/;"	f
-tx_t	../txcommon.h	/^}	tx_t;$/;"	t	typeref:struct:__anon3
-txdata_t	../txcommon.h	/^}	txdata_t;$/;"	t	typeref:struct:__anon5
-uint	../zhelpers.hpp	/^    typedef unsigned int  uint;$/;"	t
-ulong	../zhelpers.hpp	/^    typedef unsigned long ulong;$/;"	t
-verified	../txcommon.h	/^	int	verified;$/;"	m	struct:__anon3
-verified	../txcommon.h	/^	uint32_t	verified;	\/\/ 0=fail 1=success -1=none (@TXCHAIN_STATUS_VERIFIED)$/;"	m	struct:__anon5
-verified	speed.cpp	/^	int	verified;$/;"	m	struct:__anon1	file:
-verify_queue_pop	../queue.cpp	/^txdata_t verify_queue_pop()$/;"	f
-verify_queue_push	../queue.cpp	/^int	verify_queue_push(txdata_t data)$/;"	f
-vsnprintf	../zhelpers.hpp	45;"	d
-within	../zhelpers.hpp	74;"	d
-xgetclock	../util.cpp	/^double	xgetclock()$/;"	f
+u16	xsz_ex.cpp	/^	uint16_t u16;$/;"	m	struct:__anon4	file:
+u32	xsz_ex.cpp	/^	uint32_t u32;$/;"	m	struct:__anon4	file:
+u64	xsz_ex.cpp	/^	uint64_t u64;$/;"	m	struct:__anon4	file:
+u8	xsz_ex.cpp	/^	uint8_t u8;$/;"	m	struct:__anon4	file:
+uchar	keypair.cpp	/^typedef unsigned char	uchar;$/;"	t	file:
+uchar	keypair_ex.cpp	/^typedef unsigned char	uchar;$/;"	t	file:
+valid	speed.cpp	/^	uint32_t	valid;		\/\/ Valid TX mark$/;"	m	struct:__anon1	file:
+verified	speed.cpp	/^	int		verified;	\/\/ 0=fail 1=success -1=none $/;"	m	struct:__anon1	file:
+verified	speed.cpp	/^	int	verified;$/;"	m	struct:__anon2	file:
+worker_routine	zmq_msvr.cpp	/^void	*worker_routine(void *arg)$/;"	f
+xorshift32	bigint_ex.cpp	/^uint32_t xorshift32() {$/;"	f
