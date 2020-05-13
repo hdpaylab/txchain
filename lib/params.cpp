@@ -1,9 +1,5 @@
-#include <memory>
-#include <keys/hs_keys_wrapper.h>
-#include <helpers/hs_helpers.h>
-#include <map>
+#include "params.h"
 
-using namespace std;
 
 Params_type_t paramsget(const string& Path)
 {

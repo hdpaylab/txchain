@@ -14,7 +14,8 @@ $(HDACLIB): crypto
 	cd structs; make; cd ..
 	cd utils; make; cd ..
 	cd test; make; cd ..
-	ar cru $(HDACLIB) */*.o
+	ar cru $(HDACLIB) helpers/*.o keys/*.o primitives/*.o rpc/*.o script/*.o \
+		entities/*.o structs/*.o utils/*.o crypto/*.o 
 
 clean:	
 	cd crypto; make clean; cd ..

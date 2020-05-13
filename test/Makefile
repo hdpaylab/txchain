@@ -10,14 +10,12 @@ INCLUDE	= -I./ -I/usr/include/postgresql -I../HdacCSDK2/include -I../lib
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
 
-HDACLIB	= ../HdacCSDK2/hdaclib.a
-
-TXLIB	= ../lib/txlib.a
+TXLIB	= ../lib/txlib.a ../HdacCSDK2/hdaclib.a
 
 
 all: bigint_ex keypair keypair_ex leveldb_test leveldbex \
 	rapidjson_ex xsz_ex speed xsz_ex \
-	zmq_cli zmq_msvr zmq_svr \
+	zmq_cli zmq_msvr zmq_svr test_params \
 	test_aes test_base58 test_base64 test_hashlib test_md5 \
 	test_rc4 test_sha1 test_sha256 test_sha512
 
@@ -25,10 +23,10 @@ bigint_ex: bigint_ex.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) -o $@ bigint_ex.cpp $(TXLIB) $(LIBS) $(SDKLIBS) 
 
 keypair: keypair.cpp $(TXLIB)
-	$(CC) $(CPPFLAGS) -o $@ keypair.cpp $(HDACLIB) $(TXLIB) $(SDKLIBS) $(LIBS)
+	$(CC) $(CPPFLAGS) -o $@ keypair.cpp $(TXLIB) $(SDKLIBS) $(LIBS)
 
 keypair_ex: keypair_ex.cpp $(TXLIB)
-	$(CC) $(CPPFLAGS) -o $@ keypair_ex.cpp $(HDACLIB) $(TXLIB) $(SDKLIBS) $(LIBS)
+	$(CC) $(CPPFLAGS) -o $@ keypair_ex.cpp $(TXLIB) $(SDKLIBS) $(LIBS)
 
 leveldb_test: leveldb_test.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) -o $@ leveldb_test.cpp $(TXLIB) $(LIBS) $(SDKLIBS) 
@@ -40,7 +38,7 @@ rapidjson_ex: rapidjson_ex.o
 	$(CC) $(CPPFLAGS) -o $@ rapidjson_ex.cpp $(LIBS) $(SDKLIBS) 
 
 speed: speed.cpp $(TXLIB)
-	$(CC) $(CPPFLAGS) -o $@ speed.cpp $(HDACLIB) $(TXLIB) $(SDKLIBS) $(LIBS)
+	$(CC) $(CPPFLAGS) -o $@ speed.cpp $(TXLIB) $(SDKLIBS) $(LIBS)
 
 xsz_ex: xsz_ex.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) -o $@ xsz_ex.cpp $(LIBS) $(TXLIB) $(SDKLIBS) 
@@ -53,6 +51,9 @@ zmq_msvr: zmq_msvr.cpp
 
 zmq_svr: zmq_svr.cpp
 	$(CC) $(CPPFLAGS) -o $@ zmq_svr.cpp $(LIBS) $(SDKLIBS) 
+
+test_params: test_params.cpp
+	$(CC) $(CPPFLAGS) -o $@ test_params.cpp $(TXLIB) $(LIBS) $(SDKLIBS) 
 
 
 test_aes: test_aes.c $(TXLIB)
