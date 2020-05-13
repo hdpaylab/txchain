@@ -1,5 +1,9 @@
 
-all:
+HDACLIB	= hdaclib.a
+
+all: $(HDACLIB)
+
+$(HDACLIB): crypto
 	cd crypto; make; cd ..
 	cd entities; make; cd ..
 	cd helpers; make; cd ..
@@ -9,8 +13,8 @@ all:
 	cd script; make; cd ..
 	cd structs; make; cd ..
 	cd utils; make; cd ..
-	cd lib; rm *.a; ln -f -s ../*/*.a .
 	cd test; make; cd ..
+	ar cru $(HDACLIB) */*.o
 
 clean:	
 	cd crypto; make clean; cd ..
@@ -23,4 +27,3 @@ clean:
 	cd structs; make clean; cd ..
 	cd utils; make clean; cd ..
 	cd test; make clean; cd ..
-	cd lib; rm *.a; cd ..

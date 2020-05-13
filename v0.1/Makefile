@@ -1,4 +1,4 @@
-CPP	= g++
+CC	= g++
 
 CSDKDIR	= ../HdacCSDK2
 
@@ -14,28 +14,19 @@ SRCS	= xmain.cpp xpub.cpp xsub.cpp xverify.cpp xldbio.cpp \
 
 OBJS	= $(SRCS:.cpp=.o)
 
-ALIBS	= \
-	$(CSDKDIR)/lib/libhelpers.a \
-	$(CSDKDIR)/lib/libkeys.a \
-	$(CSDKDIR)/lib/libprimitives.a \
-	$(CSDKDIR)/lib/librpc.a \
-	$(CSDKDIR)/lib/libscripts.a \
-	$(CSDKDIR)/lib/libentities.a \
-	$(CSDKDIR)/lib/libstructs.a \
-	$(CSDKDIR)/lib/libutils.a \
-	$(CSDKDIR)/lib/libcrypto.a \
+HDACLIB	= ../HdacCSDK2/hdaclib.a
 
 
 all: lib tx 
 
-lib: $(ALIBS)
+lib: $(HDACLIB)
 
-$(ALIBS): 
+$(HDACLIB): 
 	cd $(CSDKDIR); make; cd ..
 #	ln -f -s $(CSDKDIR)/lib/*.a .
 
 tx: $(OBJS)
-	$(CPP) $(CPPFLAGS) -o $@ $(OBJS) $(ALIBS) $(SDKLIBS) $(LIBS)
+	$(CC) $(CPPFLAGS) -o $@ $(OBJS) $(HDACLIB) $(SDKLIBS) $(LIBS)
 
 clean:
 	rm -f tx $(OBJS) *.o *.out *.ver *.a *.log

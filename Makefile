@@ -1,4 +1,4 @@
-CPP	= g++
+CC	= g++
 
 CSDKDIR	= HdacCSDK2
 
@@ -9,26 +9,17 @@ INCLUDE	= -I/usr/include/postgresql -IHdacCSDK2/include -Ilib
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter
 
-ALIBS	= \
-	$(CSDKDIR)/lib/libhelpers.a \
-	$(CSDKDIR)/lib/libkeys.a \
-	$(CSDKDIR)/lib/libprimitives.a \
-	$(CSDKDIR)/lib/librpc.a \
-	$(CSDKDIR)/lib/libscripts.a \
-	$(CSDKDIR)/lib/libentities.a \
-	$(CSDKDIR)/lib/libstructs.a \
-	$(CSDKDIR)/lib/libutils.a \
-	$(CSDKDIR)/lib/libcrypto.a \
+HDACLIB	= ../HdacCSDK2/hdaclib.a
 
 
 all: lib test
 
-lib: $(ALIBS) txlib.a
+lib: $(HDACLIB) txlib.a
 
 txlib.a:
 	cd lib; make; cd ..
 
-$(ALIBS): 
+$(HDACLIB): 
 	cd $(CSDKDIR); make; cd ..
 
 test:

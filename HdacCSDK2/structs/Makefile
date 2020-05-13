@@ -1,5 +1,4 @@
 CC	= g++ -std=c++11
-AR	= ar 
 
 HOME	= structs
 
@@ -15,12 +14,7 @@ SRCS	= base58.cpp hash.cpp hashes.cpp hs_structs.cpp uint256.cpp
 OBJS  = $(SRCS:.cpp=.o)
 
 
-lib:	lib$(HOME).a
-
-lib$(HOME).a:	$(OBJS)
-	rm -f $@
-	$(AR) cru $@ $(OBJS)
-	cd ../lib; rm -f lib$(HOME).a; ln -f -s ../$(HOME)/*.a .
+lib:	$(OBJS)
 
 .cpp.o:   $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDE) -O2 -c $<

@@ -14,25 +14,16 @@ SRCS2	= main.cpp pub.cpp sub.cpp verify.cpp ldbio.cpp \
 
 OBJS2	= $(SRCS2:.cpp=.o)
 
-ALIBS	= \
-	$(CSDKDIR)/lib/libhelpers.a \
-	$(CSDKDIR)/lib/libkeys.a \
-	$(CSDKDIR)/lib/libprimitives.a \
-	$(CSDKDIR)/lib/librpc.a \
-	$(CSDKDIR)/lib/libscripts.a \
-	$(CSDKDIR)/lib/libentities.a \
-	$(CSDKDIR)/lib/libstructs.a \
-	$(CSDKDIR)/lib/libutils.a \
-	$(CSDKDIR)/lib/libcrypto.a \
+HDACLIB	= ../HdacCSDK2/hdaclib.a
 
 
 all: tx2 cli
 
 tx2: $(OBJS2)
-	$(CPP) $(CPPFLAGS) -o $@ $(OBJS2) $(ALIBS) $(SDKLIBS) $(LIBS) 
+	$(CC) $(CPPFLAGS) -o $@ $(OBJS2) $(HDACLIB) $(SDKLIBS) $(LIBS) 
 
 cli: cli.o ../lib/params.cpp
-	$(CPP) $(CPPFLAGS) -o $@ cli.o ../lib/params.cpp $(ALIBS) $(SDKLIBS) $(LIBS) 
+	$(CC) $(CPPFLAGS) -o $@ cli.o ../lib/params.cpp $(HDACLIB) $(SDKLIBS) $(LIBS) 
 
 clean:
 	rm -f tx2 cli $(OBJS) *.o *.out *.ver *.a *.log

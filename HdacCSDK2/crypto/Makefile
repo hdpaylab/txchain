@@ -1,5 +1,4 @@
 CC	= g++ -std=c++11
-AR	= ar 
 
 HOME	= crypto
 
@@ -16,12 +15,7 @@ SRCS	= hmac_sha256.cpp hmac_sha512.cpp ripemd160.cpp \
 OBJS  = $(SRCS:.cpp=.o)
 
 
-lib:	lib$(HOME).a
-
-lib$(HOME).a:	$(OBJS)
-	rm -f $@
-	$(AR) cru $@ $(OBJS)
-	cd ../lib; rm -f lib$(HOME).a; ln -f -s ../$(HOME)/*.a .
+lib:	$(OBJS)
 
 .cpp.o:   $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDE) -O2 -c $<

@@ -14,27 +14,20 @@ SRCS2	= main.cpp pub.cpp sub.cpp verify.cpp ldbio.cpp seriz.cpp \
 
 OBJS2	= $(SRCS2:.cpp=.o)
 
-ALIBS	= \
-	$(CSDKDIR)/lib/libhelpers.a \
-	$(CSDKDIR)/lib/libkeys.a \
-	$(CSDKDIR)/lib/libprimitives.a \
-	$(CSDKDIR)/lib/librpc.a \
-	$(CSDKDIR)/lib/libscripts.a \
-	$(CSDKDIR)/lib/libentities.a \
-	$(CSDKDIR)/lib/libstructs.a \
-	$(CSDKDIR)/lib/libutils.a \
-	$(CSDKDIR)/lib/libcrypto.a \
-	../lib2/hashlib.a
+
+HDACLIB	= ../HdacCSDK2/hdaclib.a
+
+TXLIB	= ../lib/txlib.a
 
 
 all: tx2 cli
 
 tx2: $(OBJS2)
-	$(CPP) $(CPPFLAGS) -o $@ $(OBJS2) $(ALIBS) $(SDKLIBS) $(LIBS) 
+	$(CC) $(CPPFLAGS) -o $@ $(OBJS2) $(HDACLIB) $(TXLIB) $(SDKLIBS) $(LIBS) 
 
 cli: cli.o seriz.cpp ../lib/params.cpp ../lib/xserial.cpp ../lib/util.cpp
-	$(CPP) $(CPPFLAGS) -o $@ cli.o seriz.cpp ../lib/params.cpp ../lib/xserial.cpp ../lib/util.cpp \
-	$(ALIBS) $(SDKLIBS) $(LIBS) 
+	$(CC) $(CPPFLAGS) -o $@ cli.o seriz.cpp ../lib/params.cpp ../lib/xserial.cpp ../lib/util.cpp \
+	$(HDACLIB) $(TXLIB) $(SDKLIBS) $(LIBS) 
 
 clean:
 	rm -f tx2 cli $(OBJS) *.o *.out *.ver *.a *.log

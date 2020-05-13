@@ -1,5 +1,4 @@
 CC	= g++ -std=c++11
-AR	= ar 
 
 HOME	= rpc
 
@@ -16,12 +15,7 @@ SRCS	= cif_rpccall.cpp hs_rpc.cpp rpccaller.cpp \
 OBJS  = $(SRCS:.cpp=.o)
 
 
-lib:	lib$(HOME).a
-
-lib$(HOME).a:	$(OBJS)
-	rm -f $@
-	$(AR) cru $@ $(OBJS)
-	cd ../lib; rm -f lib$(HOME).a; ln -f -s ../$(HOME)/*.a .
+lib:	$(OBJS)
 
 .cpp.o:   $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDE) -O2 -c $<

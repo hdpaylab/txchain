@@ -1,5 +1,4 @@
 CC	= g++ -std=c++11
-AR	= ar 
 
 HOME	= keys
 
@@ -17,12 +16,7 @@ SRCS	= bitcoinaddress.cpp bitcoinsecret.cpp eccautoinitreleasehandler.cpp \
 OBJS  = $(SRCS:.cpp=.o)
 
 
-lib:	lib$(HOME).a
-
-lib$(HOME).a:	$(OBJS)
-	rm -f $@
-	$(AR) cru $@ $(OBJS)
-	cd ../lib; rm -f lib$(HOME).a; ln -f -s ../$(HOME)/*.a .
+lib:	$(OBJS)
 
 .cpp.o:   $(OBJS)
 	$(CC) $(CFLAGS) $(INCLUDE) -O2 -c $<
