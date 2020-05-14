@@ -1,6 +1,9 @@
 #include "txcommon.h"
 
 
+void	send_verify_result(txdata_t& txdata);
+
+
 void	*thread_verifier(void *info_p)
 {
 	int	thrid = *(int *)info_p;
@@ -34,29 +37,52 @@ void	*thread_verifier(void *info_p)
 		string	data;
 
 		count++;
-		txdata = _recvq.pop();
+		txdata = _verifyq.pop();
 
 		txsz.setstring(txdata.data);
 		printf("\n");
-		printf("VERIFY:\n");
+		printf("-----VERIFY:\n");
 		deseriz(txsz, txsend, 1);
 		deseriz(txsz, txdata.sign, 1);
 
 		txdata.valid = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
 					txdata.data.c_str(), txdata.sign.data_length, &params.AddrHelper);
-
 		printf("	VERITY	: %d\n", txdata.valid);
+
+		// 검증 요청하는 경우는, 검증 결과만 전송함 (txid or sign + 결과(OK/FAIL))
+		if (txdata.status == STAT_VERIFY_REQUEST)
+		{
+			send_verify_result(txdata);
+		}
+		// Verification success
+		else if (txdata.valid)
+		{
+			if (txdata.status == STAT_INIT)
+			{
+				txdata.status = STAT_VERIFY_REQUEST;
+				_sendq.push(txdata);	// broadcast to other nodes... (request verification)
+
+				_mempoolq.push(txdata);	// put mempool
+			}
+		}
+		// Verification failed
+		else
+		{
+			if (txdata.status == STAT_INIT)
+			{
+				send_verify_result(txdata);
+			}
+		}
 
 		fprintf(outfp, "VER%02d: %7d: %s signature=%s\n", thrid, count, 
 			txdata.valid == 1 ? "true" : "false", txdata.sign.signature.c_str());
 		fflush(outfp);
 
-		_veriq.push(txdata);
 #ifdef DEBUG
 #else
 		if (count % 10000 == 0)
 #endif
-			printf("VER%02d: Veri %7d veriq=%5ld\n", thrid, count, _veriq.size());
+			printf("VER%02d: Veri %7d veriq=%5ld\n", thrid, count, _mempoolq.size());
 	}
 
 	fclose(outfp);
@@ -72,3 +98,23 @@ void	*thread_verifier(void *info_p)
 	return NULL;
 }
 
+
+//
+// 검증 결과만 발송: txid or sign + 검증 결과(type)
+//
+void	send_verify_result(txdata_t& txdata)
+{
+	tx_verify_reply_t txreply;
+
+	txreply.type = txdata.valid ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
+	txreply.signature = txdata.sign.signature;
+	txreply.txid = txdata.txid;
+
+	xserial txsz(1 * 1024);
+	seriz_add(txsz, txreply);
+
+	txdata.data = txsz.getdata();
+	txdata.status = txdata.valid ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
+
+	_sendq.push(txdata);	// broadcast to other nodes... (request verification)
+}

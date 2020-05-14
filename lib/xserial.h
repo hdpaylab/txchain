@@ -292,15 +292,17 @@ public:
 	{
 		check_cur_type(XSZ_TYPE_STRING);
 		size_t sz = getcursize();
-		char *buf = (char *)calloc(1, sz);
+		char *buf = (char *)calloc(1, sz + 1);
 		int len = 0;
 		if (buf)
 		{
 			len = xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_STRING, (void *)buf, sz);
-			str = buf;
+			str.assign(buf, sz);
 			free(buf);
+			return update_outpos(len);
 		}
-		return update_outpos(len);
+		else
+			return 0;
 	}
 
 	size_t operator >>(char **str)
@@ -308,7 +310,11 @@ public:
 		check_cur_type(XSZ_TYPE_STRING);
 		size_t sz = getcursize();
 		*str = (char *)calloc(1, sz + 1);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_STRING, (void *)*str, sz));
+		if (*str)
+			return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, 
+				XSZ_TYPE_STRING, (void *)*str, sz));
+		else
+			return 0;
 	}
 
 	size_t operator >>(int8_t& i8)

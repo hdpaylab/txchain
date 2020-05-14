@@ -52,7 +52,7 @@ void	*thread_send_test(void *info_p)
 		txdata.data = data;
 		txdata.seq = ii + 1;
 		txdata.valid = -1;
-		txdata.status = TX_STATUS_INIT;
+		txdata.status = STAT_INIT;
 
 		_sendq.push(txdata);
 
@@ -63,7 +63,7 @@ void	*thread_send_test(void *info_p)
 		if (ii % 100000 == 0)
 #endif
 			printf("SEND: Send %7d sendq=%5ld recvq=%5ld veriq=%5ld\n",
-				ii, _sendq.size(), _recvq.size(), _veriq.size());
+				ii, _sendq.size(), _verifyq.size(), _mempoolq.size());
 	}
 
 	snprintf(data, sizeof(data), "%s CLOSE", filter);
@@ -73,7 +73,7 @@ void	*thread_send_test(void *info_p)
 	txdata.data = data;
 	txdata.seq = MAX_SEQ;
 	txdata.valid = -1;
-	txdata.status = TX_STATUS_INIT;
+	txdata.status = STAT_INIT;
 
 	_sendq.push(txdata);
 
@@ -134,7 +134,6 @@ void	*thread_publisher(void *info_p)
 		if (txdata.seq == MAX_SEQ) break;
 
 #ifdef DEBUG
-	//	sleepms(DEBUG_SLEEP_MS);
 #else
 		if (count % 100000 == 0)
 #endif

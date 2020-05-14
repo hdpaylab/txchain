@@ -262,7 +262,7 @@ string base58_encode(string instr)
 string base58_decode(string instr)
 {
 	size_t	outbinsz = instr.length();
-	char	*outbin = (char *) calloc(1, outbinsz);
+	char	*outbin = (char *) calloc(1, outbinsz + 1);
 	string	null;
 
 	if (outbin == NULL)

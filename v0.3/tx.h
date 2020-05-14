@@ -6,52 +6,64 @@
 
 
 enum {
-	TX_STATUS_INIT		= 0x00000000,	// 0
-	TX_STATUS_REPLY		= 0x00000001,	
-	TX_STATUS_VERI		= 0x00010000,
+	STAT_INIT		= 0x00000000,	// 0
+	STAT_REPLY		= 0x00000001,	
+	STAT_VERI		= 0x00010000,
 
-	TX_STATUS_VERI_REQ	= 0x00080000,
-	TX_STATUS_READY		= 0x00010000,
-	TX_STATUS_RECV		= 0x00020000,
-	TX_STATUS_VERI_RESULT	= 0x00100000,
-	TX_STATUS_ERROR		= 0xFFFFFFFF,
-	TX_STATUS_VALID		= 0x61206120,
+	STAT_VERIFY_REQUEST	= 0x00080000,
+	STAT_VERIFY_OK		= 0x00080000,
+	STAT_VERIFY_FAIL	= 0x00080000,
+	STAT_READY		= 0x00010000,
+	STAT_RECV		= 0x00020000,
+	STAT_VERI_RESULT	= 0x00100000,
+	STAT_ERROR		= 0xFFFFFFFF,
+	STAT_VALID		= 0x61206120,
 };
 
 enum {
+	// Verification related - internal
+	TX_VERIFY_REPLY		= 100,
+
         // Token commands
-        TX_CREATE_TOKEN         = 100,
+        TX_CREATE_TOKEN         = 1000,
         TX_SEND_TOKEN,
 
         // Channel commands
-        TX_CREATE_CHANNEL       = 200,
+        TX_CREATE_CHANNEL       = 1200,
         TX_PUBLISH_CHANNEL,
         TX_SUBSCRIBE_CHANNEL,
 
         // Smart contract commands
-        TX_CREATE_CONTRACT      = 300,
+        TX_CREATE_CONTRACT      = 1300,
 
         // Permission commands
-        TX_GRANT_REVOKE         = 400,
+        TX_GRANT_REVOKE         = 1400,
         TX_DESTROY,
 
         // Wallet commands
-        TX_CREATE_WALLET        = 500,
+        TX_CREATE_WALLET        = 1500,
         TX_SET_WALLET,                  // Set address to the wallet
         TX_LIST_WALLET,
         TX_CREATE_KEYPAIR,              // Create new keypair and display only
 
         // Other commands
-        TX_CREATE_ACCOUNT       = 600,  // Account has several addresses
+        TX_CREATE_ACCOUNT       = 1600,  // Account has several addresses
         TX_SET_ACCOUNT,
         TX_LIST_ACCOUNT,
 };
 
 
 typedef struct {
-	size_t		data_length;	// sign data length
 	string		signature;
+	size_t		data_length;	// sign data length
 }	tx_sign_t;
+
+
+typedef struct {
+	uint32_t        type;		// TX_xxx
+	string		signature;
+	string		txid;
+}	tx_verify_reply_t;
 
 
 typedef struct {
@@ -242,8 +254,11 @@ typedef struct {
 
 int	seriz_add(xserial& xsz, tx_send_token_t& tx);
 int	seriz_add(xserial& xsz, tx_sign_t& tx);
+int	seriz_add(xserial& xsz, tx_verify_reply_t& tx);
+
 int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump = 0);
 int	deseriz(xserial& xsz, tx_sign_t& tx, int dump = 0);
+int	deseriz(xserial& xsz, tx_verify_reply_t& tx, int dump = 0);
 
 
 #endif  // __TX_H

@@ -25,6 +25,7 @@ using namespace std;
 #include "zhelpers.hpp"
 #include "safe_queue.h"
 #include "xserial.h"
+#include "libhash.h"
 #include "tx.h"
 
 
@@ -75,15 +76,16 @@ typedef struct {
 	uint32_t	valid;		// 0=invalid 1=valid -1=none
 
 	uint32_t        nverified;
-	uint32_t	status;		// TX_STATUS_xxx
+	uint32_t	status;		// STAT_xxx
 }	txdata_t;
 
 
 extern	int	_nverifier;	// current number of verifier threads
 
 extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
-extern	safe_queue<txdata_t>	_recvq;		// receive queue for subscriber
-extern	safe_queue<txdata_t>	_veriq;		// receive queue for verifier
+extern	safe_queue<txdata_t>	_verifyq;		// receive queue for subscriber
+extern	safe_queue<txdata_t>	_mempoolq;		// receive queue for verifier
+extern	safe_queue<txdata_t>	_resultq;		// mempool queue (verification reply)
 
 
 ////////////////////////////////////////////////////////////////////////////////

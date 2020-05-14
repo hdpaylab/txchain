@@ -54,7 +54,7 @@ int	main(int ac, char *av[])
 	txsend.user_data = "TEST SEND TOKEN";
 	txsend.sign_clock = xgetclock();
 
-	xserial txsz(4 * 1024);
+	xserial txsz(1 * 1024);
 
 	seriz_add(txsz, txsend);
 
@@ -80,7 +80,7 @@ int	main(int ac, char *av[])
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP_MS);
+		sleep(10);
 #else
 		if (count % 10000 == 0)
 #endif

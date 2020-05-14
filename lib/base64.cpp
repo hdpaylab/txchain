@@ -13,38 +13,6 @@ string base64_encode(const unsigned char* pch, size_t len);
 string base64_encode(const string& str);
 
 
-/***
-void encodetest(string a)
-{
-	cout << "[" <<  a << "]" << endl;
-
-	// encode
-	string b = base64_encode(a);
-	cout << "[" <<  b << "]" << endl;
-
-	// decode
-	string c = base64_decode(b);
-	cout << "[" <<  c << "]" << endl;
-}
-
-int main(void) 
-{
-	encodetest("Hdac Technology solution dev team.");
-
-	char a[64];
-        int i;
-        for (i = 0; i < 64; i++) {
-                a[i] = 0x01;
-        }
-
-	string binary(a);
-	encodetest(binary);
-
-	return 0;
-}
-***/
-
-
 string base64_encode(const unsigned char* pch, size_t len)
 {
     static const char *pbase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";

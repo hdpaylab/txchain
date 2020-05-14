@@ -57,27 +57,40 @@ void	*thread_subscriber(void *info_p)
 	{
 		txdata_t txdata;
 
+		//  Wait for next request from publisher
 		txdata.data = s_recv(xsock);
-		if (txdata.data == endmark)
-		{
-			fprintf(stderr, "Subscriber RECV CLOSE! peer=%s\n", peer);
-			break;
-		}
 
 		count++;
+		process_tx(txdata);
+
+		if (txdata.status == STAT_VERIFY_REQUEST)
+		{
+			txdata.valid = -1;
+			_verifyq.push(txdata);			// send to verify.cpp
+		}
+		else if (txdata.status == STAT_VERIFY_OK)	// tx_verify_reply_t
+		{
+			_resultq.push(txdata);
+		}
+		else if (txdata.status == STAT_VERIFY_FAIL)	// tx_verify_reply_t
+		{
+			_resultq.push(txdata);
+		}
+
 		fprintf(outfp, "%7d: %s\n", count, txdata.data.c_str());
 		fflush(outfp);
+
 #ifdef DEBUG
 #else
 		if (count % 100000 == 0)
 #endif
-			printf("SUB : Recv %7d recvq=%5ld\n", count, _recvq.size());
+			printf("SUB : Recv %7d recvq=%5ld\n", count, _verifyq.size());
 
 		txdata.seq = count;
 		txdata.valid = -1;
-		txdata.status = TX_STATUS_INIT;
+		txdata.status = STAT_INIT;
 
-		_recvq.push(txdata);
+		_verifyq.push(txdata);
 	}
 
 	fclose(outfp);
@@ -138,13 +151,12 @@ void	*thread_client(void *info_p)
 		txdata.data = s_recv(responder);
 
 		count++;
-
 		process_tx(txdata);
 
 		txdata.valid = -1;
-		txdata.status = TX_STATUS_INIT;
+		txdata.status = STAT_INIT;
 
-		_recvq.push(txdata);	// send to verify.cpp
+		_verifyq.push(txdata);	// send to verify.cpp
 
 #ifdef DEBUG
 #else
@@ -170,6 +182,7 @@ string	process_tx(txdata_t& txdata)
 {
 	tx_create_token_t create_token;
 	tx_send_token_t send_token;
+	tx_verify_reply_t verify_reply;
 	xserial txsz(4 * 1024);
 	string	from_addr, retstr;
 	uint32_t type, status;
@@ -181,7 +194,7 @@ string	process_tx(txdata_t& txdata)
 	txsz.rewind();
 
 	printf("\n");
-	printf("SUB:\n");
+	printf("-----SUB:\n");
 	switch (type)
 	{
 	case TX_CREATE_TOKEN:
@@ -196,6 +209,10 @@ string	process_tx(txdata_t& txdata)
 		from_addr = send_token.from_addr;
 		break;
 
+	case TX_VERIFY_REPLY:
+		deseriz(txsz, verify_reply, 1);
+		return string();
+
 	default:
 		printf("ERROR: Unknown TX type=%08X\n", type);
 		return retstr;
@@ -203,18 +220,13 @@ string	process_tx(txdata_t& txdata)
 
 	txdata.valid = verify_message_bin(from_addr.c_str(), txdata.sign.signature.c_str(), 
 				txdata.data.c_str(), txdata.sign.data_length, &_params.AddrHelper);
-
 	printf("	VERITY	: %d\n", txdata.valid);
 
 	if (txdata.valid)
 	{
-		CSHA256 sha;
-		unsigned char hash[CSHA256::OUTPUT_SIZE];	// 32B
-		sha.Write(reinterpret_cast<const unsigned char*>(txdata.sign.signature.c_str()), txdata.sign.signature.length()).Finalize(hash);
-		txdata.txid = bin2hex((const char *)hash, sizeof(hash));
+		txdata.txid = sha256(txdata.sign.signature);
 
-		printf("HASH=%s\nDUMP:", txdata.txid.c_str()); 
-		dumpbin((char *)hash, sizeof(hash));
+		printf("HASH=%s\n", txdata.txid.c_str()); 
 	}
 	else
 	{

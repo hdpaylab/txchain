@@ -19,11 +19,11 @@ void	*thread_levledb(void *info_p)
 		string	key;
 
 		count++;
-		txdata = _veriq.pop();
+		txdata = _mempoolq.pop();
 
 		txsz.setstring(txdata.data);
 		printf("\n");
-		printf("LDBIO:\n");
+		printf("-----LDBIO:\n");
 		deseriz(txsz, txsend, 1);
 		deseriz(txsz, txdata.sign, 1);
 
@@ -35,7 +35,7 @@ void	*thread_levledb(void *info_p)
 #else
 		if (count % 100000 == 0)
 #endif
-			printf("LDB : Recv %7d veriq=%5ld\n", count, _veriq.size());
+			printf("LDB : Recv %7d veriq=%5ld\n", count, _mempoolq.size());
 		if (count >= MAX_TEST_NUM_TX)
 			break;
 	}

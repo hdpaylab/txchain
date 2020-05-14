@@ -21,9 +21,11 @@ int	_chainport = DEFAULT_CHAIN_PORT;
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
 
+
 safe_queue<txdata_t>	_sendq;		// send queue for publisher
-safe_queue<txdata_t>	_recvq;		// receive queue for subscriber
-safe_queue<txdata_t>	_veriq;		// receive queue for verifier
+safe_queue<txdata_t>	_verifyq;	// stores received tx for verifier
+safe_queue<txdata_t>	_mempoolq;	// stores verifier result
+safe_queue<txdata_t>	_resultq;	// verification result queue
 
 
 void	parse_command_line(int ac, char *av[]);
@@ -37,8 +39,9 @@ int	main(int ac, char *av[])
 	parse_command_line(ac, av);
 
 	_sendq.setmax(10000);
-	_recvq.setmax(10000);
-	_veriq.setmax(10000);
+	_verifyq.setmax(10000);
+	_mempoolq.setmax(10000);
+	_resultq.setmax(10000);
 
 	create_main_threads();
 

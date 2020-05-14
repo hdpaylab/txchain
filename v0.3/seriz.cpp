@@ -24,8 +24,18 @@ int	seriz_add(xserial& xsz, tx_send_token_t& tx)
 
 int	seriz_add(xserial& xsz, tx_sign_t& tx)
 {
-	xsz << tx.data_length;
 	xsz << tx.signature;
+	xsz << tx.data_length;
+
+	return 1;
+}
+
+
+int	seriz_add(xserial& xsz, tx_verify_reply_t& tx)
+{
+	xsz << tx.type;
+	xsz << tx.signature;
+	xsz << tx.txid;
 
 	return 1;
 }
@@ -64,13 +74,30 @@ int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump)
 
 int	deseriz(xserial& xsz, tx_sign_t& tx, int dump)
 {
-	xsz >> tx.data_length;
 	xsz >> tx.signature;
+	xsz >> tx.data_length;
 
 	if (dump)
 	{
-		printf("sign data length = %ld\n", tx.data_length);
 		printf("sign = %s\n", tx.signature.c_str());
+		printf("sign data length = %ld\n", tx.data_length);
+	}
+
+	return 1;
+}
+
+
+int	deseriz(xserial& xsz, tx_verify_reply_t& tx, int dump)
+{
+	xsz >> tx.type;
+	xsz >> tx.signature;
+	xsz >> tx.txid;
+
+	if (dump)
+	{
+		printf("type = %d\n", tx.type);
+		printf("sign = %s\n", tx.signature.c_str());
+		printf("txid = %s\n", tx.txid.c_str());
 	}
 
 	return 1;

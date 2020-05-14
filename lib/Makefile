@@ -19,10 +19,10 @@ txlib.a: $(COBJS) $(CPPOBJS)
 	rm -f $@
 	ar cru $@ $(COBJS) $(CPPOBJS)
 
-.cpp.o: $(CPPOBJS)
+.cpp.o: $(SRCS)
 	$(CC) $(CFLAGS) $(INCLUDE) -O2 -c $<
 
-.c.o: $(COBJS)
+.c.o: $(SRCS)
 	$(CC) $(CFLAGS) $(INCLUDE) -O2 -c $<
 
 clean:
