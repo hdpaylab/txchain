@@ -10,12 +10,15 @@ void	*thread_publisher(void *info_p)
 	int	count = 0;
 	const char *filter = ZMQ_FILTER;
 	const char ESC = TX_DELIM;
+	char	msg[1024] = {0};
 	double	tmstart = 0, tmend = 0;
 
 	txmsg_t	txmsg;
-	const char *message = "Hdac Technology, 잘 가는지 검사하는 것임23456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
+	const char *message = "%d Hdac Technology, 잘 가는지 검사하는 것임23456789 ";
 	const char *pubkey = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
 
+	sprintf(msg, message, sendport);
+	message = msg;
 	txmsg.message = strdup(message);
 	txmsg.pubkey = strdup(pubkey);
 
@@ -76,6 +79,9 @@ void	*thread_publisher(void *info_p)
 			sprintf(data, "%s%7d %c%s%c%s%c%s", 
 				filter, count, ESC, txmsg.pubkey, ESC, txmsg.message, ESC, txmsg.signature);
 			bool ret = s_send(xpub, data);
+
+			printf("SEND %d msg=%s\n", count, msg);
+			sleep(1);
 
 			// send 260 bytes
 		//	count++;

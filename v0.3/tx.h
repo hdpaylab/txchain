@@ -19,7 +19,7 @@ enum {
 
 enum {
 	// Verification related - internal
-	TX_VERIFY_REPLY		= 100,
+	TX_VERIFY_REPLY		= 0x00007700,
 
         // Token commands
         TX_CREATE_TOKEN         = 1000,
@@ -57,15 +57,14 @@ typedef struct {
 
 
 typedef struct {
-	string		filter;
 	uint32_t        type;		// TX_xxx
+	uint32_t        status;		// STAT_VERIFY_xx
 	string		signature;
 	string		txid;
 }	tx_verify_reply_t;
 
 
 typedef struct {
-	string		filter;
 	uint32_t        type;		// TX_xxx
 	uint32_t        seq;
 
@@ -87,7 +86,6 @@ typedef struct {
 
 
 typedef struct {
-	string		filter;
 	uint32_t        type;		// TX_xxx
 	uint32_t        seq;
 

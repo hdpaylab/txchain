@@ -7,7 +7,6 @@
 
 int	seriz_add(xserial& xsz, tx_send_token_t& tx)
 {
-	xsz << tx.filter;
 	xsz << tx.type;
 	xsz << tx.seq;
 	xsz << tx.from_addr;
@@ -34,8 +33,8 @@ int	seriz_add(xserial& xsz, tx_sign_t& tx)
 
 int	seriz_add(xserial& xsz, tx_verify_reply_t& tx)
 {
-	xsz << tx.filter;
 	xsz << tx.type;
+	xsz << tx.status;
 	xsz << tx.signature;
 	xsz << tx.txid;
 
@@ -45,7 +44,6 @@ int	seriz_add(xserial& xsz, tx_verify_reply_t& tx)
 
 int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump)
 {
-	xsz >> tx.filter;
 	xsz >> tx.type;
 	xsz >> tx.seq;
 	xsz >> tx.from_addr;
@@ -59,7 +57,6 @@ int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump)
 
 	if (dump)
 	{
-		printf("filter = %d\n", tx.filter.c_str());
 		printf("type = %d\n", tx.type);
 		printf("seq = %d\n", tx.seq);
 		printf("from_addr = %s\n", tx.from_addr.c_str());
@@ -93,15 +90,15 @@ int	deseriz(xserial& xsz, tx_sign_t& tx, int dump)
 
 int	deseriz(xserial& xsz, tx_verify_reply_t& tx, int dump)
 {
-	xsz >> tx.filter;
 	xsz >> tx.type;
+	xsz >> tx.status;
 	xsz >> tx.signature;
 	xsz >> tx.txid;
 
 	if (dump)
 	{
-		printf("filter = %d\n", tx.filter.c_str());
 		printf("type = %d\n", tx.type);
+		printf("status = %d\n", tx.status);
 		printf("sign = %s\n", tx.signature.c_str());
 		printf("txid = %s\n", tx.txid.c_str());
 	}

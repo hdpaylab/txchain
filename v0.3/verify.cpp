@@ -105,8 +105,7 @@ void	send_verify_result(txdata_t& txdata)
 {
 	tx_verify_reply_t txreply;
 
-	txreply.filter = ZMQ_FILTER;
-	txreply.type = txdata.valid ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
+	txreply.type = TX_VERIFY_REPLY;
 	txreply.signature = txdata.sign.signature;
 	txreply.txid = txdata.txid;
 

@@ -31,7 +31,10 @@ const char *gettypename(int datatype)
 	case XSZ_TYPE_FLOAT:	return toliteral(XSZ_TYPE_FLOAT);
 	case XSZ_TYPE_DOUBLE:	return toliteral(XSZ_TYPE_DOUBLE);
 	}
-	return "UNKNOWN";
+	static char tmp[50] = {0};
+	sprintf(tmp, "UNKNOWN(%d)", datatype);
+
+	return tmp;
 }
 
 
@@ -128,7 +131,8 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 	}
 	if (buf == NULL || bufsz <= 0 || data == NULL || datasz <= 0)
 	{
-		printf("ERROR: buf or data is NULL or empty: bufsz=%ld datasz=%ld\n", bufsz, datasz);
+		printf("ERROR: buf=%lX or data=%lX: bufsz=%ld datasz=%ld\n", 
+			(unsigned long)buf, (unsigned long)data, bufsz, datasz);
 		return 0;
 	}
 	if (datasz > bufsz + 2)

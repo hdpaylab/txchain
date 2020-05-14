@@ -56,8 +56,6 @@ int	main(int ac, char *av[])
 	{
 		char	*peer = _peerlist[ii-1];
 
-		printf("Create subscriber [%d]=%s\n", ii - 1, peer);
-
 		char	*tp = strchr(peer, ':');
 		if (tp == NULL)
 		{
@@ -72,6 +70,8 @@ int	main(int ac, char *av[])
 			printf("\n");
 			continue;
 		}
+
+		printf("Create subscriber [%d]=%s\n", ii - 1, peer);
 
 		ret = pthread_create(&thrid[ii], NULL, thread_subscriber, (void *)_peerlist[ii-1]);
 		if (ret < 0)

@@ -58,6 +58,18 @@ void	*thread_subscriber(void *info_p)
 		//  Wait for next request from publisher
 		txdata.data = s_recv(xsock);
 
+//printf("SUB: RECV DUMP(%ld): ", txdata.data.length());
+//dumpbin(txdata.data.c_str(), txdata.data.length());
+
+		const char *filter = txdata.data.c_str();
+
+		string realdata(&filter[strlen(ZMQ_FILTER)], txdata.data.length() - strlen(ZMQ_FILTER));
+		txdata.data = realdata;
+
+//printf("SUB: REAL DUMP(%ld): ", realdata.length()); 
+//dumpbin(realdata.c_str(), realdata.length());
+
+
 		count++;
 		process_tx(txdata);
 
@@ -68,11 +80,11 @@ void	*thread_subscriber(void *info_p)
 		}
 		else if (txdata.status == STAT_VERIFY_OK)	// tx_verify_reply_t
 		{
-			_resultq.push(txdata);
+		//	_resultq.push(txdata);
 		}
 		else if (txdata.status == STAT_VERIFY_FAIL)	// tx_verify_reply_t
 		{
-			_resultq.push(txdata);
+		//	_resultq.push(txdata);
 		}
 
 		fprintf(outfp, "%7d: %s\n", count, txdata.data.c_str());
@@ -82,13 +94,7 @@ void	*thread_subscriber(void *info_p)
 #else
 		if (count % 100000 == 0)
 #endif
-			printf("SUB : Recv %7d recvq=%5ld\n", count, _verifyq.size());
-
-		txdata.seq = count;
-		txdata.valid = -1;
-		txdata.status = STAT_INIT;
-
-		_verifyq.push(txdata);
+			printf("thread_subscriber: Recv %7d recvq=%5ld\n", count, _verifyq.size());
 	}
 
 	fclose(outfp);
@@ -183,54 +189,54 @@ string	process_tx(txdata_t& txdata)
 	tx_verify_reply_t verify_reply;
 	xserial txsz(4 * 1024);
 	string	filter, from_addr, retstr;
-	uint32_t type, status;
+	uint32_t type, seq;
 
 	txsz.setstring(txdata.data);
 
-	txsz >> filter;
 	txsz >> type;
-	txsz >> status;
 	txsz.rewind();
 
-	printf("\n");
+//	printf("\n");
 	printf("-----SUB:\n");
-	switch (type)
+	if (type == TX_CREATE_TOKEN)
 	{
-	case TX_CREATE_TOKEN:
 	//	deseriz(txsz, create_token, 0);
 		deseriz(txsz, txdata.sign, 0);
 		from_addr = send_token.from_addr;
-		break;
 
-	case TX_SEND_TOKEN:
+		txdata.valid = verify_message_bin(from_addr.c_str(), txdata.sign.signature.c_str(), 
+					txdata.data.c_str(), txdata.sign.data_length, &_params.AddrHelper);
+
+		txdata.txid = txdata.valid ? sha256(txdata.sign.signature) : "ERROR: Transaction verification failed!";
+		printf("	VERITY	: %d txid=%s\n", txdata.valid, txdata.txid.c_str());
+
+		return txdata.txid;
+	}
+	else if (type == TX_SEND_TOKEN)
+	{
 		deseriz(txsz, send_token, 0);
 		deseriz(txsz, txdata.sign, 0);
 		from_addr = send_token.from_addr;
-		break;
 
-	case TX_VERIFY_REPLY:
-		deseriz(txsz, verify_reply, 0);
-		return string();
+		txdata.valid = verify_message_bin(from_addr.c_str(), txdata.sign.signature.c_str(), 
+					txdata.data.c_str(), txdata.sign.data_length, &_params.AddrHelper);
 
-	default:
-		printf("ERROR: Unknown TX type=%08X\n", type);
-		return retstr;
+		txdata.txid = txdata.valid ? sha256(txdata.sign.signature) : "ERROR: Transaction verification failed!";
+		printf("	VERITY	: %d txid=%s\n", txdata.valid, txdata.txid.c_str());
+
+		return txdata.txid;
 	}
-
-	txdata.valid = verify_message_bin(from_addr.c_str(), txdata.sign.signature.c_str(), 
-				txdata.data.c_str(), txdata.sign.data_length, &_params.AddrHelper);
-	printf("	VERITY	: %d\n", txdata.valid);
-
-	if (txdata.valid)
+	else if (type == TX_VERIFY_REPLY)
 	{
-		txdata.txid = sha256(txdata.sign.signature);
+		deseriz(txsz, verify_reply, 0);
+		txdata.status = verify_reply.status;
 
-		printf("HASH=%s\n", txdata.txid.c_str()); 
+		return string();
 	}
 	else
 	{
-		txdata.txid = "ERROR: Transaction verification failed!";
-	}
+		printf("ERROR: Unknown TX type=%08X\n", type);
 
-	return txdata.txid;
+		return retstr;
+	}
 }

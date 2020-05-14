@@ -142,7 +142,7 @@ void	create_main_threads()
 	if (_automode)
 	{
 		printf("Create [send test] thread\n");
-		ret = pthread_create(&thrid, NULL, thread_send_test, NULL);
+		ret = pthread_create(&thrid, NULL, thread_send_test, (void *)&_chainport);
 		if (ret < 0)
 		{
 			perror("thread_send_test() thread creation error");

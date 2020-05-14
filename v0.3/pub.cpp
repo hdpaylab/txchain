@@ -10,7 +10,6 @@ void	*thread_publisher(void *info_p)
 	int	count = 0;
 	double	tmstart = 0, tmend = 0;
 	char	bindstr[100] = {0};
-	const char *filter = ZMQ_FILTER;
 
 
 	printf("thread_publisher: sendport=%d START!\n", sendport);
@@ -43,17 +42,24 @@ void	*thread_publisher(void *info_p)
 		count++;
 		txdata = _sendq.pop();
 
-		printf("thread_publisher: Send %s\n", get_status_name(txdata.status));
-		printf("data: %s\n", txdata.data.c_str());
+		printf("thread_publisher: Broadcast %s: %s\n", 
+			get_status_name(txdata.status), txdata.data.c_str());
 
-	//	bool ret = s_sendmore(xpub, txdata.data);
-		bool ret = s_send(xpub, txdata.data);
+		string senddata;
 
+		senddata = string(ZMQ_FILTER) + txdata.data;
+//		printf("SEND DUMP(%ld): ", senddata.length()); 
+//		dumpbin(senddata.c_str(), senddata.length());
+
+		bool ret = s_send(xpub, senddata);
+
+		if (_sendq.size() > 9000)
+			sleepms(1);
 #ifdef DEBUG
 #else
 		if (count % 100000 == 0)
 #endif
-			printf("thread_publisher: Send %7d sendq=%5ld\n", count, _sendq.size());
+			printf("thread_publisher: Broadcast %7d sendq=%5ld\n", count, _sendq.size());
 	}
 
 	tmend = xgetclock();
@@ -76,14 +82,8 @@ void	*thread_publisher(void *info_p)
 //
 void	*thread_send_test(void *info_p)
 {
+        int	sendport = *(int *)info_p;
 	int	loop = MAX_TEST_NUM_TX;			// 100
-
-	const char *filter = ZMQ_FILTER;
-	const char ESC = TX_DELIM;
-	const char *message = "Hdac Technology, 잘 가는지 테스트 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789 123456789";
-	const char *address = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";
-	char	data[1024];
-	double	tmstart = 0, tmend = 0;
 
 
 	printf("thread_send_test: loop=%d START!\n", loop);
@@ -91,63 +91,73 @@ void	*thread_send_test(void *info_p)
 	// params set
 	Params_type_t params = paramsget("../lib/params.dat");
 
-	txmsg_t	txmsg;
-	txmsg.message = strdup(message);
-	txmsg.address = strdup(address);
-	txmsg.signature = sign_message(
-		"LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm",	// privkey
-		txmsg.message,
-		&params.PrivHelper, &params.AddrHelper);
+	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
+	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
+	const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 
-	/*****
-	printf("xp:address	: [%s]\n", txmsg.address);
-	printf("xp:message	: [%s]\n", txmsg.message);
-	printf("xp:signature	: [%s]\n", txmsg.signature);
+	tx_send_token_t	txsend;
 
-	int verify_check = verify_message(txmsg.address, txmsg.signature, txmsg.message, &params.AddrHelper);
-	printf("xp:verify_check=%d\n", verify_check);
-	*****/
+	txsend.type = TX_SEND_TOKEN;
+	txsend.seq = 1;
+	txsend.from_addr = from_addr;
+	txsend.to_addr = to_addr;
+	txsend.token_name = "XTOKEN";
+	txsend.amount = 123.456;
+	txsend.native_amount = 0.0;
+	txsend.fee = 0.0;
+	txsend.user_data = "TEST SEND TOKEN";
+	txsend.sign_clock = xgetclock();
 
-	sleepms(500);
+	xserial txsz(1 * 1024);
 
-	tmstart = xgetclock();
+	seriz_add(txsz, txsend);
+
+	tx_sign_t sign;
+	sign.data_length = txsz.getsize();
+	sign.signature = sign_message_bin(privkey, txsz.getdata(), txsz.getsize(), &params.PrivHelper, &params.AddrHelper);
+	printf("Serialize: length=%ld\n", txsz.getsize());
+	printf("address  : %s\n", from_addr);
+//	printf("message  : \n"); txsz.dump(10, 1);
+	printf("signature: %s\n", sign.signature.c_str());
+
+	int verify_check = verify_message_bin(from_addr, sign.signature.c_str(), txsz.getdata(), txsz.getsize(), &params.AddrHelper);
+	printf("verify_check=%d\n", verify_check);
+	printf("\n");
+
+	// sign은 verify 테스트 전에 serialize하면 안됨..
+	seriz_add(txsz, sign);
 
 	for (int ii = 0; ii < loop; ii++)
 	{
 		txdata_t txdata;
+		tx_verify_reply_t txreply;
 
-		snprintf(data, sizeof(data), "%s%7d %c%s%c%s%c%s", 
-			filter, ii, ESC, txmsg.address, ESC, txmsg.message, ESC, txmsg.signature);
+		txdata.valid = verify_check;
 
-		txdata.data = data;
-		txdata.seq = ii + 1;
-		txdata.valid = -1;
-		txdata.status = STAT_INIT;
+		txreply.type = TX_VERIFY_REPLY;
+		txreply.status = (ii % 2 == 0) ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
+		txreply.signature = sign.signature;
+		txreply.txid = sha256(txreply.signature);
+
+		printf("	SEND %s\n", get_status_name(txreply.status));
+
+		xserial reply_txsz(1 * 1024);
+		seriz_add(reply_txsz, txreply);
+
+		txdata.data = reply_txsz.getstring();
+		txdata.status = txdata.valid ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
 
 		_sendq.push(txdata);
 
+		if (_sendq.size() > 9000)
+			sleepms(1);
 #ifdef DEBUG
-		sleepms(DEBUG_SLEEP_MS);
 #else
 		if (ii % 100000 == 0)
 #endif
 			printf("thread_send_test: Send %7d sendq=%5ld recvq=%5ld veriq=%5ld\n",
 				ii, _sendq.size(), _verifyq.size(), _mempoolq.size());
 	}
-
-	snprintf(data, sizeof(data), "%s CLOSE", filter);
-	printf("\n\n  send: %s\n", data);
-
-	txdata_t txdata;
-	txdata.data = data;
-	txdata.seq = MAX_SEQ;
-	txdata.valid = -1;
-	txdata.status = STAT_INIT;
-
-	_sendq.push(txdata);
-
-	tmend = xgetclock();
-	printf("thread_send_test: Send time=%.3f sec / %.3f TPS\n", tmend - tmstart, loop / (tmend - tmstart));
 
 	printf("thread_send_test: ----- END!\n\n");
 

@@ -43,7 +43,6 @@ int	main(int ac, char *av[])
 
 	tx_send_token_t	txsend;
 
-	txsend.filter = ZMQ_FILTER;
 	txsend.type = TX_SEND_TOKEN;
 	txsend.seq = 1;
 	txsend.from_addr = from_addr;

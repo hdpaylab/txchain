@@ -97,6 +97,8 @@ void	*thread_subscriber(void *info_p)
 			}
 
 			count++;
+			printf("SUB: recv %d msg=%s\n", count, data.c_str());
+
 			fprintf(outfp, "%d: %s\n", count, data.c_str());
 			fflush(outfp);
 			if (count % 100000 == 0)

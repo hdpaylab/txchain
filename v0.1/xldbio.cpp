@@ -4,7 +4,9 @@
 
 void	*thread_levledb(void *info_p)
 {
+	int	sendport = *(int *)info_p;
 	int	count = 0;
+	char	tmp[200];
 	double	tmstart, tmend;
 
 #ifdef TXCHAIN_VERIFY_MODEL_MSGQ
@@ -20,7 +22,8 @@ void	*thread_levledb(void *info_p)
 
 #endif	// TXCHAIN_VERIFY_MODEL_MSGQ
 
-	leveldb db("test.db");
+	sprintf(tmp, "test-%d.db", sendport);
+	leveldb db(tmp);
 
 	tmstart = xgetclock();
 
