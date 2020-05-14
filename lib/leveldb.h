@@ -14,6 +14,7 @@
 #include <sstream>
 #include <string>
 #include <string.h>
+#include <assert.h>
 
 #include "leveldb/c.h"
 
@@ -32,6 +33,8 @@ private:
 	leveldb_writeoptions_t *wopt_;
 
 public:
+	leveldb()
+		{ ldb_ = NULL; it_ = NULL; opt_ = NULL; ropt_ = NULL; wopt_ = NULL; }
 	leveldb(string dbname)
 		{ init(dbname); }
 	~leveldb()

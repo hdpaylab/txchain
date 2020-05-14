@@ -2,6 +2,76 @@
 
 
 //
+// Publisher - Sending TX to other nodes
+//
+void	*thread_publisher(void *info_p)
+{
+        int	sendport = *(int *)info_p;
+	int	count = 0;
+	double	tmstart = 0, tmend = 0;
+	char	bindstr[100] = {0};
+	const char *filter = ZMQ_FILTER;
+
+
+	printf("thread_publisher: sendport=%d START!\n", sendport);
+
+	// ZMQ setup: prepare our context and publisher
+	zmq::context_t context_pub(1);
+	zmq::socket_t xpub(context_pub, ZMQ_PUB);
+	sprintf(bindstr, "tcp://*:%d", sendport);
+	xpub.bind(bindstr);
+
+	int bufsize = 1 * 1024 * 1024;	// 1MB ???? 
+	xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
+
+	// Avoiding message loss
+	int one = 1;
+	xpub.setsockopt(ZMQ_XPUB_NODROP, &one, sizeof(one));
+
+	// max send message length
+	int qsize = 10000;		// 10000 ??
+	xpub.setsockopt(ZMQ_SNDHWM, &qsize, sizeof(qsize));
+
+	sleepms(500);
+
+	tmstart = xgetclock();
+
+	while (1)
+	{
+		txdata_t txdata;
+
+		count++;
+		txdata = _sendq.pop();
+
+		printf("thread_publisher: Send %s\n", get_status_name(txdata.status));
+		printf("data: %s\n", txdata.data.c_str());
+
+	//	bool ret = s_sendmore(xpub, txdata.data);
+		bool ret = s_send(xpub, txdata.data);
+
+#ifdef DEBUG
+#else
+		if (count % 100000 == 0)
+#endif
+			printf("thread_publisher: Send %7d sendq=%5ld\n", count, _sendq.size());
+	}
+
+	tmend = xgetclock();
+	printf("thread_publisher: Send time=%.3f sec / %.3f TPS\n", tmend - tmstart, count / (tmend - tmstart));
+
+	xpub.close();
+	
+	printf("thread_publisher: ----- END! count=%d\n\n", count);
+
+	sleep(5);
+
+	pthread_exit(NULL);
+
+	return NULL;
+}
+
+
+//
 // Send test thread (TX generation)
 //
 void	*thread_send_test(void *info_p)
@@ -16,7 +86,7 @@ void	*thread_send_test(void *info_p)
 	double	tmstart = 0, tmend = 0;
 
 
-	printf("SEND: loop=%d START!\n", loop);
+	printf("thread_send_test: loop=%d START!\n", loop);
 
 	// params set
 	Params_type_t params = paramsget("../lib/params.dat");
@@ -58,16 +128,15 @@ void	*thread_send_test(void *info_p)
 
 #ifdef DEBUG
 		sleepms(DEBUG_SLEEP_MS);
-	//	if (ii % 10 == 0)
 #else
 		if (ii % 100000 == 0)
 #endif
-			printf("SEND: Send %7d sendq=%5ld recvq=%5ld veriq=%5ld\n",
+			printf("thread_send_test: Send %7d sendq=%5ld recvq=%5ld veriq=%5ld\n",
 				ii, _sendq.size(), _verifyq.size(), _mempoolq.size());
 	}
 
 	snprintf(data, sizeof(data), "%s CLOSE", filter);
-	printf("\n\nSEND: %s\n", data);
+	printf("\n\n  send: %s\n", data);
 
 	txdata_t txdata;
 	txdata.data = data;
@@ -78,79 +147,13 @@ void	*thread_send_test(void *info_p)
 	_sendq.push(txdata);
 
 	tmend = xgetclock();
-	printf("SEND: Send time=%.3f sec / %.3f TPS\n", tmend - tmstart, loop / (tmend - tmstart));
+	printf("thread_send_test: Send time=%.3f sec / %.3f TPS\n", tmend - tmstart, loop / (tmend - tmstart));
 
-	printf("SEND: ----- END!\n\n");
-
-	pthread_exit(NULL);
-
-	return NULL;
-}
-
-
-//
-// Publisher - Sending TX to other nodes
-//
-void	*thread_publisher(void *info_p)
-{
-        int	sendport = *(int *)info_p;
-	int	count = 0;
-	double	tmstart = 0, tmend = 0;
-	char	bindstr[100] = {0};
-
-
-	printf("PUB : sendport=%d START!\n", sendport);
-
-	// ZMQ setup: prepare our context and publisher
-	zmq::context_t context_pub(1);
-	zmq::socket_t xpub(context_pub, ZMQ_PUB);
-	sprintf(bindstr, "tcp://*:%d", sendport);
-	xpub.bind(bindstr);
-
-	int bufsize = 1 * 1024 * 1024;	// 1MB ???? 
-	xpub.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
-
-	// Avoiding message loss
-	int one = 1;
-	xpub.setsockopt(ZMQ_XPUB_NODROP, &one, sizeof(one));
-
-	// max send message length
-	int qsize = 10000;		// 10000 ??
-	xpub.setsockopt(ZMQ_SNDHWM, &qsize, sizeof(qsize));
-
-	sleepms(500);
-
-	tmstart = xgetclock();
-
-	while (1)
-	{
-		txdata_t txdata;
-
-		count++;
-		txdata = _sendq.pop();
-
-		bool ret = s_send(xpub, txdata.data);
-
-		if (txdata.seq == MAX_SEQ) break;
-
-#ifdef DEBUG
-#else
-		if (count % 100000 == 0)
-#endif
-			printf("PUB : Send %7d sendq=%5ld\n", count, _sendq.size());
-	}
-
-	tmend = xgetclock();
-	printf("PUB : Send time=%.3f sec / %.3f TPS\n", tmend - tmstart, count / (tmend - tmstart));
-
-	xpub.close();
-	
-	printf("PUB : ----- END! count=%d\n\n", count);
-
-	sleep(5);
+	printf("thread_send_test: ----- END!\n\n");
 
 	pthread_exit(NULL);
 
 	return NULL;
 }
+
 

@@ -10,7 +10,7 @@
 //
 
 
-#include "libhash.h"
+#include "lib.h"
 
 
 #define TOHEXDIGIT(v)	((v) < 10 ? (v)+'0' : (v)+('a'-10))

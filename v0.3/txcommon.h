@@ -8,6 +8,7 @@
 #include <queue>
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <unistd.h>
 #include <time.h>
 #include <unistd.h>
@@ -22,10 +23,7 @@
 using namespace std;
 
 
-#include "zhelpers.hpp"
-#include "safe_queue.h"
-#include "xserial.h"
-#include "libhash.h"
+#include "lib.h"
 #include "tx.h"
 
 
@@ -80,17 +78,13 @@ typedef struct {
 }	txdata_t;
 
 
+// main.cpp
 extern	int	_nverifier;	// current number of verifier threads
 
 extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
-extern	safe_queue<txdata_t>	_verifyq;		// receive queue for subscriber
-extern	safe_queue<txdata_t>	_mempoolq;		// receive queue for verifier
-extern	safe_queue<txdata_t>	_resultq;		// mempool queue (verification reply)
-
-
-////////////////////////////////////////////////////////////////////////////////
-
-Params_type_t paramsget(const string& Path);	// params.cpp
+extern	safe_queue<txdata_t>	_verifyq;	// receive queue for subscriber
+extern	safe_queue<txdata_t>	_mempoolq;	// receive queue for verifier
+extern	safe_queue<txdata_t>	_resultq;	// mempool queue (verification reply)
 
 void	*thread_publisher(void *info_p);	// pub.cpp
 void	*thread_send_test(void *info_p);	// main.cpp
@@ -100,10 +94,14 @@ void	*thread_verifier(void *info_p);		// verify.cpp
 void	*thread_levledb(void *info_p);		// leveldb.cpp
 
 
-double	xgetclock();				// util.cpp
-string	bin2hex(const char *bin, const size_t binlen);
-string	hex2bin(const char *hexstr, const size_t len);
-string	hex2bin(const string& hexstr);
+// ldbio.cpp
+extern	leveldb	_systemdb;	// 
+extern	leveldb	_walletdb;	// 
+
+
+// common.cpp
+const char *get_type_name(int type);
+const char *get_status_name(int status);
 
 
 #endif	// __COMMON_H

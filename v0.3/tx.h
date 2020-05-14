@@ -6,18 +6,15 @@
 
 
 enum {
-	STAT_INIT		= 0x00000000,	// 0
-	STAT_REPLY		= 0x00000001,	
-	STAT_VERI		= 0x00010000,
+	STAT_VERIFY_OK		= 1,
+	STAT_VERIFY_FAIL	= 0,
 
-	STAT_VERIFY_REQUEST	= 0x00080000,
-	STAT_VERIFY_OK		= 0x00080000,
-	STAT_VERIFY_FAIL	= 0x00080000,
-	STAT_READY		= 0x00010000,
-	STAT_RECV		= 0x00020000,
-	STAT_VERI_RESULT	= 0x00100000,
+	STAT_INIT		= 0x00001000,
+	STAT_VERIFY_REQUEST	= 0x00001001,
+	STAT_VERI_RESULT	= 0x00001002,
+
 	STAT_ERROR		= 0xFFFFFFFF,
-	STAT_VALID		= 0x61206120,
+	STAT_VALID		= 0x11111111,
 };
 
 enum {
@@ -60,6 +57,7 @@ typedef struct {
 
 
 typedef struct {
+	string		filter;
 	uint32_t        type;		// TX_xxx
 	string		signature;
 	string		txid;
@@ -67,6 +65,7 @@ typedef struct {
 
 
 typedef struct {
+	string		filter;
 	uint32_t        type;		// TX_xxx
 	uint32_t        seq;
 
@@ -88,6 +87,7 @@ typedef struct {
 
 
 typedef struct {
+	string		filter;
 	uint32_t        type;		// TX_xxx
 	uint32_t        seq;
 

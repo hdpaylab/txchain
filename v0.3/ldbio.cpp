@@ -1,13 +1,22 @@
 #include "txcommon.h"
-#include "leveldb.h"
+
+
+leveldb	_systemdb;
+leveldb	_walletdb;
 
 
 void	*thread_levledb(void *info_p)
 {
+	int	chainport = *(int *)info_p;
 	int	count = 0;
+	char	dbname[256] = {0};
 	double	tmstart, tmend;
 
-	leveldb db("test.db");
+	sprintf(dbname, "system-%d.db", chainport);
+	_systemdb.open(dbname);
+
+	sprintf(dbname, "wallet-%d.db", chainport);
+	_walletdb.open(dbname);
 
 	tmstart = xgetclock();
 
@@ -24,12 +33,12 @@ void	*thread_levledb(void *info_p)
 		txsz.setstring(txdata.data);
 		printf("\n");
 		printf("-----LDBIO:\n");
-		deseriz(txsz, txsend, 1);
-		deseriz(txsz, txdata.sign, 1);
+		deseriz(txsz, txsend, 0);
+		deseriz(txsz, txdata.sign, 0);
 
 		key = txdata.sign.signature;
 
-		db.put(key, txdata.data);
+		_walletdb.put(key, txdata.data);
 
 #ifdef DEBUG
 #else
@@ -44,7 +53,8 @@ void	*thread_levledb(void *info_p)
 	printf("LDB : Recv time=%.3f / %.1f/sec\n",
 		tmend - tmstart, count / (tmend - tmstart));
 
-//	db.close();
+	_systemdb.close();
+	_walletdb.close();
 
 	return 0;
 }

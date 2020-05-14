@@ -17,7 +17,7 @@ void	*thread_subscriber(void *info_p)
 	double	tmstart = 0, tmend = 0;
 
 	FILE	*outfp = NULL;
-	char	peerstr[100] = {0}, endmark[100] = {0};
+	char	peerstr[100] = {0};
 	char	tmp[4096] = {0}, *tp = NULL;
 	const char *filter = ZMQ_FILTER;
 
@@ -48,8 +48,6 @@ void	*thread_subscriber(void *info_p)
 	xsock.setsockopt(ZMQ_RCVHWM, &qsize, sizeof(qsize));
 
 	sleepms(100);
-
-	sprintf(endmark, "%s CLOSE", filter);
 
 	tmstart = xgetclock();
 
@@ -184,11 +182,12 @@ string	process_tx(txdata_t& txdata)
 	tx_send_token_t send_token;
 	tx_verify_reply_t verify_reply;
 	xserial txsz(4 * 1024);
-	string	from_addr, retstr;
+	string	filter, from_addr, retstr;
 	uint32_t type, status;
 
 	txsz.setstring(txdata.data);
 
+	txsz >> filter;
 	txsz >> type;
 	txsz >> status;
 	txsz.rewind();
@@ -198,19 +197,19 @@ string	process_tx(txdata_t& txdata)
 	switch (type)
 	{
 	case TX_CREATE_TOKEN:
-	//	deseriz(txsz, create_token, 1);
-		deseriz(txsz, txdata.sign, 1);
+	//	deseriz(txsz, create_token, 0);
+		deseriz(txsz, txdata.sign, 0);
 		from_addr = send_token.from_addr;
 		break;
 
 	case TX_SEND_TOKEN:
-		deseriz(txsz, send_token, 1);
-		deseriz(txsz, txdata.sign, 1);
+		deseriz(txsz, send_token, 0);
+		deseriz(txsz, txdata.sign, 0);
 		from_addr = send_token.from_addr;
 		break;
 
 	case TX_VERIFY_REPLY:
-		deseriz(txsz, verify_reply, 1);
+		deseriz(txsz, verify_reply, 0);
 		return string();
 
 	default:

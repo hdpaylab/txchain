@@ -195,8 +195,6 @@ void	create_subscriber_threads()
 			exit(-1);
 		}
 
-		printf("Create subscriber thread [%d]=%s\n", idx, peer);
-
 		// skip subscriber on self node
 		if (_maxnode > 1 && atoi(tp+1) == _chainport)
 		{
@@ -204,6 +202,8 @@ void	create_subscriber_threads()
 			printf("\n");
 			continue;
 		}
+
+		printf("Create subscriber thread [%d]=%s\n", idx, peer);
 
 		ret = pthread_create(&thrid[idx], NULL, thread_subscriber, (void *)_peerlist[idx]);
 		if (ret < 0)

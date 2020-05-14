@@ -42,12 +42,11 @@ void	*thread_verifier(void *info_p)
 		txsz.setstring(txdata.data);
 		printf("\n");
 		printf("-----VERIFY:\n");
-		deseriz(txsz, txsend, 1);
-		deseriz(txsz, txdata.sign, 1);
+		deseriz(txsz, txsend, 0);
+		deseriz(txsz, txdata.sign, 0);
 
 		txdata.valid = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
 					txdata.data.c_str(), txdata.sign.data_length, &params.AddrHelper);
-		printf("	VERITY	: %d\n", txdata.valid);
 
 		// 검증 요청하는 경우는, 검증 결과만 전송함 (txid or sign + 결과(OK/FAIL))
 		if (txdata.status == STAT_VERIFY_REQUEST)
@@ -106,6 +105,7 @@ void	send_verify_result(txdata_t& txdata)
 {
 	tx_verify_reply_t txreply;
 
+	txreply.filter = ZMQ_FILTER;
 	txreply.type = txdata.valid ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
 	txreply.signature = txdata.sign.signature;
 	txreply.txid = txdata.txid;

@@ -64,6 +64,8 @@ bool	leveldb::destroy(string dbname)
 {
 	char	*err = NULL;
 
+	assert(ldb_ != NULL);
+
 	leveldb_options_t *opt = leveldb_options_create();
 	leveldb_destroy_db(opt, dbname.c_str(), &err);
 
@@ -86,6 +88,8 @@ string	leveldb::get(const char *key, size_t keylen)
 	char	*err = NULL;
 	char	*readval = NULL;
 	size_t	vallen = 0;
+
+	assert(ldb_ != NULL);
 
 	readval = leveldb_get(ldb_, ropt_, key, keylen, &vallen, &err);
 
@@ -112,6 +116,8 @@ bool	leveldb::put(const char *key, size_t keylen, const char *val, size_t vallen
 {
 	char	*err = NULL;
 
+	assert(ldb_ != NULL);
+
 	leveldb_put(ldb_, wopt_, key, keylen, val, vallen, &err);
 
 	if (err != NULL) 
@@ -129,6 +135,8 @@ bool	leveldb::remove(string key)
 {
 	char	*err = NULL;
 
+	assert(ldb_ != NULL);
+
 	leveldb_delete(ldb_, wopt_, key.c_str(), key.length(), &err);
 
 	if (err != NULL) 
@@ -144,6 +152,8 @@ bool	leveldb::remove(string key)
 
 void	leveldb::seek_first()
 { 
+	assert(ldb_ != NULL);
+
 	if (it_)
 		leveldb_iter_destroy(it_);
 	it_ = leveldb_create_iterator(ldb_, ropt_); 
