@@ -58,7 +58,7 @@ int	main(int ac, char *av[])
 	txsend.user_data = "TEST SEND TOKEN";
 	txsend.sign_clock = xgetclock();
 
-	xserial hdrszr, bodyszr;
+	xserialize hdrszr, bodyszr;
 
 	seriz_add(bodyszr, txsend);
 	txhdr.data_length = bodyszr.size();

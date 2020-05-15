@@ -55,7 +55,7 @@ void	*thread_levledb(void *info_p)
 int	db_process(txdata_t& txdata)
 {
 	tx_send_token_t txsend;
-	xserial hdrszr, bodyszr;
+	xserialize hdrszr, bodyszr;
 	string	key;
 
 	key = txdata.hdr.txid;

@@ -20,7 +20,7 @@
 
 
 #include "aes.h"
-#include "xserial.h"
+#include "xserialize.h"
 
 
 static void print_hex(uint8_t* str, size_t len);

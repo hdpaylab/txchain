@@ -2,7 +2,7 @@
 // Performance: 300000/sec 
 //
 
-#include "xserial.h"
+#include "xserialize.h"
 
 
 #define toliteral(v)	#v
@@ -122,7 +122,7 @@ void	dumpbin(const char *buf, const size_t bufsz, const int nthnl, const int spc
 // byte2~9: real data length
 // data...
 //
-size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz)
+size_t	xserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t datasz)
 {
 	if (datatype < 0 || datatype > XSZ_TYPE_MASK)
 	{
@@ -213,7 +213,7 @@ size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t data
 }
 
 
-size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz)
+size_t	xdeserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t datasz)
 {
 	if (datatype < 0 || datatype > XSZ_TYPE_MASK)
 		return 0;

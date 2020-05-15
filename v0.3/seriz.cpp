@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Serialize
 
-int	seriz_add(xserial& xsz, tx_header_t& tx)
+int	seriz_add(xserialize& xsz, tx_header_t& tx)
 {
 	xsz << tx.nodeid;		// node id
 	xsz << tx.type;			// TX_xxx
@@ -21,7 +21,7 @@ int	seriz_add(xserial& xsz, tx_header_t& tx)
 }
 
 
-int	seriz_add(xserial& xsz, tx_verify_reply_t& tx)
+int	seriz_add(xserialize& xsz, tx_verify_reply_t& tx)
 {
 //	xsz << tx.txid;
 
@@ -29,7 +29,7 @@ int	seriz_add(xserial& xsz, tx_verify_reply_t& tx)
 }
 
 
-int	seriz_add(xserial& xsz, tx_create_token_t& tx)
+int	seriz_add(xserialize& xsz, tx_create_token_t& tx)
 {
 	xsz << tx.from_addr;
 	xsz << tx.to_addr;
@@ -50,7 +50,7 @@ int	seriz_add(xserial& xsz, tx_create_token_t& tx)
 }
 
 
-int	seriz_add(xserial& xsz, tx_send_token_t& tx)
+int	seriz_add(xserialize& xsz, tx_send_token_t& tx)
 {
 	xsz << tx.from_addr;
 	xsz << tx.to_addr;
@@ -69,7 +69,7 @@ int	seriz_add(xserial& xsz, tx_send_token_t& tx)
 ////////////////////////////////////////////////////////////////////////////////
 // De-serialize
 
-int	deseriz(xserial& xsz, tx_header_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 {
 	xsz >> tx.nodeid;		// node id
 	xsz >> tx.type;			// TX_xxx
@@ -94,7 +94,7 @@ int	deseriz(xserial& xsz, tx_header_t& tx, int dump)
 }
 
 
-int	deseriz(xserial& xsz, tx_verify_reply_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_verify_reply_t& tx, int dump)
 {
 //	xsz >> tx.txid;
 
@@ -107,7 +107,7 @@ int	deseriz(xserial& xsz, tx_verify_reply_t& tx, int dump)
 }
 
 
-int	deseriz(xserial& xsz, tx_create_token_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump)
 {
 	xsz >> tx.from_addr;
 	xsz >> tx.to_addr;
@@ -146,7 +146,7 @@ int	deseriz(xserial& xsz, tx_create_token_t& tx, int dump)
 }
 
 
-int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump)
 {
 	xsz >> tx.from_addr;
 	xsz >> tx.to_addr;

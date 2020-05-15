@@ -110,7 +110,7 @@ void	*thread_send_test(void *info_p)
 	txsend.user_data = "TEST SEND TOKEN by THREAD";
 	txsend.sign_clock = xgetclock();
 
-	xserial hdrszr, bodyszr;
+	xserialize hdrszr, bodyszr;
 
 	seriz_add(bodyszr, txsend);
 	txhdr.data_length = bodyszr.size();
@@ -145,7 +145,7 @@ void	*thread_send_test(void *info_p)
 
 		printf("	SEND REPLY valid=%d\n", txhdr.valid);
 
-		xserial hdrszr;
+		xserialize hdrszr;
 		seriz_add(hdrszr, txhdr);
 		*/
 

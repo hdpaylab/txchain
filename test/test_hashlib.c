@@ -16,7 +16,7 @@
 //#include <stdint.h>
 //#include <string.h>
 //#include <stdbool.h>
-#include "libhash.h"
+#include "lib.h"
 
 
 #define MAX_PLAINTEXT_SIZE      100

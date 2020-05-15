@@ -66,7 +66,7 @@ int	tx_process(txdata_t& txdata)
 {
 	tx_header_t *hp;
 	tx_send_token_t txsend;
-	xserial hdrszr, bodyszr;
+	xserialize hdrszr, bodyszr;
 
 
 	hp = &txdata.hdr;
@@ -110,7 +110,7 @@ int	tx_process(txdata_t& txdata)
 			hp->nodeid = getpid();
 			hp->status = STAT_VERIFY_REQUEST;
 
-			xserial tmpszr;
+			xserialize tmpszr;
 			seriz_add(tmpszr, txdata.hdr);
 			txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체 
 
@@ -144,7 +144,7 @@ int	tx_process(txdata_t& txdata)
 void	send_verify_result(txdata_t& txdata)
 {
 	tx_header_t hdr;
-	xserial hdrszr;
+	xserialize hdrszr;
 
 	hdr.nodeid = getpid();
 	hdr.type = TX_VERIFY_REPLY;

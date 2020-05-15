@@ -14,10 +14,11 @@ TXLIB	= ../lib/txlib.a ../HdacCSDK2/hdaclib.a
 
 
 all: bigint_ex keypair keypair_ex leveldb_test leveldbex \
-	rapidjson_ex xsz_ex speed xsz_ex \
+	rapidjson_ex xserialize_ex speed \
 	zmq_cli zmq_msvr zmq_svr test_params \
 	test_aes test_base58 test_base64 test_hashlib test_md5 \
-	test_rc4 test_sha1 test_sha256 test_sha512
+	test_rc4 test_sha1 test_sha256 test_sha512 \
+	test_cssmap
 
 bigint_ex: bigint_ex.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) -o $@ bigint_ex.cpp $(TXLIB) $(LIBS) $(SDKLIBS) 
@@ -40,8 +41,8 @@ rapidjson_ex: rapidjson_ex.o
 speed: speed.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) -o $@ speed.cpp $(TXLIB) $(SDKLIBS) $(LIBS)
 
-xsz_ex: xsz_ex.cpp $(TXLIB)
-	$(CC) $(CPPFLAGS) -o $@ xsz_ex.cpp $(LIBS) $(TXLIB) $(SDKLIBS) 
+xserialize_ex: xserialize_ex.cpp $(TXLIB)
+	$(CC) $(CPPFLAGS) -o $@ xserialize_ex.cpp $(LIBS) $(TXLIB) $(SDKLIBS) 
 
 zmq_cli: zmq_cli.cpp
 	$(CC) $(CPPFLAGS) -o $@ zmq_cli.cpp $(LIBS) $(SDKLIBS) 
@@ -84,11 +85,16 @@ test_sha512: test_sha512.c $(TXLIB)
 	$(CC) $(CPPFLAGS) $@.c -o $@ $(TXLIB)
 
 
+test_cssmap: test_cssmap.cpp $(TXLIB)
+	$(CC) $(CPPFLAGS) $@.cpp -o $@ $(TXLIB)
+
+
 clean:
 	rm -f $(OBJS) *.o *.out *.ver *.log
 	rm -f bigint_ex keypair keypair_ex leveldb_test leveldbex \
-		rapidjson_ex xsz_ex speed xsz_ex \
+		rapidjson_ex xserialize_ex speed \
 		zmq_cli zmq_msvr zmq_svr \
 		test_aes test_base58 test_base64 test_hashlib test_md5 \
-		test_rc4 test_sha1 test_sha256 test_sha512
+		test_rc4 test_sha1 test_sha256 test_sha512 \
+		test_cssmap
 	rm -rf level.db

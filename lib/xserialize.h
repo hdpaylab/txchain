@@ -45,15 +45,15 @@ uint64_t getdatasize(void *buf, int hdrbytes);
 void	dumpbin(const char *buf, const size_t bufsz, const int spc = 0, const int nthnl = 0);
 
 
-size_t	xserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz);
-size_t	xdeserialize(char *buf, size_t bufsz, int datatype, void *data, size_t datasz);
+size_t	xserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t datasz);
+size_t	xdeserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t datasz);
 
 extern int _xsz_debug;
 
 
-class xserial {
+class xserialize {
 public:
-	xserial(size_t sz = 1 * 1024)
+	xserialize(size_t sz = 1 * 1024)
 	{
 		bufsz_ = sz;
 		if (bufsz_ <= 0)
@@ -64,7 +64,7 @@ public:
 		assert(buf_ != NULL);
 		debug_ = 0;
 	}
-	~xserial()
+	~xserialize()
 	{
 		memset(buf_, 0, inbufpos_);	// safe clear
 		if (allocated_ && buf_)
@@ -206,7 +206,7 @@ public:
 	size_t seriz(uint8_t *bin, size_t binsz)
 	{
 		check_in_size(binsz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_BINARY, (void *)bin, binsz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_BINARY, (void *)bin, binsz));
 	}
 
 	size_t operator <<(string str)
@@ -215,7 +215,7 @@ public:
 		assert(bufsz_ > 0);
 		size_t	sz = str.length();
 		check_in_size(sz + 2);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_STRING, (void *)str.c_str(), sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_STRING, (void *)str.c_str(), sz));
 	}
 
 	size_t operator <<(char *str)
@@ -226,77 +226,77 @@ public:
 			return 0;
 		size_t	sz = strlen(str);
 		check_in_size(sz + 2);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_STRING, (void *)str, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_STRING, (void *)str, sz));
 	}
 
 	size_t operator <<(int8_t i8)
 	{
 		size_t	sz = sizeof(i8);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT8, (void *)&i8, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT8, (void *)&i8, sz));
 	}
 
 	size_t operator <<(int16_t i16)
 	{
 		size_t	sz = sizeof(i16);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT16, (void *)&i16, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT16, (void *)&i16, sz));
 	}
 
 	size_t operator <<(int32_t i32)
 	{
 		size_t	sz = sizeof(i32);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT32, (void *)&i32, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT32, (void *)&i32, sz));
 	}
 
 	size_t operator <<(int64_t i64)
 	{
 		size_t	sz = sizeof(i64);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT64, (void *)&i64, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_INT64, (void *)&i64, sz));
 	}
 
 	size_t operator <<(uint8_t u8)
 	{
 		size_t	sz = sizeof(u8);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT8, (void *)&u8, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT8, (void *)&u8, sz));
 	}
 
 	size_t operator <<(uint16_t u16)
 	{
 		size_t	sz = sizeof(u16);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT16, (void *)&u16, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT16, (void *)&u16, sz));
 	}
 
 	size_t operator <<(uint32_t u32)
 	{
 		size_t	sz = sizeof(u32);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT32, (void *)&u32, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT32, (void *)&u32, sz));
 	}
 
 	size_t operator <<(uint64_t u64)
 	{
 		size_t	sz = sizeof(u64);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT64, (void *)&u64, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_UINT64, (void *)&u64, sz));
 	}
 
 	size_t operator <<(float ff)
 	{
 		size_t	sz = sizeof(ff);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_FLOAT, (void *)&ff, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_FLOAT, (void *)&ff, sz));
 	}
 
 	size_t operator <<(double dd)
 	{
 		size_t	sz = sizeof(dd);
 		check_in_size(sz + 1);
-		return update_inpos(xserialize(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_DOUBLE, (void *)&dd, sz));
+		return update_inpos(xserialize_func(inbuf_, bufsz_ - inbufpos_, XSZ_TYPE_DOUBLE, (void *)&dd, sz));
 	}
 
 	// de-serialize
@@ -305,7 +305,7 @@ public:
 	{
 		check_cur_type(XSZ_TYPE_BINARY);
 		check_out_size(outbinsz);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_BINARY, (void *)outbin, outbinsz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_BINARY, (void *)outbin, outbinsz));
 	}
 
 	size_t operator >>(string& str)
@@ -316,7 +316,7 @@ public:
 		int len = 0;
 		if (buf)
 		{
-			len = xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_STRING, (void *)buf, sz);
+			len = xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_STRING, (void *)buf, sz);
 			str.assign(buf, sz);
 			free(buf);
 			return update_outpos(len);
@@ -331,7 +331,7 @@ public:
 		size_t sz = getcursize();
 		*str = (char *)calloc(1, sz + 1);
 		if (*str)
-			return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, 
+			return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, 
 				XSZ_TYPE_STRING, (void *)*str, sz));
 		else
 			return 0;
@@ -341,70 +341,70 @@ public:
 	{
 		if (debug_) printf("i8: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(i8);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT8, (void *)&i8, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT8, (void *)&i8, sz));
 	}
 
 	size_t operator >>(int16_t& i16)
 	{
 		if (debug_) printf("i16: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(i16);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT16, (void *)&i16, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT16, (void *)&i16, sz));
 	}
 
 	size_t operator >>(int32_t& i32)
 	{
 		if (debug_) printf("i32: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(i32);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT32, (void *)&i32, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT32, (void *)&i32, sz));
 	}
 
 	size_t operator >>(int64_t& i64)
 	{
 		if (debug_) printf("i64: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(i64);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT64, (void *)&i64, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_INT64, (void *)&i64, sz));
 	}
 
 	size_t operator >>(uint8_t& u8)
 	{
 		if (debug_) printf("u8: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(u8);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT8, (void *)&u8, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT8, (void *)&u8, sz));
 	}
 
 	size_t operator >>(uint16_t& u16)
 	{
 		if (debug_) printf("u16: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(u16);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT16, (void *)&u16, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT16, (void *)&u16, sz));
 	}
 
 	size_t operator >>(uint32_t& u32)
 	{
 		if (debug_) printf("u32: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(u32);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT32, (void *)&u32, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT32, (void *)&u32, sz));
 	}
 
 	size_t operator >>(uint64_t& u64)
 	{
 		if (debug_) printf("u64: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(u64);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&u64, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&u64, sz));
 	}
 
 	size_t operator >>(float& ff)
 	{
 		if (debug_) printf("ff: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(ff);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&ff, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&ff, sz));
 	}
 
 	size_t operator >>(double& dd)
 	{
 		if (debug_) printf("dd: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 		size_t	sz = sizeof(dd);
-		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&dd, sz));
+		return update_outpos(xdeserialize_func(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&dd, sz));
 	}
 
 	void	dump(int nthnl = 0, int spc = 0)

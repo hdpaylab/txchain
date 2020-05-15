@@ -225,15 +225,15 @@ typedef struct {
 }       txstat_t;
 
 
-int	seriz_add(xserial& xsz, tx_send_token_t& tx);
-int	seriz_add(xserial& xsz, tx_header_t& tx);
-int	seriz_add(xserial& xsz, tx_create_token_t& tx);
-int	seriz_add(xserial& xsz, tx_verify_reply_t& tx);
+int	seriz_add(xserialize& xsz, tx_send_token_t& tx);
+int	seriz_add(xserialize& xsz, tx_header_t& tx);
+int	seriz_add(xserialize& xsz, tx_create_token_t& tx);
+int	seriz_add(xserialize& xsz, tx_verify_reply_t& tx);
 
-int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump = 0);
-int	deseriz(xserial& xsz, tx_header_t& tx, int dump = 0);
-int	deseriz(xserial& xsz, tx_create_token_t& tx, int dump = 0);
-int	deseriz(xserial& xsz, tx_verify_reply_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_header_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_verify_reply_t& tx, int dump = 0);
 
 
 #endif  // __TX_H

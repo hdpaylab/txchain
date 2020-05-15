@@ -27,7 +27,7 @@ Params_type_t _params;
 safe_queue<txdata_t>	_sendq;		// send queue for publisher
 safe_queue<txdata_t>	_verifyq;	// stores received tx for verifier
 safe_queue<txdata_t>	_mempoolq;	// stores verifier result
-safe_queue<txdata_t>	_resultq;	// verification result queue
+safe_queue<txdata_t>	_consensusq;	// verification result queue
 
 
 void	parse_command_line(int ac, char *av[]);
@@ -45,7 +45,7 @@ int	main(int ac, char *av[])
 	_sendq.setmax(10000);
 	_verifyq.setmax(10000);
 	_mempoolq.setmax(10000);
-	_resultq.setmax(10000);
+	_consensusq.setmax(10000);
 
 	// load params set
 	_params = paramsget("../lib/params.dat");
@@ -143,7 +143,7 @@ void	create_main_threads()
 		exit(-1);
 	}
 	pthread_detach(thrid);
-	sleepms(10);
+	sleepms(1);
 
 	// Send test thread
 	if (_automode)
@@ -156,7 +156,7 @@ void	create_main_threads()
 			exit(-1);
 		}
 		pthread_detach(thrid);
-		sleepms(10);
+		sleepms(1);
 	}
 
 	// level db thread
@@ -168,7 +168,7 @@ void	create_main_threads()
 		exit(-1);
 	}
 	pthread_detach(thrid);
-	sleepms(10);
+	sleepms(1);
 }
 
 void	create_subscriber_threads()
@@ -187,7 +187,7 @@ void	create_subscriber_threads()
 			exit(-1);
 		}
 		pthread_detach(cthrid);
-		sleepms(10);
+		sleepms(1);
 	}
 
 	// Subscriber threads
@@ -219,14 +219,25 @@ void	create_subscriber_threads()
 			exit(-1);
 		}
 		pthread_detach(thrid[idx]);
-		sleepms(10);
+		sleepms(1);
 	}
 }
 
 
 void	create_verifier_threads(int nverifiers)
 {
-	pthread_t thrid[100];
+	pthread_t thrid[100], cthrid;
+
+	// consensus thread
+	printf("Create [consensus] thread\n");
+	int ret = pthread_create(&cthrid, NULL, thread_consensus, (void *)&_chainport);
+	if (ret < 0)
+	{
+		perror("thread_consensus() thread creation error");
+		exit(-1);
+	}
+	pthread_detach(cthrid);
+	sleepms(1);
 
 	// Verifier thread creation
 	for (int idx = 0; idx < nverifiers; idx++)
@@ -238,6 +249,6 @@ void	create_verifier_threads(int nverifiers)
                         exit(-1);
                 }
 		pthread_detach(thrid[idx]);
-                sleepms(10);
+                sleepms(1);
 	}
 }

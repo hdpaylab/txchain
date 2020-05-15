@@ -54,18 +54,6 @@ using namespace std;
 #define TX_DELIM	'|'			// TX delimiter
 
 
-typedef unsigned char	uchar;
-
-
-// msg 데이터 전송 테스트용 
-typedef struct {
-	char	*address;
-	char	*message;
-	char	*signature;
-	int	verified;
-}	txmsg_t;
-
-
 typedef struct {
 	tx_header_t	hdr;		// TX header 
 	string		hdrser;		// Serialized tx header for broadcast
@@ -74,16 +62,23 @@ typedef struct {
 }	txdata_t;
 
 
+typedef struct {
+	uint32_t	nodeid;
+	int		valid;
+}	node_valid_t;
+
+
 // main.cpp
 extern	int	_nverifier;	// current number of verifier threads
 
 extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
 extern	safe_queue<txdata_t>	_verifyq;	// receive queue for subscriber
 extern	safe_queue<txdata_t>	_mempoolq;	// receive queue for verifier
-extern	safe_queue<txdata_t>	_resultq;	// mempool queue (verification reply)
+extern	safe_queue<txdata_t>	_consensusq;	// mempool queue (verification reply)
 
 extern	Params_type_t _params;			// parameters for sign/verify
 
+extern	map<string, array<node_valid_t, 100>> _csslist;		// consensus list ("txid":"nodeid-valid")
 
 void	*thread_publisher(void *info_p);	// pub.cpp
 void	*thread_send_test(void *info_p);	// main.cpp
@@ -91,6 +86,7 @@ void	*thread_subscriber(void *info_p);	// sub.cpp
 void	*thread_client(void *info_p);		// sub.cpp
 void	*thread_verifier(void *info_p);		// verify.cpp
 void	*thread_levledb(void *info_p);		// leveldb.cpp
+void	*thread_consensus(void *info_p);	// consensus.cpp
 
 
 // ldbio.cpp
@@ -103,5 +99,6 @@ const char *get_type_name(int type);
 const char *get_status_name(int status);
 
 
+extern	cssmap	_cssmap;		// consensus.cpp
 
 #endif	// __COMMON_H

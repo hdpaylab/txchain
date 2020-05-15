@@ -12,7 +12,7 @@
 //
 
 
-#include "libhash.h"
+#include "lib.h"
 
 
 void	test_c();

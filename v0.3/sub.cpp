@@ -79,13 +79,11 @@ void	*thread_subscriber(void *info_p)
 		}
 		else if (txdata.hdr.status == STAT_VERIFY_OK)	// tx_verify_reply_t
 		{
-		//	tx_verify(txdata);
-		//	_resultq.push(txdata);
+			_consensusq.push(txdata);
 		}
 		else if (txdata.hdr.status == STAT_VERIFY_FAIL)	// tx_verify_reply_t
 		{
-		//	tx_verify(txdata);
-		//	_resultq.push(txdata);
+			_consensusq.push(txdata);
 		}
 
 		fprintf(outfp, "%7d: len=%ld\n", count, txdata.hdr.data_length);
@@ -199,7 +197,7 @@ int	tx_verify(txdata_t& txdata)
 	tx_create_token_t create_token;
 	tx_send_token_t send_token;
 	tx_verify_reply_t verify_reply;
-	xserial hdrszr, bodyszr;
+	xserialize hdrszr, bodyszr;
 	string	from_addr;
 
 	hdrszr.setstring(txdata.orgdataser);
@@ -211,7 +209,7 @@ int	tx_verify(txdata_t& txdata)
 	txdata.bodyser = body;
 	hp = &txdata.hdr;
 
-	xserial tmpszr;
+	xserialize tmpszr;
 	seriz_add(tmpszr, txdata.hdr);
 	txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체
 

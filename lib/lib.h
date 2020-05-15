@@ -30,8 +30,10 @@ using namespace std;
 #include "sha1.h"
 #include "sha256.h"
 #include "sha512.h"
-#include "xserial.h"
+#include "xserialize.h"
 #include "bigint.hpp"
+#include "cssmap.h"
+
 #include "zhelpers.hpp"
 
 
