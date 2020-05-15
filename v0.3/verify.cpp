@@ -1,6 +1,7 @@
 #include "txcommon.h"
 
 
+int	tx_process(txdata_t& txdata);
 void	send_verify_result(txdata_t& txdata);
 
 
@@ -16,9 +17,6 @@ void	*thread_verifier(void *info_p)
 	const char *filter = ZMQ_FILTER;
 
 
-	// params set
-	Params_type_t params = paramsget("../lib/params.dat");
-
 	printf("Verifier %d START!\n", thrid);
 
 	sprintf(tmp, "VER%02d.ver", thrid);	// out file
@@ -32,56 +30,22 @@ void	*thread_verifier(void *info_p)
 	while (1)
 	{
 		txdata_t txdata;
-		tx_send_token_t txsend;
-		xserial txsz(4 * 1024);
-		string	data;
 
 		count++;
 		txdata = _verifyq.pop();
 
-		txsz.setstring(txdata.data);
-		printf("\n");
-		printf("-----VERIFY:\n");
-		deseriz(txsz, txsend, 0);
-		deseriz(txsz, txdata.sign, 0);
+		printf("\n-----Verifier:\n");
 
-		txdata.valid = verify_message_bin(txsend.from_addr.c_str(), txdata.sign.signature.c_str(), 
-					txdata.data.c_str(), txdata.sign.data_length, &params.AddrHelper);
-
-		// 검증 요청하는 경우는, 검증 결과만 전송함 (txid or sign + 결과(OK/FAIL))
-		if (txdata.status == STAT_VERIFY_REQUEST)
-		{
-			send_verify_result(txdata);
-		}
-		// Verification success
-		else if (txdata.valid)
-		{
-			if (txdata.status == STAT_INIT)
-			{
-				txdata.status = STAT_VERIFY_REQUEST;
-				_sendq.push(txdata);	// broadcast to other nodes... (request verification)
-
-				_mempoolq.push(txdata);	// put mempool
-			}
-		}
-		// Verification failed
-		else
-		{
-			if (txdata.status == STAT_INIT)
-			{
-				send_verify_result(txdata);
-			}
-		}
+		tx_process(txdata);
 
 		fprintf(outfp, "VER%02d: %7d: %s signature=%s\n", thrid, count, 
-			txdata.valid == 1 ? "true" : "false", txdata.sign.signature.c_str());
+			txdata.hdr.valid == 1 ? "true" : "false", txdata.hdr.signature.c_str());
 		fflush(outfp);
-
 #ifdef DEBUG
 #else
 		if (count % 10000 == 0)
 #endif
-			printf("VER%02d: Veri %7d veriq=%5ld\n", thrid, count, _mempoolq.size());
+			printf("    Ver%02d: processed %7d veriq=%5ld\n", thrid, count, _mempoolq.size());
 	}
 
 	fclose(outfp);
@@ -98,22 +62,103 @@ void	*thread_verifier(void *info_p)
 }
 
 
+int	tx_process(txdata_t& txdata)
+{
+	tx_header_t *hp;
+	tx_send_token_t txsend;
+	xserial hdrszr, bodyszr;
+
+
+	hp = &txdata.hdr;
+	bodyszr.setstring(txdata.bodyser);
+
+	if (hp->type == TX_CREATE_TOKEN && hp->valid == -1)
+	{
+		tx_create_token_t create_token;
+
+		deseriz(bodyszr, create_token, 0);
+		string from_addr = create_token.from_addr;
+
+		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
+					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
+		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+	}
+	else if (hp->type == TX_SEND_TOKEN && hp->valid == -1)
+	{
+		tx_send_token_t send_token;
+
+		deseriz(bodyszr, send_token, 0);
+		string from_addr = send_token.from_addr;
+
+		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
+					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
+		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+	}
+
+	// 검증 요청하는 경우는, 검증 결과만 전송함 (txid or sign + 결과(OK/FAIL))
+	if (hp->status == STAT_VERIFY_REQUEST)
+	{
+		send_verify_result(txdata);
+	}
+	// Verification success
+	else if (hp->valid)
+	{
+		if (hp->status == STAT_INIT)
+		{
+			hp->nodeid = getpid();
+			hp->status = STAT_VERIFY_REQUEST;
+
+			xserial tmpszr;
+			seriz_add(tmpszr, txdata.hdr);
+			txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체 
+
+			printf("    Add to sendq: type=%s status=%s\n",
+				get_type_name(hp->type), get_status_name(hp->status));
+
+			_sendq.push(txdata);	// broadcast to other nodes... (request verification)
+
+			printf("    Add to mempoolq: type=%s status=%s\n",
+				get_type_name(txdata.hdr.type), get_status_name(txdata.hdr.status));
+
+			_mempoolq.push(txdata);	// put mempool
+		}
+	}
+	// Verification failed
+	else
+	{
+		if (hp->status == STAT_INIT)
+		{
+			send_verify_result(txdata);
+		}
+	}
+
+	return 1;
+}
+
+
 //
 // 검증 결과만 발송: txid or sign + 검증 결과(type)
 //
 void	send_verify_result(txdata_t& txdata)
 {
-	tx_verify_reply_t txreply;
+	tx_header_t hdr;
+	xserial hdrszr;
 
-	txreply.type = TX_VERIFY_REPLY;
-	txreply.signature = txdata.sign.signature;
-	txreply.txid = txdata.txid;
+	hdr.nodeid = getpid();
+	hdr.type = TX_VERIFY_REPLY;
+	hdr.status = 0;
+	hdr.data_length = 0;
+	hdr.valid = txdata.hdr.valid;
+	hdr.signature = txdata.hdr.signature;
+	hdr.txid = sha256(txdata.hdr.signature);
 
-	xserial txsz(1 * 1024);
-	seriz_add(txsz, txreply);
+	seriz_add(hdrszr, hdr);
+	txdata.hdrser = hdrszr.getstring();	// 헤더 serialization 교체 
 
-	txdata.data = txsz.getdata();
-	txdata.status = txdata.valid ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
+	printf("    Add to sendq: type=%s status=%s\n",
+		get_type_name(hdr.type), get_status_name(hdr.status));
 
 	_sendq.push(txdata);	// broadcast to other nodes... (request verification)
 }

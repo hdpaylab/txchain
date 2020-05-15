@@ -26,14 +26,14 @@ int	main(int ac, char *av[])
 		snprintf(svr, sizeof(svr), "tcp://%s:%d", "192.168.1.10", DEFAULT_CLIENT_PORT);
 	}
 
-	printf("CLIENT: connect to %s\n\n", svr);
+	printf("CLIENT: connect to %s (pid=%d)\n\n", svr, getpid());
 
 	zmq::context_t context(1);
 
 	zmq::socket_t requester(context, ZMQ_REQ);
 	requester.connect(svr);
 
-	// params set
+	// Load params for sign/verify
 	Params_type_t params = paramsget("../lib/params.dat");
 
 
@@ -41,10 +41,14 @@ int	main(int ac, char *av[])
 	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
 	const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 
+	tx_header_t	txhdr;
 	tx_send_token_t	txsend;
 
-	txsend.type = TX_SEND_TOKEN;
-	txsend.seq = 1;
+	memset(&txhdr, 0, sizeof(txhdr));
+	txhdr.nodeid = getpid();	// 임시로 
+	txhdr.type = TX_SEND_TOKEN;
+	txhdr.valid = -1;
+	
 	txsend.from_addr = from_addr;
 	txsend.to_addr = to_addr;
 	txsend.token_name = "XTOKEN";
@@ -54,33 +58,33 @@ int	main(int ac, char *av[])
 	txsend.user_data = "TEST SEND TOKEN";
 	txsend.sign_clock = xgetclock();
 
-	xserial txsz(1 * 1024);
+	xserial hdrszr, bodyszr;
 
-	seriz_add(txsz, txsend);
+	seriz_add(bodyszr, txsend);
+	txhdr.data_length = bodyszr.size();
 
-	tx_sign_t sign;
-	sign.data_length = txsz.getsize();
-	sign.signature = sign_message_bin(privkey, txsz.getdata(), txsz.getsize(), &params.PrivHelper, &params.AddrHelper);
-	printf("Serialize: length=%ld\n", txsz.getsize());
+	txhdr.data_length = bodyszr.size();
+	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &params.PrivHelper, &params.AddrHelper);
+	printf("Serialize: body length=%ld\n", bodyszr.size());
 	printf("address  : %s\n", from_addr);
-//	printf("message  : \n"); txsz.dump(10, 1);
-	printf("signature: %s\n", sign.signature.c_str());
+//	printf("message  : \n"); bodyszr.dump(10, 1);
+	printf("signature: %s\n", txhdr.signature.c_str());
 
-	int verify_check = verify_message_bin(from_addr, sign.signature.c_str(), txsz.getdata(), txsz.getsize(), &params.AddrHelper);
+	// 발송 전에 미리 검증 테스트 
+	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &params.AddrHelper);
 	printf("verify_check=%d\n", verify_check);
 	printf("\n");
 
 	// sign은 verify 테스트 전에 serialize하면 안됨..
-	seriz_add(txsz, sign);
+	seriz_add(hdrszr, txhdr);
 
 	for (int count = 0; count < 100000; count++)
 	{
-		bool ret = s_send(requester, txsz.getstring());
+		bool ret = s_send(requester, hdrszr.getstring() + bodyszr.getstring());
 
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
-		sleep(10);
 #else
 		if (count % 10000 == 0)
 #endif

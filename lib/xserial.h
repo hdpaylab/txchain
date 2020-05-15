@@ -15,24 +15,24 @@ using namespace std;
 // lower 6bit: data type
 //
 enum {
-	XSZ_HDRLEN_MASK	= 0xC0,
+	XSZ_HDRLEN_MASK		= 0xC0,
 	XSZ_TYPE_MASK		= 0x3F,
 
-	XSZ_TYPE_BINARY	= 0,	// has data length block
-	XSZ_TYPE_STRING	= 1,	// has data length block
+	XSZ_TYPE_BINARY		= 0,	// has data length block
+	XSZ_TYPE_STRING		= 1,	// has data length block
 
-	XSZ_TYPE_INT8	= 2,
-	XSZ_TYPE_INT16	= 3,
-	XSZ_TYPE_INT32	= 4,
-	XSZ_TYPE_INT64	= 5,
+	XSZ_TYPE_INT8		= 2,
+	XSZ_TYPE_INT16		= 3,
+	XSZ_TYPE_INT32		= 4,
+	XSZ_TYPE_INT64		= 5,
 
-	XSZ_TYPE_UINT8	= 6,
-	XSZ_TYPE_UINT16	= 7,
-	XSZ_TYPE_UINT32	= 8,
-	XSZ_TYPE_UINT64	= 9,
+	XSZ_TYPE_UINT8		= 6,
+	XSZ_TYPE_UINT16		= 7,
+	XSZ_TYPE_UINT32		= 8,
+	XSZ_TYPE_UINT64		= 9,
 
-	XSZ_TYPE_FLOAT	= 10,
-	XSZ_TYPE_DOUBLE	= 11,
+	XSZ_TYPE_FLOAT		= 10,
+	XSZ_TYPE_DOUBLE		= 11,
 };
 
 
@@ -53,11 +53,11 @@ extern int _xsz_debug;
 
 class xserial {
 public:
-	xserial(size_t sz)
+	xserial(size_t sz = 1 * 1024)
 	{
 		bufsz_ = sz;
 		if (bufsz_ <= 0)
-			bufsz_ = 4 * 1024;
+			bufsz_ = 1 * 1024;
 		inbuf_ = outbuf_ = buf_ = (char *)calloc(1, bufsz_);
 		allocated_ = 1;
 		inbufpos_ = outbufpos_ = 0;
@@ -81,19 +81,38 @@ public:
 		outbufpos_ = 0;
 	}
 
-	size_t getsize()
+	size_t size()
 	{
 		return inbufpos_;
 	}
 
-	char *getdata()
+	// current position of outbuf
+	size_t getcurpos()
+	{
+		return outbufpos_;
+	}
+
+	char *data()
 	{
 		return buf_;
+	}
+
+	// current data pointer of outbuf
+	char *curdata()
+	{
+		return &buf_[outbufpos_];
 	}
 
 	string getstring()
 	{
 		string ss(buf_, inbufpos_);
+		return ss;
+	}
+
+	// current(remaining) outbuf string
+	string getcurstring()
+	{
+		string ss(curdata(), inbufpos_ - outbufpos_);
 		return ss;
 	}
 
@@ -104,6 +123,7 @@ public:
 		clear();
 		check_in_size(datalen);
 		memcpy(inbuf_, data, datalen);
+		update_inpos(datalen);
 	}
 
 	void setstring(string& str)
@@ -113,6 +133,7 @@ public:
 		clear();
 		check_in_size(str.length());
 		memcpy(inbuf_, str.c_str(), str.length());
+		update_inpos(str.length());
 	}
 
 	int getcurtype()
@@ -167,9 +188,8 @@ public:
 		{
 			if (buf_)
 				free(buf_);
+			bufsz_ = 1 * 1024;
 			inbufpos_ = outbufpos_ = 0;
-			if (bufsz_ <= 0)
-				bufsz_ = 4 * 1024;
 			inbuf_ = outbuf_ = buf_ = (char *)calloc(1, bufsz_);
 			allocated_ = 1;
 		}
@@ -387,10 +407,10 @@ public:
 		return update_outpos(xdeserialize(outbuf_, bufsz_ - outbufpos_, XSZ_TYPE_UINT64, (void *)&dd, sz));
 	}
 
-	void	dump(int nthnl = 1, int spc = 0)
+	void	dump(int nthnl = 0, int spc = 0)
 	{
-		size_t sz = getsize();
-		char *buf = getdata();
+		size_t sz = size();
+		char *buf = data();
 		dumpbin(buf, sz, nthnl, spc);
 	}
 
@@ -408,7 +428,7 @@ private:
 		}
 		else if (allocated_ && inbufpos_ + reqsz > bufsz_ && buf_)
 		{
-			size_t	newsz = (inbufpos_ + reqsz) + 4 * 1024;
+			size_t	newsz = (inbufpos_ + reqsz) + 1 * 1024;
 			char	*newbuf = (char *)calloc(1, newsz);
 			if (newbuf)
 			{

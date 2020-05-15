@@ -1,10 +1,7 @@
 #include "txcommon.h"
 
 
-string	process_tx(txdata_t& txdata);
-
-
-Params_type_t _params;
+int	tx_verify(txdata_t& txdata);
 
 
 //
@@ -56,45 +53,49 @@ void	*thread_subscriber(void *info_p)
 		txdata_t txdata;
 
 		//  Wait for next request from publisher
-		txdata.data = s_recv(xsock);
+		txdata.orgdataser = s_recv(xsock);
 
-//printf("SUB: RECV DUMP(%ld): ", txdata.data.length());
-//dumpbin(txdata.data.c_str(), txdata.data.length());
+		printf("\n\n=====Subscriber for broadcast: (recv from ZMQ::PUB-SUB)\n");
 
-		const char *filter = txdata.data.c_str();
+		printf("    data length=%ld (include filter [%s])\n", txdata.orgdataser.size(), ZMQ_FILTER);
 
-		string realdata(&filter[strlen(ZMQ_FILTER)], txdata.data.length() - strlen(ZMQ_FILTER));
-		txdata.data = realdata;
+		const char *filter = txdata.orgdataser.c_str();
 
-//printf("SUB: REAL DUMP(%ld): ", realdata.length()); 
-//dumpbin(realdata.c_str(), realdata.length());
+		string realdata(&filter[strlen(ZMQ_FILTER)], txdata.orgdataser.length() - strlen(ZMQ_FILTER));
+		txdata.orgdataser = realdata;
 
+		printf("    real data length=%ld\n", txdata.orgdataser.size());
 
 		count++;
-		process_tx(txdata);
+		tx_verify(txdata);
 
-		if (txdata.status == STAT_VERIFY_REQUEST)
+		if (txdata.hdr.status == STAT_VERIFY_REQUEST)
 		{
-			txdata.valid = -1;
+			txdata.hdr.valid = -1;
+			printf("    Add to verifyq: type=%s status=%s\n",
+				get_type_name(txdata.hdr.type), get_status_name(txdata.hdr.status));
+
 			_verifyq.push(txdata);			// send to verify.cpp
 		}
-		else if (txdata.status == STAT_VERIFY_OK)	// tx_verify_reply_t
+		else if (txdata.hdr.status == STAT_VERIFY_OK)	// tx_verify_reply_t
 		{
+		//	tx_verify(txdata);
 		//	_resultq.push(txdata);
 		}
-		else if (txdata.status == STAT_VERIFY_FAIL)	// tx_verify_reply_t
+		else if (txdata.hdr.status == STAT_VERIFY_FAIL)	// tx_verify_reply_t
 		{
+		//	tx_verify(txdata);
 		//	_resultq.push(txdata);
 		}
 
-		fprintf(outfp, "%7d: %s\n", count, txdata.data.c_str());
+		fprintf(outfp, "%7d: len=%ld\n", count, txdata.hdr.data_length);
 		fflush(outfp);
 
 #ifdef DEBUG
 #else
 		if (count % 100000 == 0)
 #endif
-			printf("thread_subscriber: Recv %7d recvq=%5ld\n", count, _verifyq.size());
+			printf("    Processed %d  recvq=%5ld\n", count, _verifyq.size());
 	}
 
 	fclose(outfp);
@@ -116,7 +117,10 @@ void	*thread_subscriber(void *info_p)
 
 
 //
-// Send client thread (Client management)
+// Client thread (Client request management)
+//
+// 1. Verify tx and returns the result immediately.
+// 2. Push into verifyq if valid tx. (status=STAT_INIT)
 //
 void	*thread_client(void *info_p)
 {
@@ -125,9 +129,6 @@ void	*thread_client(void *info_p)
 
 
 	printf("CLIENT: client port=%d START!\n", clientport);
-
-	// params set
-	_params = paramsget("../lib/params.dat");
 
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
 	FILE *outfp = fopen(tmp, "w+b");	// output file
@@ -152,24 +153,31 @@ void	*thread_client(void *info_p)
 		txdata_t txdata;
 
 		//  Wait for next request from client
-		txdata.data = s_recv(responder);
-
+		txdata.orgdataser = s_recv(responder);
 		count++;
-		process_tx(txdata);
 
-		txdata.valid = -1;
-		txdata.status = STAT_INIT;
+		printf("\n\n=====Subscriber for client: (recv from ZMQ::REQ-REPLY)\n");
 
-		_verifyq.push(txdata);	// send to verify.cpp
+		int verify_required = tx_verify(txdata);
+
+		// 정상적으로 검증된 tx인 경우에만 verify 수행함 
+		if (txdata.hdr.valid == 1 && verify_required)
+		{
+			txdata.hdr.status = STAT_INIT;
+			printf("    Add to verifyq: type=%s status=%s\n",
+				get_type_name(txdata.hdr.type), get_status_name(txdata.hdr.status));
+
+			_verifyq.push(txdata);	// send to verify.cpp
+		}
 
 #ifdef DEBUG
 #else
 		if (count % 10000 == 0)
 #endif
-			cout << "Client request: count=" << count << " sign=" << txdata.sign.signature << endl;
+			printf("    Client request: count=%d sign=%s\n", count, txdata.hdr.signature.c_str());
 
 		// Send reply back to client
-		s_send(responder, txdata.txid);
+		s_send(responder, txdata.hdr.txid);
 	}
 
 	fclose(outfp);
@@ -182,61 +190,65 @@ void	*thread_client(void *info_p)
 }
 
 
-string	process_tx(txdata_t& txdata)
+//
+// returns 1 if verify required
+//
+int	tx_verify(txdata_t& txdata)
 {
+	tx_header_t *hp;
 	tx_create_token_t create_token;
 	tx_send_token_t send_token;
 	tx_verify_reply_t verify_reply;
-	xserial txsz(4 * 1024);
-	string	filter, from_addr, retstr;
-	uint32_t type, seq;
+	xserial hdrszr, bodyszr;
+	string	from_addr;
 
-	txsz.setstring(txdata.data);
+	hdrszr.setstring(txdata.orgdataser);
+	deseriz(hdrszr, txdata.hdr, 1);
 
-	txsz >> type;
-	txsz.rewind();
+	string body = hdrszr.getcurstring();
+	bodyszr.setstring(body);
 
-//	printf("\n");
-	printf("-----SUB:\n");
-	if (type == TX_CREATE_TOKEN)
+	txdata.bodyser = body;
+	hp = &txdata.hdr;
+
+	xserial tmpszr;
+	seriz_add(tmpszr, txdata.hdr);
+	txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체
+
+	if (hp->type == TX_CREATE_TOKEN)
 	{
-	//	deseriz(txsz, create_token, 0);
-		deseriz(txsz, txdata.sign, 0);
+		deseriz(bodyszr, create_token, 0);
 		from_addr = send_token.from_addr;
 
-		txdata.valid = verify_message_bin(from_addr.c_str(), txdata.sign.signature.c_str(), 
-					txdata.data.c_str(), txdata.sign.data_length, &_params.AddrHelper);
+		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
+					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
+		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 
-		txdata.txid = txdata.valid ? sha256(txdata.sign.signature) : "ERROR: Transaction verification failed!";
-		printf("	VERITY	: %d txid=%s\n", txdata.valid, txdata.txid.c_str());
-
-		return txdata.txid;
+		return 1;
 	}
-	else if (type == TX_SEND_TOKEN)
+	else if (hp->type == TX_SEND_TOKEN)
 	{
-		deseriz(txsz, send_token, 0);
-		deseriz(txsz, txdata.sign, 0);
+		deseriz(bodyszr, send_token, 0);
 		from_addr = send_token.from_addr;
 
-		txdata.valid = verify_message_bin(from_addr.c_str(), txdata.sign.signature.c_str(), 
-					txdata.data.c_str(), txdata.sign.data_length, &_params.AddrHelper);
+		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
+					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
+		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 
-		txdata.txid = txdata.valid ? sha256(txdata.sign.signature) : "ERROR: Transaction verification failed!";
-		printf("	VERITY	: %d txid=%s\n", txdata.valid, txdata.txid.c_str());
-
-		return txdata.txid;
+		return 1;
 	}
-	else if (type == TX_VERIFY_REPLY)
+	else if (hp->type == TX_VERIFY_REPLY)
 	{
-		deseriz(txsz, verify_reply, 0);
-		txdata.status = verify_reply.status;
+		deseriz(bodyszr, verify_reply, 1);
 
-		return string();
+		return 0;
 	}
 	else
 	{
-		printf("ERROR: Unknown TX type=%08X\n", type);
+		printf("ERROR: Unknown TX type=%08X\n", hp->type);
 
-		return retstr;
+		return 0;
 	}
 }

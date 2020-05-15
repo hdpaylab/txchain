@@ -2,12 +2,15 @@
 #define __TX_H
 
 
+#include "txcommon.h"
+
+
 #define TX_HEADER_MARK          0x7c484452      // "|HDR"
 
 
 enum {
-	STAT_VERIFY_OK		= 1,
-	STAT_VERIFY_FAIL	= 0,
+	STAT_VERIFY_OK		= 0x00000001,
+	STAT_VERIFY_FAIL	= 0x00000000,
 
 	STAT_INIT		= 0x00001000,
 	STAT_VERIFY_REQUEST	= 0x00001001,
@@ -51,23 +54,22 @@ enum {
 
 
 typedef struct {
-	string		signature;
+	uint32_t	nodeid;		// node id
+	uint32_t        type;		// TX_xxx
+	uint32_t        status;		// STAT_VERIFY_xx
 	size_t		data_length;	// sign data length
-}	tx_sign_t;
+	int		valid;		// 0=invalid 1=valid -1=none
+	string		signature;	// signature of data
+	string		txid;		// transaction id: sha256(sign)
+}	tx_header_t;
 
 
 typedef struct {
-	uint32_t        type;		// TX_xxx
-	uint32_t        status;		// STAT_VERIFY_xx
-	string		signature;
-	string		txid;
+	string		not_userd_txid;
 }	tx_verify_reply_t;
 
 
 typedef struct {
-	uint32_t        type;		// TX_xxx
-	uint32_t        seq;
-
 	string          from_addr;
 	string          to_addr;
 	string          token_name;     // 256 bytes
@@ -86,9 +88,6 @@ typedef struct {
 
 
 typedef struct {
-	uint32_t        type;		// TX_xxx
-	uint32_t        seq;
-
 	string          from_addr;
 	string          to_addr;
 	string          token_name;     // 256 bytes
@@ -102,9 +101,6 @@ typedef struct {
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          channel_name;   // 256 bytes
@@ -119,9 +115,6 @@ typedef struct {
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          channel_name;   // 256 bytes
@@ -134,9 +127,6 @@ typedef struct {
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          contract_name;  // 256 bytes
@@ -152,9 +142,6 @@ typedef struct {
 
 // Destroy object: master only
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          target_name;    // TOKEN / CHANNEL / CONTRACT
@@ -166,9 +153,6 @@ typedef struct {
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          permission;     // TOKEN: issue, admin
@@ -186,9 +170,6 @@ typedef struct {
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          wallet_name;
@@ -203,9 +184,6 @@ typedef struct {
 
 
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          account_name;
@@ -225,9 +203,6 @@ typedef struct {
 // listwallet WALLET            => get wallet.db key=WALLET::list result=JSON array
 // create keypair
 typedef struct {
-        uint32_t        type;
-        uint32_t        seq;
-
         string          from_addr;
         string          to_addr;
         string          command;
@@ -251,11 +226,13 @@ typedef struct {
 
 
 int	seriz_add(xserial& xsz, tx_send_token_t& tx);
-int	seriz_add(xserial& xsz, tx_sign_t& tx);
+int	seriz_add(xserial& xsz, tx_header_t& tx);
+int	seriz_add(xserial& xsz, tx_create_token_t& tx);
 int	seriz_add(xserial& xsz, tx_verify_reply_t& tx);
 
 int	deseriz(xserial& xsz, tx_send_token_t& tx, int dump = 0);
-int	deseriz(xserial& xsz, tx_sign_t& tx, int dump = 0);
+int	deseriz(xserial& xsz, tx_header_t& tx, int dump = 0);
+int	deseriz(xserial& xsz, tx_create_token_t& tx, int dump = 0);
 int	deseriz(xserial& xsz, tx_verify_reply_t& tx, int dump = 0);
 
 

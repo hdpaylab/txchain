@@ -9,7 +9,7 @@ INCLUDE	= -I/usr/include/postgresql -I../HdacCSDK2/include -I../lib -I../lib2
 
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
-SRCS2	= main.cpp pub.cpp sub.cpp verify.cpp ldbio.cpp seriz.cpp common.cpp
+SRCS2	= main.cpp sub.cpp verify.cpp pub.cpp ldbio.cpp seriz.cpp common.cpp
 
 OBJS2	= $(SRCS2:.cpp=.o)
 
@@ -22,8 +22,8 @@ all: tx3 cli
 tx3: $(OBJS2)
 	$(CC) $(CPPFLAGS) -o $@ $(OBJS2) $(TXLIB) $(SDKLIBS) $(LIBS) 
 
-cli: cli.o seriz.cpp 
-	$(CC) $(CPPFLAGS) -o $@ cli.o seriz.cpp $(TXLIB) $(SDKLIBS) $(LIBS) 
+cli: cli.o seriz.cpp common.cpp
+	$(CC) $(CPPFLAGS) -o $@ cli.o seriz.cpp common.cpp $(TXLIB) $(SDKLIBS) $(LIBS) 
 
 clean:
 	rm -f tx3 cli $(OBJS) *.o *.out *.ver *.a *.log

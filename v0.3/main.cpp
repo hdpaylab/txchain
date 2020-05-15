@@ -21,6 +21,8 @@ int	_chainport = DEFAULT_CHAIN_PORT;
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
 
+Params_type_t _params;
+
 
 safe_queue<txdata_t>	_sendq;		// send queue for publisher
 safe_queue<txdata_t>	_verifyq;	// stores received tx for verifier
@@ -38,10 +40,15 @@ int	main(int ac, char *av[])
 {
 	parse_command_line(ac, av);
 
+	printf("Start txchain main: pid=%d\n", getpid());
+
 	_sendq.setmax(10000);
 	_verifyq.setmax(10000);
 	_mempoolq.setmax(10000);
 	_resultq.setmax(10000);
+
+	// load params set
+	_params = paramsget("../lib/params.dat");
 
 	create_main_threads();
 

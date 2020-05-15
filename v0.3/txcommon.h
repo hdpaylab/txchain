@@ -17,6 +17,7 @@
 #include <structs/hashes.h>		// CSHA256()
 #include <utils/utilstrencodings.h>	// HexStr()
 #include <sys/time.h>
+#include <sys/types.h>
 #include <leveldb/c.h>			// xleveldb.cpp
 
 
@@ -66,15 +67,10 @@ typedef struct {
 
 
 typedef struct {
-	string		data;		// for sign (include tx_sign_t)
-	tx_sign_t	sign;		// sign 
-	string		txid;		// sha256(sign)
-
-	uint32_t	seq;		// TX sequence
-	uint32_t	valid;		// 0=invalid 1=valid -1=none
-
-	uint32_t        nverified;
-	uint32_t	status;		// STAT_xxx
+	tx_header_t	hdr;		// TX header 
+	string		hdrser;		// Serialized tx header for broadcast
+	string		bodyser;	// Serialized tx body for sign
+	string		orgdataser;	// Serialized hdader + body
 }	txdata_t;
 
 
@@ -85,6 +81,9 @@ extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
 extern	safe_queue<txdata_t>	_verifyq;	// receive queue for subscriber
 extern	safe_queue<txdata_t>	_mempoolq;	// receive queue for verifier
 extern	safe_queue<txdata_t>	_resultq;	// mempool queue (verification reply)
+
+extern	Params_type_t _params;			// parameters for sign/verify
+
 
 void	*thread_publisher(void *info_p);	// pub.cpp
 void	*thread_send_test(void *info_p);	// main.cpp
@@ -102,6 +101,7 @@ extern	leveldb	_walletdb;	//
 // common.cpp
 const char *get_type_name(int type);
 const char *get_status_name(int status);
+
 
 
 #endif	// __COMMON_H

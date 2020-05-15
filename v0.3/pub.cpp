@@ -42,12 +42,13 @@ void	*thread_publisher(void *info_p)
 		count++;
 		txdata = _sendq.pop();
 
-		printf("thread_publisher: Broadcast %s: %s\n", 
-			get_status_name(txdata.status), txdata.data.c_str());
+		printf("\n-----Publisher for PUB-SUB:\n");
+		printf("    recv data length=%ld filter=%s\n", txdata.orgdataser.size(), ZMQ_FILTER);
 
 		string senddata;
 
-		senddata = string(ZMQ_FILTER) + txdata.data;
+		senddata = string(ZMQ_FILTER) + txdata.hdrser + txdata.bodyser;
+
 //		printf("SEND DUMP(%ld): ", senddata.length()); 
 //		dumpbin(senddata.c_str(), senddata.length());
 
@@ -59,7 +60,7 @@ void	*thread_publisher(void *info_p)
 #else
 		if (count % 100000 == 0)
 #endif
-			printf("thread_publisher: Broadcast %7d sendq=%5ld\n", count, _sendq.size());
+			printf("    Send: broadcast %d  sendq=%5ld\n", count, _sendq.size());
 	}
 
 	tmend = xgetclock();
@@ -82,81 +83,87 @@ void	*thread_publisher(void *info_p)
 //
 void	*thread_send_test(void *info_p)
 {
-        int	sendport = *(int *)info_p;
+	int	sendport = *(int *)info_p;
 	int	loop = MAX_TEST_NUM_TX;			// 100
 
 
 	printf("thread_send_test: loop=%d START!\n", loop);
 
-	// params set
-	Params_type_t params = paramsget("../lib/params.dat");
-
 	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
 	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
 	const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 
+	tx_header_t txhdr;
 	tx_send_token_t	txsend;
 
-	txsend.type = TX_SEND_TOKEN;
-	txsend.seq = 1;
+	memset(&txhdr, 0, sizeof(txhdr));
+	txhdr.nodeid = getpid();		// 임시로 
+	txhdr.type = TX_SEND_TOKEN;
+	txhdr.valid = -1;
+	
 	txsend.from_addr = from_addr;
 	txsend.to_addr = to_addr;
 	txsend.token_name = "XTOKEN";
 	txsend.amount = 123.456;
 	txsend.native_amount = 0.0;
 	txsend.fee = 0.0;
-	txsend.user_data = "TEST SEND TOKEN";
+	txsend.user_data = "TEST SEND TOKEN by THREAD";
 	txsend.sign_clock = xgetclock();
 
-	xserial txsz(1 * 1024);
+	xserial hdrszr, bodyszr;
 
-	seriz_add(txsz, txsend);
+	seriz_add(bodyszr, txsend);
+	txhdr.data_length = bodyszr.size();
 
-	tx_sign_t sign;
-	sign.data_length = txsz.getsize();
-	sign.signature = sign_message_bin(privkey, txsz.getdata(), txsz.getsize(), &params.PrivHelper, &params.AddrHelper);
-	printf("Serialize: length=%ld\n", txsz.getsize());
+	txhdr.data_length = bodyszr.size();
+	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &_params.PrivHelper, &_params.AddrHelper);
+	printf("Serialize: body length=%ld\n", bodyszr.size());
 	printf("address  : %s\n", from_addr);
-//	printf("message  : \n"); txsz.dump(10, 1);
-	printf("signature: %s\n", sign.signature.c_str());
+//	printf("message  : \n"); bodyszr.dump(10, 1);
+	printf("signature: %s\n", txhdr.signature.c_str());
 
-	int verify_check = verify_message_bin(from_addr, sign.signature.c_str(), txsz.getdata(), txsz.getsize(), &params.AddrHelper);
+	// 발송 전에 미리 검증 테스트 
+	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &_params.AddrHelper);
 	printf("verify_check=%d\n", verify_check);
 	printf("\n");
 
 	// sign은 verify 테스트 전에 serialize하면 안됨..
-	seriz_add(txsz, sign);
+	seriz_add(hdrszr, txhdr);
 
 	for (int ii = 0; ii < loop; ii++)
 	{
 		txdata_t txdata;
-		tx_verify_reply_t txreply;
 
-		txdata.valid = verify_check;
+		/*
+		txhdr.nodeid = getpid();
+		txhdr.type = TX_VERIFY_REPLY;
+		txhdr.status = 0;
+		txhdr.data_length = 0;
+		txhdr.valid = verify_check;
 
-		txreply.type = TX_VERIFY_REPLY;
-		txreply.status = (ii % 2 == 0) ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
-		txreply.signature = sign.signature;
-		txreply.txid = sha256(txreply.signature);
+		txhdr.txid = sha256(txhdr.signature);
 
-		printf("	SEND %s\n", get_status_name(txreply.status));
+		printf("	SEND REPLY valid=%d\n", txhdr.valid);
 
-		xserial reply_txsz(1 * 1024);
-		seriz_add(reply_txsz, txreply);
+		xserial hdrszr;
+		seriz_add(hdrszr, txhdr);
+		*/
 
-		txdata.data = reply_txsz.getstring();
-		txdata.status = txdata.valid ? STAT_VERIFY_OK : STAT_VERIFY_FAIL;
+		txdata.orgdataser = hdrszr.getstring() + bodyszr.getstring();
+
+		printf("    Add to sendq: type=%s status=%s\n",
+			get_type_name(txhdr.type), get_status_name(txhdr.status));
 
 		_sendq.push(txdata);
 
 		if (_sendq.size() > 9000)
 			sleepms(1);
 #ifdef DEBUG
+		sleep(1);
 #else
 		if (ii % 100000 == 0)
 #endif
-			printf("thread_send_test: Send %7d sendq=%5ld recvq=%5ld veriq=%5ld\n",
-				ii, _sendq.size(), _verifyq.size(), _mempoolq.size());
+			printf("    Auto sender: send %d  sendq=%5ld\n", ii, _sendq.size());
 	}
 
 	printf("thread_send_test: ----- END!\n\n");

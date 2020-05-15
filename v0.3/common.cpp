@@ -42,16 +42,16 @@ const char *get_status_name(int status)
 {
 	switch (status)
 	{
-	case STAT_VERIFY_OK:		return "STAT_VERIFY_OK"; 
-	case STAT_VERIFY_FAIL:		return "STAT_VERIFY_FAIL"; 
-
 	case STAT_INIT:			return "STAT_INIT"; 
 	case STAT_VERIFY_REQUEST:	return "STAT_VERIFY_REQUEST"; 
 	case STAT_VERI_RESULT:		return "STAT_VERI_RESULT"; 
 
 	case STAT_ERROR:		return "STAT_ERROR"; 
 	case STAT_VALID:		return "STAT_VALID"; 
+
+	case 0:				return "0";
 	default:
 		printf("Unknown type %d", status); return "UNKNOWN";
 	}
 }
+
