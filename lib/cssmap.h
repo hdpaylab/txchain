@@ -54,9 +54,14 @@ public:
 		return 1;
 	}
 
-	int remove(string txid)
+	void remove(string txid)
 	{
 		nodemap.erase(txid);
+	}
+
+	size_t size()
+	{
+		return nodemap.size();
 	}
 
 	int totalcount(string txid)

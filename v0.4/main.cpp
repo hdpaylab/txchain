@@ -27,10 +27,9 @@ Params_type_t _params;
 safe_queue<txdata_t>	_sendq;		// send queue for publisher
 safe_queue<txdata_t>	_verifyq;	// stores received tx for verifier
 safe_queue<txdata_t>	_mempoolq;	// stores verifier result
+safe_queue<txdata_t>	_leveldbq;	// leveldb queue 
 safe_queue<txdata_t>	_consensusq;	// verification result queue
 
-vector<txdata_t>	_mempool;	// mempool
-map<string, txdata_t *>	_mempoolmap;	// mempool index (key=txid)
 
 void	parse_command_line(int ac, char *av[]);
 void	create_main_threads();
@@ -49,7 +48,7 @@ int	main(int ac, char *av[])
 	_mempoolq.setmax(10000);
 	_consensusq.setmax(10000);
 
-	_mempool.resize(10000);
+	_mempool.resize(1000);
 
 	// load params set
 	_params = paramsget("../lib/params.dat");
@@ -162,6 +161,17 @@ void	create_main_threads()
 		pthread_detach(thrid);
 		sleepms(1);
 	}
+
+	// block sync thread
+	printf("Create [block sync] thread\n");
+	ret = pthread_create(&thrid, NULL, thread_block_sync, (void *)&_chainport);
+	if (ret < 0)
+	{
+		perror("thread_block_sync() thread creation error");
+		exit(-1);
+	}
+	pthread_detach(thrid);
+	sleepms(1);
 
 	// level db thread
 	printf("Create [leveldb] thread\n");

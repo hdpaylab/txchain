@@ -56,14 +56,6 @@ using namespace std;
 
 
 typedef struct {
-	tx_header_t	hdr;		// TX header 
-	string		hdrser;		// Serialized tx header for broadcast
-	string		bodyser;	// Serialized tx body for sign
-	string		orgdataser;	// Serialized hdader + body
-}	txdata_t;
-
-
-typedef struct {
 	uint32_t	nodeid;
 	int		valid;
 }	node_valid_t;
@@ -75,6 +67,7 @@ extern	int	_nverifier;	// current number of verifier threads
 extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
 extern	safe_queue<txdata_t>	_verifyq;	// receive queue for subscriber
 extern	safe_queue<txdata_t>	_mempoolq;	// receive queue for verifier
+extern	safe_queue<txdata_t>	_leveldbq;	// leveldb queue 
 extern	safe_queue<txdata_t>	_consensusq;	// mempool queue (verification reply)
 
 extern	Params_type_t _params;			// parameters for sign/verify
@@ -86,6 +79,7 @@ void	*thread_send_test(void *info_p);	// main.cpp
 void	*thread_subscriber(void *info_p);	// sub.cpp
 void	*thread_client(void *info_p);		// sub.cpp
 void	*thread_verifier(void *info_p);		// verify.cpp
+void	*thread_block_sync(void *info_p);	// mempool.cpp
 void	*thread_levledb(void *info_p);		// leveldb.cpp
 void	*thread_consensus(void *info_p);	// consensus.cpp
 
@@ -98,8 +92,17 @@ extern	leveldb	_walletdb;	//
 // common.cpp
 const char *get_type_name(int type);
 const char *get_status_name(int status);
+tx_header_t	*parse_header_body(txdata_t& txdata);
+void	update_tx_status(string txid, int flag);
 
+// mempool.cpp
+extern	vector<txdata_t> _mempool;		// mempool
+extern	size_t _mempool_count;			// number of mempool
+extern	map<string, txdata_t *>	_mempoolmap;	// mempool index (key=txid)
 
+int	add_mempool(txdata_t& txdata);
+
+// consensus.cpp
 extern	cssmap	_cssmap;		// consensus.cpp
 
 #endif	// __COMMON_H
