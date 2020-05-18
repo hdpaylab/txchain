@@ -102,8 +102,7 @@ char *file_param_value_get(char *text, const char *key)
 	return token;
 }
 
-map<string, string> mapFromFileReadMulti(const string& Path, 
-						const vector<string>& keys)
+map<string, string> mapFromFileReadMulti(const string& Path, const vector<string>& keys)
 {
 	map<string, string> resultItems;
 	char *temp;
@@ -148,10 +147,12 @@ std::string trim(std::string& s,const std::string& drop = TRIM_SPACE)
 	std::string r=s.erase(s.find_last_not_of(drop)+1);
 	return r.erase(0,r.find_first_not_of(drop));
 }
+
 std::string rtrim(std::string s,const std::string& drop = TRIM_SPACE)
 {
 	return s.erase(s.find_last_not_of(drop)+1);
 }
+
 std::string ltrim(std::string s,const std::string& drop = TRIM_SPACE)
 {
 	return s.erase(0,s.find_first_not_of(drop));
@@ -168,11 +169,10 @@ map<string, string> mapFromFileReadAll(const string& Path)
 		return resultItems;
 	}
 
-	while(getline(openFile, line)){
-		if (line[0] == '#' || IS_SPACE(line[0]) ||
-			line.size() == 0) {
+	while(getline(openFile, line))
+	{
+		if (line[0] == '#' || IS_SPACE(line[0]) || line.size() == 0)
 			continue;
-		}
 		
 		string key;
 		string value;
