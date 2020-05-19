@@ -29,13 +29,13 @@ enum {
 	STAT_VALID		= 0x11111111,
 
 	FLAG_SENT_TX		= 0x01000000,	// 발송된 TX
-	FLAG_NEXT_BLOCK		= 0x02000000,	// 다음 블록체 포함될 TX
+	FLAG_TX_LOCK		= 0x02000000,	// 다음 블록체 포함될 TX
 };
 
 enum {
 	// Block sync 
-	TX_BLOCK_SYNC_REQ	= 0x00010000,
-	TX_BLOCK_SYNC_REPLY	= 0x00020000,
+	TX_BLOCK_GEN_REQ	= 0x00010000,
+	TX_BLOCK_GEN_REPLY	= 0x00020000,
 
 	// Verification related - internal
 	TX_VERIFY_REPLY		= 0x00007700,
@@ -95,13 +95,13 @@ typedef struct {
 
 typedef struct {
 	string		txid;
-}	tx_block_txid_t;
+}	tx_block_gen_req_t;
 
 
 typedef struct {
 	int		ntotal;		// 전체 요청 온 TXID 개수 
 	int		nfail;		// 존재하지 않는 TXID 개수 
-}	tx_block_sync_reply_t;
+}	tx_block_gen_reply_t;
 
 
 typedef struct {
@@ -269,15 +269,15 @@ int	seriz_add(xserialize& xsz, tx_send_token_t& tx);
 int	seriz_add(xserialize& xsz, tx_header_t& tx);
 int	seriz_add(xserialize& xsz, tx_create_token_t& tx);
 int	seriz_add(xserialize& xsz, tx_verify_reply_t& tx);
-int	seriz_add(xserialize& xsz, tx_block_txid_t& tx);
-int	seriz_add(xserialize& xsz, tx_block_sync_reply_t& tx);
+int	seriz_add(xserialize& xsz, tx_block_gen_req_t& tx);
+int	seriz_add(xserialize& xsz, tx_block_gen_reply_t& tx);
 
 int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_header_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_verify_reply_t& tx, int dump = 0);
-int	deseriz(xserialize& xsz, tx_block_txid_t& tx, int dump = 0);
-int	deseriz(xserialize& xsz, tx_block_sync_reply_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_block_gen_req_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_block_gen_reply_t& tx, int dump = 0);
 
 
 #endif  // __TX_H

@@ -2,11 +2,10 @@
 
 
 int	tx_verify(txdata_t& txdata);
-void	ps_block_sync(txdata_t& txdata);
 
 
 //
-// thread for VECTOR model
+// 각 노드 사이에서 전파되는 정보를 수신하여 처리
 //
 void	*thread_subscriber(void *info_p)
 {
@@ -21,9 +20,7 @@ void	*thread_subscriber(void *info_p)
 
 	printf("SUB : peer=%s START!\n", peer);
 
-	zmq::context_t context_sub(1);
-	zmq::socket_t xsock(context_sub, ZMQ_SUB);
-
+	// 디버깅 파일 생성 
 	strcpy(tmp, peer);
 	strcat(tmp, ".out");
 	tp = strchr(tmp, ':');
@@ -32,12 +29,18 @@ void	*thread_subscriber(void *info_p)
 	outfp = fopen(tmp, "w+b");
 	assert(outfp != NULL);
 
-	// ZMQ setup 
+	// ZMQ PUB-SUB 구조 초기화
+	zmq::context_t context_sub(1);
+	zmq::socket_t xsock(context_sub, ZMQ_SUB);
+
+	// ZMQ setup connection
 	sprintf(peerstr, "tcp://%s", peer);
 	xsock.connect(peerstr);
 	
+	// ZMQ setup filter
 	xsock.setsockopt(ZMQ_SUBSCRIBE, filter, strlen(filter));
 
+	// ZMQ Buffer & queue setup
 	int bufsize = 1 * 1024 * 1024;	// 1MB buffer
 	xsock.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
@@ -50,8 +53,9 @@ void	*thread_subscriber(void *info_p)
 	{
 		txdata_t txdata;
 
-		//  Wait for next request from publisher
+		//  각 노드에서 오는 패킷을 순서대로 읽음
 		txdata.orgdataser = s_recv(xsock);
+		count++;
 
 		printf("\n\n=====Subscriber for broadcast: (recv from ZMQ::PUB-SUB)\n");
 
@@ -61,14 +65,16 @@ void	*thread_subscriber(void *info_p)
 		string realdata(&filter[strlen(ZMQ_FILTER)], txdata.orgdataser.length() - strlen(ZMQ_FILTER));
 		txdata.orgdataser = realdata;
 
-		count++;
+		// 헤더와 바디 구분 파싱 
 		tx_header_t *hp = parse_header_body(txdata);
 
 		printf("    %s data length=%ld (%s) real length=%ld\n", 
 			get_type_name(hp->type), txdata.orgdataser.size(), ZMQ_FILTER, txdata.orgdataser.size());
 
+		// TX 유형별 처리 
 		tx_verify(txdata);
 
+		// 디버깅 위해 파일에 저장 
 		fprintf(outfp, "%7d: len=%ld\n", count, hp->data_length);
 		fflush(outfp);
 #ifdef DEBUG
@@ -78,9 +84,9 @@ void	*thread_subscriber(void *info_p)
 #endif
 	}
 
-	fclose(outfp);
-
 	xsock.close();
+
+	fclose(outfp);
 
 	pthread_exit(NULL);
 
@@ -89,52 +95,53 @@ void	*thread_subscriber(void *info_p)
 
 
 //
-// Client thread (Client request management)
-//
-// 1. Verify tx and returns the result immediately.
-// 2. Push into verifyq if valid tx. (status=STAT_INIT)
+// Client 요청을 수신: Client 요청 수신 후 즉시 응답 
 //
 void	*thread_client(void *info_p)
 {
         int	clientport = *(int *)info_p;
+	int	count = 0;
 	char	tmp[256] = {0}, ip_port[100] = {0};
 
 
 	printf("CLIENT: client port=%d START!\n", clientport);
 
+	// 디버깅 파일 생성 
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
 	FILE *outfp = fopen(tmp, "w+b");	// output file
 	assert(outfp != NULL);
 
+	// ZMQ setup: REQ-REP model 
 	zmq::context_t context(1);
 
 	zmq::socket_t responder(context, ZMQ_REP);
 	sprintf(ip_port, "tcp://*:%d", clientport);
 	responder.bind(ip_port);
 
+	// ZMQ Buffer & queue setup
 	int bufsize = 64 * 1024;	// 64k buffer
 	responder.setsockopt(ZMQ_SNDBUF, &bufsize, sizeof(bufsize));
 
 	bufsize = 64 * 1024;		// 64k buffer
 	responder.setsockopt(ZMQ_RCVBUF, &bufsize, sizeof(bufsize));
 
-	int	count = 0;
-
 	while(1)
 	{
 		txdata_t txdata;
 
-		//  Wait for next request from client
+		//  Client 요청 수신 
 		txdata.orgdataser = s_recv(responder);
 		count++;
 
+		// 헤더와 바디 분리 파싱 
 		tx_header_t *hp = parse_header_body(txdata);
 
 		printf("\n\n=====Subscriber for client: (recv from ZMQ::REQ-REPLY)\n");
 
+		// 요청 유형에 따라서 처리: 전체 노드로 broadcast 필요한 경우 1이 리턴됨 
 		int broadcast_tx = tx_verify(txdata);
 
-		// 정상적으로 검증된 tx인 경우에만 verify 수행함 
+		// 정상적으로 검증되고 전체 노드로 broadcast 필요한 tx인 경우 (verify는 중복 처리 안함)
 		if (hp->valid == 1 && broadcast_tx)
 		{
 			hp->status = STAT_BCAST_TX;
@@ -163,7 +170,7 @@ void	*thread_client(void *info_p)
 
 
 //
-// returns 1 if verify required
+// Return: 전체 노드로 broadcast 필요한 경우에 1 리턴
 //
 int	tx_verify(txdata_t& txdata)
 {
@@ -185,21 +192,19 @@ int	tx_verify(txdata_t& txdata)
 
 		_verifyq.push(txdata);			// send to verify.cpp
 	}
-	else if (hp->type == TX_BLOCK_SYNC_REQ)
+	// 다른 노드에서 블록 생성하겠다고 요청이 온 경우
+	// 일정 시간 동안 동일 블록 생성 요청을 못하게 block됨 (timeout)
+	else if (hp->type == TX_BLOCK_GEN_REQ)
 	{
-		ps_block_sync(txdata);
+		ps_block_gen_req(txdata);
 
 		return 0;
 	}
-	else if (hp->type == TX_BLOCK_SYNC_REPLY)
+	// 블록 생성과 관련된 응답을 받음 
+	// 각 서버별로 응답을 모아서, 일정 비율 이상이면 블록 발행 
+	else if (hp->type == TX_BLOCK_GEN_REPLY)
 	{
-		printf("    TX_BLOCK_SYNC_REPLY: fail=%d\n", hp->status);
-		printf("    각 서버별로 오는 응답 받아서 BLOCK 적용 broadcast\n");
-
-		hp->valid = verify_message_bin(hp->from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
-		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		printf("    TX_BLOCK_SYNC_REPLY verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		ps_block_gen_reply(txdata);
 
 		return 0;
 	}
@@ -248,88 +253,3 @@ int	tx_verify(txdata_t& txdata)
 
 	return 0;
 }
-
-
-static	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
-static	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
-static	const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
-
-
-//
-// BLOCK_SYNC_REQ 요청 처리: 해당 TX 검증 => 각 TXID 존재여부 확인 => 이상 없으면 OK 리턴 
-//
-void	ps_block_sync(txdata_t& txdata)
-{
-	tx_header_t *hp;
-	xserialize hdrszr, bodyszr, newbodyszr;
-
-	hp = &txdata.hdr;
-	bodyszr.setstring(txdata.bodyser);
-
-	hp->valid = verify_message_bin(hp->from_addr.c_str(), hp->signature.c_str(), 
-				txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
-	hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-	printf("    BLOCK_SYNC verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
-
-	if (hp->valid == 0)
-		return;
-
-	int	ntotal = 0, nfail = 0;
-
-	while (1)
-	{
-		tx_block_txid_t block_sync;
-
-		int ret = deseriz(bodyszr, block_sync, 0);
-		if (ret == 0)
-			break;
-		ntotal++;
-
-		txdata_t *txp = _mempoolmap[block_sync.txid];
-		if (txp == NULL)
-		{
-			printf("TXID NOT FOUND: %s\n", block_sync.txid.c_str());
-			nfail++;
-		}
-		else
-		{
-			txdata_t& txdata = *_mempoolmap[block_sync.txid];
-			txdata.hdr.flag |= FLAG_NEXT_BLOCK;
-			printf("Marked as next block TXID=%s\n", block_sync.txid.c_str());
-		}
-	}
-
-	txdata_t newtxdata;
-	tx_header_t hdr;
-	tx_block_sync_reply_t reply;
-
-	hdr.nodeid = getpid();
-	hdr.type = TX_BLOCK_SYNC_REPLY;
-	hdr.status = -nfail;
-	hdr.data_length = 0;
-	hdr.valid = -1;
-	hdr.txid = "";
-	hdr.from_addr = from_addr;
-	hdr.txclock = xgetclock();
-	hdr.flag = 0;
-
-	reply.ntotal = ntotal;
-	reply.nfail = nfail;
-
-	seriz_add(newbodyszr, reply);
-	hdr.data_length = newbodyszr.size();
-
-	hdr.signature = sign_message_bin(privkey, newbodyszr.data(), newbodyszr.size(), 
-				&_params.PrivHelper, &_params.AddrHelper);
-	seriz_add(hdrszr, hdr);
-
-	newtxdata.hdrser = hdrszr.getstring();	// 헤더 serialization 교체 
-	newtxdata.bodyser = newbodyszr.getstring();
-	newtxdata.orgdataser = string();
-
-	printf("    Add to sendq(TX_BLOCK_SYNC_REPLY): type=%s nfail=%d\n",
-		get_type_name(hdr.type), hdr.status);
-
-	_sendq.push(newtxdata);	// broadcast to other nodes... (request verification)
-}
-

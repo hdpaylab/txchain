@@ -43,19 +43,10 @@ int	main(int ac, char *av[])
 
 	for (int count = 0; count < 1000000; count++)
 	{
+		xserialize hdrszr, bodyszr;
 		tx_header_t	txhdr;
 		tx_send_token_t	txsend;
 
-		txhdr.nodeid = getpid();	// 임시로 
-		txhdr.type = TX_SEND_TOKEN;
-		txhdr.status = 0;
-		txhdr.data_length = 0;
-		txhdr.valid = -1;
-		txhdr.txid = "";
-		txhdr.from_addr = from_addr;
-		txhdr.txclock = xgetclock();
-		txhdr.flag = 0;
-		
 		txsend.from_addr = from_addr;
 		txsend.to_addr = to_addr;
 		txsend.token_name = "XTOKEN";
@@ -66,14 +57,23 @@ int	main(int ac, char *av[])
 		txsend.user_data = tmp;
 		txsend.sign_clock = xgetclock();
 
-		xserialize hdrszr, bodyszr;
-
 		seriz_add(bodyszr, txsend);
-		txhdr.data_length = bodyszr.size();
 
+		txhdr.nodeid = getpid();	// 임시로 
+		txhdr.type = TX_SEND_TOKEN;
+		txhdr.status = 0;
+		txhdr.data_length = bodyszr.size();
+		txhdr.valid = -1;
+		txhdr.txid = "";
+		txhdr.from_addr = from_addr;
+		txhdr.txclock = xgetclock();
+		txhdr.flag = 0;
 		txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &params.PrivHelper, &params.AddrHelper);
+		seriz_add(hdrszr, txhdr);
+
+
 		printf("Serialize: body length=%ld\n", bodyszr.size());
-		printf("address  : %s\n", from_addr);
+//		printf("address  : %s\n", from_addr);
 //		printf("message  : \n"); bodyszr.dump(10, 1);
 		printf("signature: %s\n", txhdr.signature.c_str());
 
@@ -81,9 +81,6 @@ int	main(int ac, char *av[])
 		int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &params.AddrHelper);
 		printf("verify_check=%d\n", verify_check);
 		printf("\n");
-
-		// sign은 verify 테스트 전에 serialize하면 안됨..
-		seriz_add(hdrszr, txhdr);
 
 		bool ret = s_send(requester, hdrszr.getstring() + bodyszr.getstring());
 

@@ -30,7 +30,7 @@ const char *get_status_name(int status)
 	case STAT_VALID:		return "STAT_VALID";
 
 	case FLAG_SENT_TX:		return "FLAG_SENT_TX";
-	case FLAG_NEXT_BLOCK:		return "FLAG_NEXT_BLOCK";
+	case FLAG_TX_LOCK:		return "FLAG_TX_LOCK";
 
 	default:
 		printf("Unknown type %d", status); return "UNKNOWN";
@@ -42,8 +42,8 @@ const char *get_type_name(int type)
 {
 	switch (type)
 	{
-	case TX_BLOCK_SYNC_REQ:		return "TX_BLOCK_SYNC_REQ"; 
-	case TX_BLOCK_SYNC_REPLY:	return "TX_BLOCK_SYNC_REPLY"; 
+	case TX_BLOCK_GEN_REQ:		return "TX_BLOCK_GEN_REQ"; 
+	case TX_BLOCK_GEN_REPLY:	return "TX_BLOCK_GEN_REPLY"; 
 
 	case TX_VERIFY_REPLY:		return "TX_VERIFY_REPLY"; 
 

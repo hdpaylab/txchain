@@ -79,7 +79,7 @@ void	*thread_send_test(void *info_p);	// main.cpp
 void	*thread_subscriber(void *info_p);	// sub.cpp
 void	*thread_client(void *info_p);		// sub.cpp
 void	*thread_verifier(void *info_p);		// verify.cpp
-void	*thread_block_sync(void *info_p);	// mempool.cpp
+void	*thread_block_gen(void *info_p);	// mempool.cpp
 void	*thread_levledb(void *info_p);		// leveldb.cpp
 void	*thread_consensus(void *info_p);	// consensus.cpp
 
@@ -101,6 +101,8 @@ extern	size_t _mempool_count;			// number of mempool
 extern	map<string, txdata_t *>	_mempoolmap;	// mempool index (key=txid)
 
 int	add_mempool(txdata_t& txdata);
+void	ps_block_gen_req(txdata_t& txdata);
+void	ps_block_gen_reply(txdata_t& txdata);
 
 // consensus.cpp
 extern	cssmap	_cssmap;		// consensus.cpp

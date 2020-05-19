@@ -164,10 +164,10 @@ void	create_main_threads()
 
 	// block sync thread
 	printf("Create [block sync] thread\n");
-	ret = pthread_create(&thrid, NULL, thread_block_sync, (void *)&_chainport);
+	ret = pthread_create(&thrid, NULL, thread_block_gen, (void *)&_chainport);
 	if (ret < 0)
 	{
-		perror("thread_block_sync() thread creation error");
+		perror("thread_block_gen() thread creation error");
 		exit(-1);
 	}
 	pthread_detach(thrid);

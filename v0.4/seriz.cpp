@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Serialize
 
-int	seriz_add(xserialize& xsz, tx_block_txid_t& tx)
+int	seriz_add(xserialize& xsz, tx_block_gen_req_t& tx)
 {
 	int ret = xsz << tx.txid;
 
@@ -16,7 +16,7 @@ int	seriz_add(xserialize& xsz, tx_block_txid_t& tx)
 }
 
 
-int	seriz_add(xserialize& xsz, tx_block_sync_reply_t& tx)
+int	seriz_add(xserialize& xsz, tx_block_gen_reply_t& tx)
 {
 	int ret = 0;
 	
@@ -98,7 +98,7 @@ int	seriz_add(xserialize& xsz, tx_send_token_t& tx)
 ////////////////////////////////////////////////////////////////////////////////
 // De-serialize
 
-int	deseriz(xserialize& xsz, tx_block_txid_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_block_gen_req_t& tx, int dump)
 {
 	int ret = xsz >> tx.txid;
 
@@ -111,7 +111,7 @@ int	deseriz(xserialize& xsz, tx_block_txid_t& tx, int dump)
 }
 
 
-int	deseriz(xserialize& xsz, tx_block_sync_reply_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_block_gen_reply_t& tx, int dump)
 {
 	int ret = 0;
 
