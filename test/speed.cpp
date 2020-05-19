@@ -39,10 +39,10 @@ int	main(int ac, char *av[])
 	if (ac == 1 && av[0] == 0)
 		ac = ac;
 
-	char *aa = "AB";
+	const char *aa = "AB";
 
 	string ss(aa, 2);
-	printf("LEN=%d\n", ss.length());
+	printf("LEN=%ld\n", ss.length());
 
 	const char *sp = ss.c_str();
 	printf("sp=%s sp[2]=0x%02X\n", sp, sp[2]);

@@ -57,5 +57,9 @@ string	bin2hex(const char *bin, const size_t binlen);
 string	hex2bin(const char *hexstr, const size_t len);
 string	hex2bin(const string& hexstr);
 
+string& ltrim(string& str, const string& chars = "\t\n\v\f\r ");
+string& rtrim(string& str, const string& chars = "\t\n\v\f\r ");
+string& trim(string& str, const string& chars = "\t\n\v\f\r ");
+
 
 #endif	// __LIB_H__

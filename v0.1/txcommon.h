@@ -92,7 +92,7 @@ extern	safe_queue<txdata_t>	_veriq;		// receive queue for verifier
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Params_type_t paramsget(const string& Path);	// params.cpp
+Params_type_t load_params(const string& Path);	// params.cpp
 
 void	*thread_publisher(void *info_p);	// pub.cpp
 void	*thread_send_test(void *info_p);	// main.cpp

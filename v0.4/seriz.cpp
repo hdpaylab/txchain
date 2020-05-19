@@ -8,6 +8,23 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Serialize
 
+int	seriz_add(xserialize& xsz, block_info_t& tx)
+{
+	int ret = 0;
+	
+	ret = xsz << tx.block_hash;		// 블록 해시 sha256(block_info_t + orgdataser 리스트)
+						// 아래의 내용에 대한 hash 값임 (자신은 0000으로 초기화된 상태)
+	ret = xsz << tx.block_height;		// 블록 번호 
+	ret = xsz << tx.gen_addr;		// 블록 생성자
+	ret = xsz << tx.signature;		// sign(orgdataser 리스트)
+	ret = xsz << tx.prev_block_hash;	// 이전 블록 hash
+	ret = xsz << tx.block_clock;		// 블록 생성 시각 
+	ret = xsz << tx.ntx;			// TX 개수 
+
+	return ret;
+}
+
+
 int	seriz_add(xserialize& xsz, tx_block_gen_req_t& tx)
 {
 	int ret = xsz << tx.txid;
@@ -27,19 +44,31 @@ int	seriz_add(xserialize& xsz, tx_block_gen_reply_t& tx)
 }
 
 
+int	seriz_add(xserialize& xsz, tx_block_gen_t& tx)
+{
+	int ret = 0;
+	
+	ret = xsz << tx.sign_hash;
+
+	return ret;
+}
+
+
 int	seriz_add(xserialize& xsz, tx_header_t& tx)
 {
 	int ret = 0;
 
 	ret = xsz << tx.nodeid;		// node id
 	ret = xsz << tx.type;		// TX_xxx
-	ret = xsz << tx.status;		// STAT_VERIFY_xx
 	ret = xsz << tx.data_length;	// sign data length
-	ret = xsz << tx.valid;		// 0=invalid 1=valid -1=none
 	ret = xsz << tx.signature;	// signature of data
-	ret = xsz << tx.txid;		// transaction id: sha256(sign)
 	ret = xsz << tx.from_addr;	// 데이터 부분에 from_addr가 없는 경우에 사용
 	ret = xsz << tx.txclock;	// tx generation clock
+
+	ret = xsz << tx.block_height;	// 블록 번호
+	ret = xsz << tx.status;		// STAT_VERIFY_xx
+	ret = xsz << tx.valid;		// 0=invalid 1=valid -1=none
+	ret = xsz << tx.txid;		// transaction id: sha256(sign)
 	ret = xsz << tx.flag;		// FLAG_xxx
 
 	return ret;
@@ -71,7 +100,6 @@ int	seriz_add(xserialize& xsz, tx_create_token_t& tx)
 	ret = xsz << tx.expire_time;    // token 중단 시간 (0이면 계속)
 
 	ret = xsz << tx.user_data;
-        ret = xsz << tx.sign_clock;
 
 	return ret;
 }
@@ -89,7 +117,6 @@ int	seriz_add(xserialize& xsz, tx_send_token_t& tx)
 	ret = xsz << tx.fee;
 
 	ret = xsz << tx.user_data;
-	ret = xsz << tx.sign_clock;
 
 	return ret;
 }
@@ -97,6 +124,34 @@ int	seriz_add(xserialize& xsz, tx_send_token_t& tx)
 
 ////////////////////////////////////////////////////////////////////////////////
 // De-serialize
+
+int	deseriz(xserialize& xsz, block_info_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> (char **)&tx.block_hash;	// 블록 해시 sha256(block_info_t + orgdataser 리스트)
+						// 아래의 내용에 대한 hash 값임 (자신은 0000으로 초기화된 상태)
+	ret = xsz >> tx.block_height;		// 블록 번호 
+	ret = xsz >> tx.gen_addr;		// 블록 생성자
+	ret = xsz >> tx.signature;		// sign(orgdataser 리스트)
+	ret = xsz >> tx.prev_block_hash;	// 이전 블록 hash
+	ret = xsz >> tx.block_clock;		// 블록 생성 시각 
+	ret = xsz >> tx.ntx;			// TX 개수 
+
+	if (dump)
+	{
+		printf("    block_hash = %s\n", tx.block_hash);
+		printf("    block_height = %lu\n", tx.block_height);
+		printf("    gen_addr = %s\n", tx.gen_addr.c_str());
+		printf("    signature = %s\n", tx.signature.c_str());
+		printf("    prev_block_hash = %s\n", tx.prev_block_hash.c_str());
+		printf("    block_clock = %.3f\n", tx.block_clock);
+		printf("    ntx = %d\n", tx.ntx);
+	}
+
+	return ret;
+}
+
 
 int	deseriz(xserialize& xsz, tx_block_gen_req_t& tx, int dump)
 {
@@ -128,19 +183,34 @@ int	deseriz(xserialize& xsz, tx_block_gen_reply_t& tx, int dump)
 }
 
 
+int	deseriz(xserialize& xsz, tx_block_gen_t& tx, int dump)
+{
+	int ret = xsz >> tx.sign_hash;
+
+	if (dump)
+	{
+		printf("    sign_hash = %s\n", tx.sign_hash.c_str());
+	}
+
+	return ret;
+}
+
+
 int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 {
 	int ret = 0;
 
 	ret = xsz >> tx.nodeid;		// node id
 	ret = xsz >> tx.type;		// TX_xxx
-	ret = xsz >> tx.status;		// STAT_VERIFY_xx
 	ret = xsz >> tx.data_length;	// sign data length
-	ret = xsz >> tx.valid;		// 0=invalid 1=valid -1=none
 	ret = xsz >> tx.signature;	// signature of data
-	ret = xsz >> tx.txid;		// transaction id: sha256(sign)
 	ret = xsz >> tx.from_addr;	// 데이터 부분에 from_addr가 없는 경우에 사용
 	ret = xsz >> tx.txclock;	// tx generation clock
+
+	ret = xsz >> tx.block_height;	// 블록 번호
+	ret = xsz >> tx.status;		// STAT_VERIFY_xx
+	ret = xsz >> tx.valid;		// 0=invalid 1=valid -1=none
+	ret = xsz >> tx.txid;		// transaction id: sha256(sign)
 	ret = xsz >> tx.flag;		// FLAG_xxx
 
 	if (dump)
@@ -148,14 +218,16 @@ int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 		printf("    hdr::nodeid = %u\n", tx.nodeid);
 		printf("    hdr::type = %s (%u == 0x%08X)\n", 
 			get_type_name(tx.type), tx.type, tx.type);
+		printf("    hdr::data length = %ld\n", tx.data_length);
+		printf("    hdr::signature = %s (%ld)\n", tx.signature.c_str(), tx.signature.size());
+		printf("    hdr::from_addr = %s (%ld)\n", tx.from_addr.c_str(), tx.from_addr.size());
+		printf("    hdr::txclock = %.3f\n", tx.txclock);
+
+		printf("    hdr::block_height = %lu\n", tx.block_height);
 		printf("    hdr::status = %s (%u == 0x%08X)\n", 
 			get_status_name(tx.status), tx.status, tx.status);
-		printf("    hdr::data length = %ld\n", tx.data_length);
 		printf("    hdr::valid = %d\n", tx.valid);
-		printf("    hdr::sign = %s\n", tx.signature.c_str());
-		printf("    hdr::txid = %s\n", tx.txid.c_str());
-		printf("    hdr::from_addr = %s\n", tx.from_addr.c_str());
-		printf("    hdr::txclock = %.3f\n", tx.txclock);
+		printf("    hdr::txid = %s (%ld)\n", tx.txid.c_str(), tx.txid.size());
 		printf("    hdr::sent = 0x%08X\n", tx.flag);
 	}
 
@@ -193,7 +265,6 @@ int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump)
 	ret = xsz >> tx.expire_time;    // token 중단 시간 (0이면 계속)
 
 	ret = xsz >> tx.user_data;
-        ret = xsz >> tx.sign_clock;
 
 	if (dump)
 	{
@@ -210,7 +281,6 @@ int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump)
 		printf("    expire_time = %ld\n", tx.expire_time);
 
 		printf("    user_data = %s\n", tx.user_data.c_str());
-		printf("    sign_clock = %.3f\n", tx.sign_clock);
 	}
 
 	return ret;
@@ -228,7 +298,6 @@ int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump)
 	ret = xsz >> tx.native_amount;
 	ret = xsz >> tx.fee;
 	ret = xsz >> tx.user_data;
-	ret = xsz >> tx.sign_clock;
 
 	if (dump)
 	{
@@ -239,7 +308,6 @@ int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump)
 		printf("    native_amount = %.6f\n", tx.native_amount);
 		printf("    fee = %.6f\n", tx.fee);
 		printf("    user_data = %s\n", tx.user_data.c_str());
-		printf("    sign_clock = %.3f\n", tx.sign_clock);
 	}
 
 	return ret;

@@ -47,15 +47,16 @@ void	*thread_publisher(void *info_p)
 		senddata = string(ZMQ_FILTER) + txdata.hdrser + txdata.bodyser;
 
 		printf("\n-----Publisher for PUB-SUB:\n");
-		printf("    read data length=%ld filter=%s sendsize=%ld\n", 
-			txdata.orgdataser.size(), ZMQ_FILTER, senddata.size() - strlen(ZMQ_FILTER));
+		printf("    orglen=%ld filter=%s sendsize=%ld hdrlen=%ld bodylen=%ld\n", 
+			txdata.orgdataser.size(), ZMQ_FILTER, senddata.size() - strlen(ZMQ_FILTER),
+			txdata.hdrser.size(), txdata.bodyser.size());
 
 //		printf("SEND DUMP(%ld): ", senddata.length()); 
 //		dumpbin(senddata.c_str(), senddata.length());
 
 		bool ret = s_send(xpub, senddata);
 
-		update_tx_status(txdata.hdr.txid, FLAG_SENT_TX);
+		mempool_update(txdata.hdr.txid, FLAG_SENT_TX);
 
 		if (_sendq.size() > 9000)
 			sleepms(1);
@@ -102,16 +103,12 @@ void	*thread_send_test(void *info_p)
 	memset(&txhdr, 0, sizeof(txhdr));
 	txhdr.nodeid = getpid();		// 임시로 
 	txhdr.type = TX_SEND_TOKEN;
-	txhdr.valid = -1;
 	
 	txsend.from_addr = from_addr;
 	txsend.to_addr = to_addr;
 	txsend.token_name = "XTOKEN";
 	txsend.amount = 123.456;
-	txsend.native_amount = 0.0;
-	txsend.fee = 0.0;
 	txsend.user_data = "TEST SEND TOKEN by THREAD";
-	txsend.sign_clock = xgetclock();
 
 	xserialize hdrszr, bodyszr;
 
@@ -119,14 +116,14 @@ void	*thread_send_test(void *info_p)
 	txhdr.data_length = bodyszr.size();
 
 	txhdr.data_length = bodyszr.size();
-	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &_params.PrivHelper, &_params.AddrHelper);
+	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &_netparams.PrivHelper, &_netparams.AddrHelper);
 	printf("Serialize: body length=%ld\n", bodyszr.size());
 	printf("address  : %s\n", from_addr);
 //	printf("message  : \n"); bodyszr.dump(10, 1);
 	printf("signature: %s\n", txhdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
-	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &_params.AddrHelper);
+	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &_netparams.AddrHelper);
 	printf("verify_check=%d\n", verify_check);
 	printf("\n");
 

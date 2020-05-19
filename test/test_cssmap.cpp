@@ -4,7 +4,7 @@
 cssmap _cssmap;
 
 
-main()
+int main(void)
 {
 	int	count = 0;
 

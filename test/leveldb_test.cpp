@@ -53,11 +53,11 @@ int	main(int ac, char *av[])
 		string kk = key;
 		string vv(value, sizeof(value));
 
-		printf("---PUT KEY=%s VALUE len=%d\n", kk.c_str(), vv.length());
+		printf("---PUT KEY=%s VALUE len=%ld\n", kk.c_str(), vv.length());
 		db.put(kk, vv);
 
 		string value2 = db.get(kk);
-		printf("---GET KEY=%s VALUE2 len=%d\n", kk.c_str(), value2.length());
+		printf("---GET KEY=%s VALUE2 len=%ld\n", kk.c_str(), value2.length());
 
 		dumpbin(value2.c_str(), value2.length(), 1, 10);
 

@@ -11,7 +11,10 @@
 using namespace std;
 
 
-Params_type_t paramsget(const string& Path);
+extern	map<string, string> _params;
+
+
+Params_type_t load_params(const string& Path);
 
 
 #endif	// __PARAMS_H

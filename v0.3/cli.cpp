@@ -34,7 +34,7 @@ int	main(int ac, char *av[])
 	requester.connect(svr);
 
 	// Load params for sign/verify
-	Params_type_t params = paramsget("../lib/params.dat");
+	Params_type_t params = load_params("../lib/params.dat");
 
 
 	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey

@@ -18,14 +18,14 @@ OBJS2	= $(SRCS2:.cpp=.o)
 TXLIB	= ../lib/txlib.a ../HdacCSDK2/hdaclib.a
 
 
-all: tx3 cli
+all: tx4 cli
 
-tx3: $(OBJS2)
+tx4: $(OBJS2)
 	$(CC) $(CPPFLAGS) -o $@ $(OBJS2) $(TXLIB) $(SDKLIBS) $(LIBS) 
 
 cli: cli.o seriz.cpp common.cpp
 	$(CC) $(CPPFLAGS) -o $@ cli.o seriz.cpp common.cpp $(TXLIB) $(SDKLIBS) $(LIBS) 
 
 clean:
-	rm -f tx3 cli $(OBJS) *.o *.out *.ver *.a *.log
+	rm -f tx4 cli $(OBJS) *.o *.out *.ver *.a *.log
 	rm -rf system*.db wallet*.db block*.db

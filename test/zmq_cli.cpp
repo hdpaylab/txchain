@@ -87,7 +87,6 @@ void	push_pull(int direc)
 	while (1)
 	{
 		zmq::message_t message;
-		int workload;           //  Workload in msecs
 
 		//  Send results to sink
 		count++;

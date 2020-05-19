@@ -3,6 +3,7 @@
 
 typedef struct {
 	string str1;
+	string str2;
 	double dd;
 	float ff;
 
@@ -16,7 +17,7 @@ typedef struct {
 	uint16_t u16;
 	uint8_t u8;
 
-	string str2;
+	string str3;
 } seriz_test_t;
 
 
@@ -26,29 +27,33 @@ int	test_cpp(seriz_test_t& tx);
 int	stcmp(seriz_test_t *tx1, seriz_test_t *tx2);
 
 
-int	_debug = 0;
+int	_debug = 1;
 
 
-main(int ac, char *av[])
+int	main(int ac, char *av[])
 {
 	seriz_test_t	tx;
 	int	ii = 0, ok = 0;
 
 	set_struct(tx);
-	test_c(tx);
+//	test_c(tx);
 
 	set_struct(tx);
-	for (ii = 0; ii < 1000000; ii++)
+//	for (ii = 0; ii < 1000000; ii++)
 	{
 		ok += test_cpp(tx);
 	}
 	printf("ii = %d OK=%d\n", ii, ok);
+
+	return 0;
 }
 
 
 void	set_struct(seriz_test_t& tx)
 {
-	tx.str1 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123456789";
+	tx.str1 = "AAAAAAAA";
+//	tx.str2.assign(tx.str1.c_str(), 6);
+	tx.str2 = string();
 
 	tx.dd = 12345678.9012345e+125;
 	tx.ff = 1234.5678e+17;
@@ -63,7 +68,8 @@ void	set_struct(seriz_test_t& tx)
 	tx.u32 = 0xF8765432;
 	tx.u64 = 0xF234567812345678;
 
-	tx.str2 = "한국어 잘 되는지 테스트";
+	const char *pp = "한국어 잘 되는지 테스트";
+	tx.str3.assign(pp, strlen(pp));
 }
 
 
@@ -123,6 +129,8 @@ int	test_c(seriz_test_t& tx)
 	len2 += xdeserialize_func(buf + len2, len - len2, XSZ_TYPE_STRING, strbuf, sizeof(strbuf));
 	tx2.str1 = strbuf;
 	if (_debug) printf("len2=%d str1=%s\n", len2, tx2.str1.c_str());
+	tx2.str2 = strbuf;
+	if (_debug) printf("len2=%d str2=%s\n", len2, tx2.str2.c_str());
 
 	len2 += xdeserialize_func(buf + len2, len - len2, XSZ_TYPE_INT8, (void *)&tx2.i8, sizeof(tx2.i8));
 	if (_debug) printf("INT8:	%d==0x%02X\n", tx2.i8, tx2.i8 & 0x00FF);
@@ -148,8 +156,8 @@ int	test_c(seriz_test_t& tx)
 	if (_debug) printf("DOUBLE:	%lg==0x%016lX\n", tx2.dd, *(uint64_t *)&tx2.dd);
 
 	len2 += xdeserialize_func(buf + len2, len - len2, XSZ_TYPE_STRING, strbuf, sizeof(strbuf));
-	tx2.str2 = strbuf;
-	if (_debug) printf("len2=%d str2=%s\n", len2, tx2.str2.c_str());
+	tx2.str3 = strbuf;
+	if (_debug) printf("len2=%d str3=%s\n", len2, tx2.str3.c_str());
 
 	if (stcmp(&tx, &tx2) == 0)
 	{
@@ -175,6 +183,8 @@ int	test_cpp(seriz_test_t& tx)
 
 	if (_debug) printf("STRING: %s\n", tx.str1.c_str());
 	xsz << tx.str1;
+	if (_debug) printf("STRING: %s\n", tx.str1.c_str());
+	xsz << tx.str2;
 
 	if (_debug) printf("INT8:	%d==0x%02X\n", tx.i8, tx.i8 & 0x00FF);
 	xsz << tx.i8;
@@ -200,7 +210,7 @@ int	test_cpp(seriz_test_t& tx)
 	xsz << tx.dd;
 
 	if (_debug) printf("STRING: %s\n", tx.str2.c_str());
-	xsz << tx.str2;
+	xsz << tx.str3;
 
 	len = xsz.size();
 	bp = xsz.data();
@@ -217,6 +227,9 @@ int	test_cpp(seriz_test_t& tx)
 
 	xsz >> tx2.str1;
 	if (_debug) printf("str1=%s\n", tx2.str1.c_str());
+	xsz >> tx2.str2;
+	if (_debug) printf("str2=%s\n", tx2.str2.c_str());
+
 	xsz >> tx2.i8;
 	if (_debug) printf("INT8:	%d==0x%02X\n", tx2.i8, tx2.i8 & 0x00FF);
 	xsz >> tx2.i16;
@@ -240,8 +253,8 @@ int	test_cpp(seriz_test_t& tx)
 	xsz >> tx2.dd;
 	if (_debug) printf("DOUBLE:	%lg==0x%016lX\n", tx2.dd, *(uint64_t *)(&tx2.dd));
 
-	xsz >> tx2.str2;
-	if (_debug) printf("str2=%s\n", tx2.str2.c_str());
+	xsz >> tx2.str3;
+	if (_debug) printf("str3=%s\n", tx2.str3.c_str());
 
 	if (stcmp(&tx, &tx2) == 0)
 	{

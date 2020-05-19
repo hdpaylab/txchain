@@ -68,7 +68,7 @@ int	verify_process(txdata_t& txdata)
 	// TX 전파하는 경우, mempool에 넣기만 함 
 	if (hp->status == STAT_ADD_TO_MEMPOOL)
 	{
-		add_mempool(txdata);	// put mempool
+		mempool_add(txdata);	// put mempool
 	}
 	// client에서 온 TX
 	else if (hp->type == TX_CREATE_TOKEN && hp->valid == -1)
@@ -79,9 +79,9 @@ int	verify_process(txdata_t& txdata)
 		string from_addr = create_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		printf("    VERIFY CREATE_TOKEN:result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}
 	// client에서 온 TX
 	else if (hp->type == TX_SEND_TOKEN && hp->valid == -1)
@@ -92,9 +92,9 @@ int	verify_process(txdata_t& txdata)
 		string from_addr = send_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		printf("    VERIFY SEND_TOKEN: result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}
 	// Verification success
 	else if (hp->valid)
@@ -108,14 +108,14 @@ int	verify_process(txdata_t& txdata)
 			seriz_add(tmpszr, txdata.hdr);
 			txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체 
 
-			printf("    Add to sendq: type=%s status=%s\n",
-				get_type_name(hp->type), get_status_name(hp->status));
-
-			add_mempool(txdata);	// put mempool
-
 			printf("    Add to mempoolq: type=%s status=%s size=%ld\n",
 				get_type_name(txdata.hdr.type), get_status_name(txdata.hdr.status),
 				hp->data_length);
+
+			mempool_add(txdata);	// put mempool
+
+			printf("    Add to sendq: type=%s status=%s\n",
+				get_type_name(hp->type), get_status_name(hp->status));
 
 			_sendq.push(txdata);	// broadcast to other nodes... (request verification)
 		}

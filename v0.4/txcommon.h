@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <mutex>
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,7 +71,7 @@ extern	safe_queue<txdata_t>	_mempoolq;	// receive queue for verifier
 extern	safe_queue<txdata_t>	_leveldbq;	// leveldb queue 
 extern	safe_queue<txdata_t>	_consensusq;	// mempool queue (verification reply)
 
-extern	Params_type_t _params;			// parameters for sign/verify
+extern	Params_type_t _netparams;			// parameters for sign/verify
 
 extern	map<string, array<node_valid_t, 100>> _csslist;		// consensus list ("txid":"nodeid-valid")
 
@@ -93,16 +94,20 @@ extern	leveldb	_walletdb;	//
 const char *get_type_name(int type);
 const char *get_status_name(int status);
 tx_header_t	*parse_header_body(txdata_t& txdata);
-void	update_tx_status(string txid, int flag);
+void	mempool_update(string txid, int flag);
 
 // mempool.cpp
 extern	vector<txdata_t> _mempool;		// mempool
 extern	size_t _mempool_count;			// number of mempool
 extern	map<string, txdata_t *>	_mempoolmap;	// mempool index (key=txid)
+extern	mutex	_mempool_lock;			// mempool lock
 
-int	add_mempool(txdata_t& txdata);
+int	mempool_add(txdata_t& txdata);
+
+// block.cpp
 void	ps_block_gen_req(txdata_t& txdata);
 void	ps_block_gen_reply(txdata_t& txdata);
+void	ps_block_gen(txdata_t& txdata);		// 실제 블록 생성 
 
 // consensus.cpp
 extern	cssmap	_cssmap;		// consensus.cpp

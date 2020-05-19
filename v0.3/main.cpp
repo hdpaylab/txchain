@@ -52,7 +52,7 @@ int	main(int ac, char *av[])
 	_mempool.resize(10000);
 
 	// load params set
-	_params = paramsget("../lib/params.dat");
+	_params = load_params("../lib/params.dat");
 
 	create_main_threads();
 

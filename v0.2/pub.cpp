@@ -19,7 +19,7 @@ void	*thread_send_test(void *info_p)
 	printf("SEND: loop=%d START!\n", loop);
 
 	// params set
-	Params_type_t params = paramsget("../lib/params.dat");
+	Params_type_t params = load_params("../lib/params.dat");
 
 	txmsg_t	txmsg;
 	txmsg.message = strdup(message);

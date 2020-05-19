@@ -54,6 +54,7 @@ using namespace std;
 
 typedef unsigned char	uchar;
 
+
 // msg 데이터 전송 테스트용 
 typedef struct {
 	char	*pubkey;
@@ -93,7 +94,7 @@ extern	safe_queue<txdata_t>	_veriq;		// receive queue for verifier
 
 ////////////////////////////////////////////////////////////////////////////////
 
-Params_type_t paramsget(const string& Path);	// params.cpp
+Params_type_t load_params(const string& Path);	// params.cpp
 
 void	*thread_publisher(void *info_p);	// pub.cpp
 void	*thread_send_test(void *info_p);	// main.cpp

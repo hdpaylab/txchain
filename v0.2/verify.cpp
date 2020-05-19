@@ -15,7 +15,7 @@ void	*thread_verifier(void *info_p)
 
 
 	// params set
-	Params_type_t params = paramsget("../lib/params.dat");
+	Params_type_t params = load_params("../lib/params.dat");
 
 	printf("Verifier %d START!\n", thrid);
 

@@ -34,7 +34,7 @@ int	main(int ac, char *av[])
 	requester.connect(svr);
 
 	// Load params for sign/verify
-	Params_type_t params = paramsget("../lib/params.dat");
+	Params_type_t params = load_params("../lib/params.dat");
 
 
 	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
@@ -55,30 +55,27 @@ int	main(int ac, char *av[])
 		txsend.fee = 0.0;
 		sprintf(tmp, "Send test: %d", count + 1);
 		txsend.user_data = tmp;
-		txsend.sign_clock = xgetclock();
 
 		seriz_add(bodyszr, txsend);
 
 		txhdr.nodeid = getpid();	// 임시로 
 		txhdr.type = TX_SEND_TOKEN;
-		txhdr.status = 0;
 		txhdr.data_length = bodyszr.size();
-		txhdr.valid = -1;
-		txhdr.txid = "";
 		txhdr.from_addr = from_addr;
 		txhdr.txclock = xgetclock();
-		txhdr.flag = 0;
-		txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &params.PrivHelper, &params.AddrHelper);
+		txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), 
+					&params.PrivHelper, &params.AddrHelper);
 		seriz_add(hdrszr, txhdr);
 
-
+		printf("Serialize: hdr  length=%ld\n", hdrszr.size());
 		printf("Serialize: body length=%ld\n", bodyszr.size());
 //		printf("address  : %s\n", from_addr);
 //		printf("message  : \n"); bodyszr.dump(10, 1);
 		printf("signature: %s\n", txhdr.signature.c_str());
 
 		// 발송 전에 미리 검증 테스트 
-		int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &params.AddrHelper);
+		int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
+					bodyszr.data(), bodyszr.size(), &params.AddrHelper);
 		printf("verify_check=%d\n", verify_check);
 		printf("\n");
 
@@ -87,7 +84,7 @@ int	main(int ac, char *av[])
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
-		sleep(1);
+		sleepms(10);
 #else
 		if (count % 10000 == 0)
 #endif

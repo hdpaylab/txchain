@@ -208,6 +208,13 @@ int	tx_verify(txdata_t& txdata)
 
 		return 0;
 	}
+	// 실제 블록 생성 명령 
+	else if (hp->type == TX_BLOCK_GEN)
+	{
+		ps_block_gen(txdata);
+
+		return 0;
+	}
 	else if (hp->type == TX_CREATE_TOKEN)
 	{
 		tx_create_token_t create_token;
@@ -216,7 +223,7 @@ int	tx_verify(txdata_t& txdata)
 		from_addr = create_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 		printf("    CREATE_TOKEN verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 
@@ -230,7 +237,7 @@ int	tx_verify(txdata_t& txdata)
 		from_addr = send_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 		printf("    SEND_TOKEN verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 
@@ -246,7 +253,8 @@ int	tx_verify(txdata_t& txdata)
 	}
 	else
 	{
-		printf("ERROR: Unknown TX type=%08X\n", hp->type);
+		printf("ERROR: Subscriber: No handling routine for TX type=%s\n",
+			get_type_name(hp->type));
 
 		return 0;
 	}

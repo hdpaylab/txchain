@@ -86,18 +86,18 @@ void xserialize::setdata(char *data, size_t datalen)
 		return;
 	clear();
 	check_in_size(datalen);
-	memcpy(inbuf_, data, datalen);
+	memcpy(buf_, data, datalen);
 	update_inpos(datalen);
 }
 
 void xserialize::setstring(string& str)
 {
-	if (str.length() <= 0)
+	if (str.size() <= 0)
 		return;
 	clear();
-	check_in_size(str.length());
-	memcpy(inbuf_, str.c_str(), str.length());
-	update_inpos(str.length());
+	check_in_size(str.size());
+	memcpy(buf_, str.c_str(), str.size());
+	update_inpos(str.size());
 }
 
 int xserialize::getcurtype()
@@ -114,7 +114,7 @@ size_t xserialize::getcursize()
 	switch (type)
 	{
 	case XSZ_TYPE_BINARY: return getdatasize(outbuf_ + 1, hdrbytes);
-	case XSZ_TYPE_STRING: return getdatasize(outbuf_ + 1, hdrbytes) + 1;
+	case XSZ_TYPE_STRING: return getdatasize(outbuf_ + 1, hdrbytes);
 
 	case XSZ_TYPE_INT8:	return 1;
 	case XSZ_TYPE_INT16:	return 2;
@@ -149,7 +149,7 @@ void xserialize::clear()
 {
 	ninput_ = 0;
 	noutput_ = 0;
-	memset(buf_, 0, inbufpos_);	// safe clear
+	memset(buf_, 0, bufsz_);	// safe clear
 
 	if (allocated_)
 	{
@@ -294,8 +294,6 @@ size_t xserialize::deseriz(uint8_t *outbin, size_t outbinsz)
 size_t xserialize::operator >>(string& str)
 {
 	size_t sz = getcursize();
-	if (sz <= 0)
-		return 0;
 	if (check_cur_type(XSZ_TYPE_STRING) == 0)
 		return 0;
 	noutput_++;
@@ -315,8 +313,6 @@ size_t xserialize::operator >>(string& str)
 size_t xserialize::operator >>(char **str)
 {
 	size_t sz = getcursize();
-	if (sz <= 0)
-		return 0;
 	if (check_cur_type(XSZ_TYPE_STRING) == 0)
 		return 0;
 
@@ -333,7 +329,10 @@ size_t xserialize::operator >>(int8_t& i8)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: i8: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("i8: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(i8);
@@ -344,7 +343,10 @@ size_t xserialize::operator >>(int16_t& i16)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: i16: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("i16: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(i16);
@@ -355,7 +357,10 @@ size_t xserialize::operator >>(int32_t& i32)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: i32: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("i32: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(i32);
@@ -366,7 +371,10 @@ size_t xserialize::operator >>(int64_t& i64)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: i64: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("i64: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(i64);
@@ -377,7 +385,10 @@ size_t xserialize::operator >>(uint8_t& u8)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: u8: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("u8: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(u8);
@@ -388,7 +399,10 @@ size_t xserialize::operator >>(uint16_t& u16)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: u16: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("u16: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(u16);
@@ -399,7 +413,10 @@ size_t xserialize::operator >>(uint32_t& u32)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: u32: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("u32: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(u32);
@@ -410,7 +427,10 @@ size_t xserialize::operator >>(uint64_t& u64)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: u64: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("u64: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(u64);
@@ -421,7 +441,10 @@ size_t xserialize::operator >>(float& ff)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: float: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("ff: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(ff);
@@ -432,7 +455,10 @@ size_t xserialize::operator >>(double& dd)
 {
 	size_t sz = getcursize();
 	if (sz <= 0)
+	{
+		fprintf(stderr, "WARNING: double: cursz=%ld\n", sz);
 		return 0;
+	}
 	if (debug_) printf("dd: outbuf=0x%02X outpos=%ld\n", *outbuf_, outbufpos_);
 	noutput_++;
 	sz = sizeof(dd);
@@ -469,6 +495,7 @@ void	xserialize::check_in_size(size_t reqsz)
 			free(buf_);
 			buf_ = newbuf;
 			inbuf_ = buf_ + inbufpos_;
+			outbuf_ = buf_ + outbufpos_;
 			allocated_ = 1;
 		}
 	}
@@ -523,16 +550,6 @@ void	xserialize::set_debug(int debug)
 	debug_ = debug;
 	_xsz_debug = debug;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -662,7 +679,7 @@ size_t	xserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t
 			(unsigned long)buf, (unsigned long)data, bufsz, datasz);
 		return 0;
 	}
-	if (datasz > bufsz + 2)
+	if (datasz > bufsz)
 	{
 		printf("ERROR: bufsz %ld < datasz %ld + 2\n", bufsz, datasz);
 		return 0;
@@ -687,7 +704,8 @@ size_t	xserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t
 
 		// data body copy
 		memcpy(bp, data, datasz);
-		return datasz + 1 + hdrbytes;
+
+		return datasz + 2 + hdrbytes;
 
 	case XSZ_TYPE_STRING:
 		// hdr 1 byte copy
@@ -703,8 +721,7 @@ size_t	xserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t
 
 		// data body copy
 		memcpy(bp, data, datasz);
-		if (bufsz >= datasz + 2 + hdrbytes)
-			bp[datasz] = 0;
+	//	printf("SZ.str: "); dumpbin((char *)buf, datasz + 2 + hdrbytes, 10, 1);
 
 		return datasz + 2 + hdrbytes;
 
@@ -729,6 +746,7 @@ size_t	xserialize_func(char *buf, size_t bufsz, int datatype, void *data, size_t
 
 		memcpy(bp, data, datasz);
 		bp += datasz;
+	//	printf("NUM: "); dumpbin((char *)buf, datasz + 1, 10, 1);
 		return datasz + 1;
 
 	default:
@@ -747,11 +765,10 @@ size_t	xdeserialize_func(char *buf, size_t bufsz, int datatype, void *data, size
 	char	*bp = buf, *dp = (char *)data;
 	int	hdrlen = (*bp & XSZ_HDRLEN_MASK) >> 6;
 	int	hdrbytes = hdrlen2bytes(hdrlen);
-	assert(hdrbytes != 0);
 	int	type = (*bp & XSZ_TYPE_MASK);
 	size_t	sz = 0;
 
-	bp++;
+	bp++;		// skip type
 	switch (type)
 	{
 	case XSZ_TYPE_BINARY:
@@ -764,24 +781,25 @@ size_t	xdeserialize_func(char *buf, size_t bufsz, int datatype, void *data, size
 			memcpy(data, bp, datasz); 
 		}
 		else
+		{
 			memcpy(data, bp, sz);
-	//	printf("DSZ.bin: "); dumpbin((char *)data, sz, 10, 1);
-		return sz + 1 + hdrbytes;
+		}
+		return sz + 2 + hdrbytes;
 
-	case XSZ_TYPE_STRING:
-	//	printf("DSZ.hdr: "); dumpbin(buf, hdrbytes + 1, 10, 1);
+	case XSZ_TYPE_STRING:		// same as binary
 		sz = getdatasize(bp, hdrbytes);
 		bp += hdrbytes;
-		if (datasz < sz + 1)
+		if (datasz < sz)
 		{
 			fprintf(stderr, "WARNING: String real length=%ld copyed %ld\n",
 				sz, datasz);
-			memcpy(data, bp, datasz - 1); dp[datasz] = 0;
+			memcpy(data, bp, datasz); 
 		}
 		else
-			memcpy(data, bp, sz); dp[sz] = 0;
-		bp++;
-	//	printf("DSZ.str: "); dumpbin((char *)data, sz + 1, 10, 1);
+		{
+			memcpy(data, bp, sz); 
+		}
+	//	printf("DSZ.str: "); dumpbin((char *)data, sz, 10, 1);
 		return sz + 2 + hdrbytes;
 
 	case XSZ_TYPE_UINT8:

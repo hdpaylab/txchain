@@ -69,7 +69,7 @@ int	main(int ac, char *av[])
 		assert(jsondoc["vout"].IsArray());
 		cout << "vout Size=" << jsondoc["vout"].Size() << endl;
 
-		for (int nv = 0; nv < jsondoc["vout"].Size(); nv++)
+		for (int nv = 0; nv < (ssize_t)jsondoc["vout"].Size(); nv++)
 		{
 			Value& vv = jsondoc["vout"][nv]["value"];
 			double val = vv.GetDouble();

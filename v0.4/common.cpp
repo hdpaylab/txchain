@@ -44,6 +44,7 @@ const char *get_type_name(int type)
 	{
 	case TX_BLOCK_GEN_REQ:		return "TX_BLOCK_GEN_REQ"; 
 	case TX_BLOCK_GEN_REPLY:	return "TX_BLOCK_GEN_REPLY"; 
+	case TX_BLOCK_GEN:		return "TX_BLOCK_GEN"; 
 
 	case TX_VERIFY_REPLY:		return "TX_VERIFY_REPLY"; 
 
@@ -77,7 +78,7 @@ tx_header_t	*parse_header_body(txdata_t& txdata)
 {
 	xserialize hdrszr, bodyszr;
 
-	hdrszr.setstring(txdata.orgdataser);
+	hdrszr.setstring(txdata.orgdataser);	// 헤더 + 바디 모두 들어가 있음 
 	deseriz(hdrszr, txdata.hdr, 0);		// 헤더 부분 먼저 deserialize
 
 	string body = hdrszr.getcurstring();	// 헤더 뒷부분: body

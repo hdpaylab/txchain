@@ -4,17 +4,21 @@
 vector<txdata_t>	_mempool;		// mempool
 size_t			_mempool_count = 0;	// number of mempool
 map<string, txdata_t *>	_mempoolmap;		// mempool index (key=txid)
+mutex			_mempool_lock;		// mempool lock
 
 
 int	mempool_process(txdata_t& txdata);
 int	make_block(txdata_t& txdata);
 
 
-int	add_mempool(txdata_t& txdata)
+int	mempool_add(txdata_t& txdata)
 {
 	string	key;
 
 	key = txdata.hdr.txid;
+	assert(key.size() >= 32);
+
+	lock_guard<mutex> lock(_mempool_lock);		// 해당 블록 안에서만 lock됨 
 
 	if (_mempool_count >= _mempool.size() - 1)
 	{
@@ -33,19 +37,19 @@ int	add_mempool(txdata_t& txdata)
 	{
 		printf("MEMPOOL SHRINK %ld => %ld\n",
 			_mempool.size(), _mempool_count + 1000);
+
 		_mempool.resize(_mempool_count + 1000);
 		_mempool.shrink_to_fit();
 	}
-
-//	printf("    Mempool num=%ld size=%ld: key=%s  / data length=%ld\n", 
-//		_mempool_count, _mempool.size(), key.c_str(), txdata.bodyser.size());
 
 	return 1;
 }
 
 
-void	update_tx_status(string txid, int flag)
+void	mempool_update(string txid, int flag)
 {
+	lock_guard<mutex> lock(_mempool_lock);		// 해당 블록 안에서만 lock됨 
+
 	txdata_t *txp = _mempoolmap[txid];
 	if (txp == NULL)
 		return;

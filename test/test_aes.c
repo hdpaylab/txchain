@@ -40,7 +40,7 @@ int main(void)
 
 	//                            16              32              48
 	//             123456789 123456789 123456789 123456789 123456789 123456789 
-	char	*dd = "AAAAAAAAAAAAAAX";
+	const char *dd = "AAAAAAAAAAAAAAX";
 	string data = dd;
 
 	printf("Original: %s\n", data.c_str());
