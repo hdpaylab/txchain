@@ -10,7 +10,7 @@
 
 enum {
 	STAT_VERIFY_OK		= 0x00000001,
-	STAT_VERIFY_FAIL	= 0x00000000,
+	STAT_VERIFY_FAIL	= 0x80000001,
 
 	// mempool TX 복사 
 	STAT_BCAST_TX		= 0x00000010,
@@ -101,6 +101,7 @@ typedef struct tx_header {
 		status = 0;
 		valid = -1;
 		flag = 0;
+		recvclock = 0;
 	}
 // 블록 저장시 변경되지 않는 값 
 	uint32_t	nodeid;		// node id
@@ -116,6 +117,8 @@ typedef struct tx_header {
 	int		valid;		// 0=invalid 1=valid -1=none
 	string		txid;		// transaction id: sha256(sign)
 	int		flag;		// FLAG_xxx bit mask
+	double		recvclock;	// 수신 clock
+	int		value;
 }	tx_header_t;
 
 

@@ -30,7 +30,7 @@ safe_queue<txdata_t>	_mempoolq;	// stores verifier result
 safe_queue<txdata_t>	_consensusq;	// verification result queue
 
 vector<txdata_t>	_mempool;	// mempool
-map<string, txdata_t *>	_mempoolmap;	// mempool index (key=txid)
+map<string, txdata_t>	_mempoolmap;	// mempool index (key=txid)
 
 void	parse_command_line(int ac, char *av[]);
 void	create_main_threads();

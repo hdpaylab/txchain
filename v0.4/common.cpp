@@ -10,6 +10,7 @@ const char *get_status_name(int status)
 {
 	switch (status)
 	{
+	case 0:				return "0";
 	case STAT_VERIFY_OK:		return "STAT_VERIFY_OK";
 	case STAT_VERIFY_FAIL:		return "STAT_VERIFY_FAIL";
 
@@ -33,7 +34,7 @@ const char *get_status_name(int status)
 	case FLAG_TX_LOCK:		return "FLAG_TX_LOCK";
 
 	default:
-		printf("Unknown type %d", status); return "UNKNOWN";
+		printf("Unknown status %d\n", status); return "UNKNOWN";
 	}
 }
 
@@ -42,6 +43,8 @@ const char *get_type_name(int type)
 {
 	switch (type)
 	{
+	case 0:				return "0";
+
 	case TX_BLOCK_GEN_REQ:		return "TX_BLOCK_GEN_REQ"; 
 	case TX_BLOCK_GEN_REPLY:	return "TX_BLOCK_GEN_REPLY"; 
 	case TX_BLOCK_GEN:		return "TX_BLOCK_GEN"; 
@@ -69,7 +72,7 @@ const char *get_type_name(int type)
         case TX_SET_ACCOUNT:		return "TX_SET_ACCOUNT"; 
         case TX_LIST_ACCOUNT:		return "TX_LIST_ACCOUNT"; 
 	default:
-		printf("Unknown type %d", type); return "UNKNOWN";
+		printf("Unknown type %d\n", type); return "UNKNOWN";
 	}
 }
 
@@ -91,4 +94,21 @@ tx_header_t	*parse_header_body(txdata_t& txdata)
 	txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체
 
 	return &txdata.hdr;
+}
+
+
+string	dump_tx(const char *title, txdata_t& txdata, bool disp)
+{
+	char	buf[256] = {0};
+
+	snprintf(buf, sizeof(buf), "%s%-20s %-20s / sz=%-3ld/%-4ld / valid=%d", 
+		title, get_type_name(txdata.hdr.type), 
+		txdata.hdr.status >= 0 ? get_status_name(txdata.hdr.status) : "", 
+		txdata.hdrser.size(), txdata.bodyser.size(), txdata.hdr.valid);
+
+	if (disp)
+		printf("%s\n", buf);
+
+	string retstr = buf;
+	return retstr;
 }

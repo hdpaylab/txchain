@@ -64,6 +64,7 @@ typedef struct {
 
 // main.cpp
 extern	int	_nverifier;	// current number of verifier threads
+extern	int	_debug;		// debugging level
 
 extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
 extern	safe_queue<txdata_t>	_verifyq;	// receive queue for subscriber
@@ -95,21 +96,26 @@ const char *get_type_name(int type);
 const char *get_status_name(int status);
 tx_header_t	*parse_header_body(txdata_t& txdata);
 void	mempool_update(string txid, int flag);
+string	dump_tx(const char *title, txdata_t& txdata, bool disp = 1);
+
 
 // mempool.cpp
 extern	vector<txdata_t> _mempool;		// mempool
 extern	size_t _mempool_count;			// number of mempool
-extern	map<string, txdata_t *>	_mempoolmap;	// mempool index (key=txid)
+extern	map<string, size_t> _mempoolmap;	// mempool index (key=txid)
 extern	mutex	_mempool_lock;			// mempool lock
 
 int	mempool_add(txdata_t& txdata);
+
 
 // block.cpp
 void	ps_block_gen_req(txdata_t& txdata);
 void	ps_block_gen_reply(txdata_t& txdata);
 void	ps_block_gen(txdata_t& txdata);		// 실제 블록 생성 
 
+
 // consensus.cpp
 extern	cssmap	_cssmap;		// consensus.cpp
+
 
 #endif	// __COMMON_H

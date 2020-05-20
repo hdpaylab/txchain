@@ -16,7 +16,7 @@ void	*thread_verifier(void *info_p)
 	const char *filter = ZMQ_FILTER;
 
 
-	printf("Verifier %d START!\n", thrid);
+	if (_debug > 2) printf("Verifier %d START!\n", thrid);
 
 	sprintf(tmp, "VER%02d.ver", thrid);	// out file
 	outfp = fopen(tmp, "w+b");
@@ -33,18 +33,19 @@ void	*thread_verifier(void *info_p)
 		count++;
 		txdata = _verifyq.pop();
 
-		printf("\n-----Verifier:\n");
+		if (_debug > 3) printf("\n-----Verifier:\n");
 
 		verify_process(txdata);
 
-		fprintf(outfp, "VER%02d: %7d: %s signature=%s\n", thrid, count, 
-			txdata.hdr.valid == 1 ? "true" : "false", txdata.hdr.signature.c_str());
+		string dumpstr = dump_tx("", txdata, 0);
+		fprintf(outfp, "VER%02d: %7d: %s \n", thrid, count, dumpstr.c_str());
 		fflush(outfp);
 #ifdef DEBUG
 #else
 		if (count % 10000 == 0)
+			printf("    Ver%02d: processed %7d  verifyq=%5ld\n", 
+				thrid, count, _verifyq.size());
 #endif
-			printf("    Ver%02d: processed %7d veriq=%5ld\n", thrid, count, _verifyq.size());
 	}
 
 	fclose(outfp);
@@ -81,7 +82,7 @@ int	verify_process(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		printf("    VERIFY CREATE_TOKEN:result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		if (_debug > 2) printf("    VERIFY CREATE_TOKEN:result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}
 	// client에서 온 TX
 	else if (hp->type == TX_SEND_TOKEN && hp->valid == -1)
@@ -94,7 +95,7 @@ int	verify_process(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		printf("    VERIFY SEND_TOKEN: result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		if (_debug > 2) printf("    VERIFY SEND_TOKEN: result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}
 	// Verification success
 	else if (hp->valid)
@@ -108,13 +109,13 @@ int	verify_process(txdata_t& txdata)
 			seriz_add(tmpszr, txdata.hdr);
 			txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체 
 
-			printf("    Add to mempoolq: type=%s status=%s size=%ld\n",
+			if (_debug > 2) printf("    Add to mempoolq: type=%s status=%s size=%ld\n",
 				get_type_name(txdata.hdr.type), get_status_name(txdata.hdr.status),
 				hp->data_length);
 
 			mempool_add(txdata);	// put mempool
 
-			printf("    Add to sendq: type=%s status=%s\n",
+			if (_debug > 3) printf("    Add to sendq: type=%s status=%s\n",
 				get_type_name(hp->type), get_status_name(hp->status));
 
 			_sendq.push(txdata);	// broadcast to other nodes... (request verification)

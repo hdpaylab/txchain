@@ -8,11 +8,10 @@ void	*thread_publisher(void *info_p)
 {
         int	sendport = *(int *)info_p;
 	int	count = 0;
-	double	tmstart = 0, tmend = 0;
 	char	bindstr[100] = {0};
 
 
-	printf("thread_publisher: sendport=%d START!\n", sendport);
+	if (_debug > 2) printf("thread_publisher: sendport=%d START!\n", sendport);
 
 	// ZMQ setup: prepare our context and publisher
 	zmq::context_t context_pub(1);
@@ -33,8 +32,6 @@ void	*thread_publisher(void *info_p)
 
 	sleepms(500);
 
-	tmstart = xgetclock();
-
 	while (1)
 	{
 		txdata_t txdata;
@@ -46,13 +43,11 @@ void	*thread_publisher(void *info_p)
 
 		senddata = string(ZMQ_FILTER) + txdata.hdrser + txdata.bodyser;
 
-		printf("\n-----Publisher for PUB-SUB:\n");
-		printf("    orglen=%ld filter=%s sendsize=%ld hdrlen=%ld bodylen=%ld\n", 
-			txdata.orgdataser.size(), ZMQ_FILTER, senddata.size() - strlen(ZMQ_FILTER),
-			txdata.hdrser.size(), txdata.bodyser.size());
+		if (_debug > 3) printf("\n-----Publisher for PUB-SUB:\n");
 
-//		printf("SEND DUMP(%ld): ", senddata.length()); 
-//		dumpbin(senddata.c_str(), senddata.length());
+		//if (_debug > 1) 
+		if (txdata.hdr.type != TX_SEND_TOKEN)
+			dump_tx("    PUBLISH: ", txdata);
 
 		bool ret = s_send(xpub, senddata);
 
@@ -63,18 +58,13 @@ void	*thread_publisher(void *info_p)
 #ifdef DEBUG
 #else
 		if (count % 100000 == 0)
+			printf("    Publish: broadcast %d  sendq=%5ld\n", count, _sendq.size());
 #endif
-			printf("    Send: broadcast %d  sendq=%5ld\n", count, _sendq.size());
 	}
-
-	tmend = xgetclock();
-	printf("thread_publisher: Send time=%.3f sec / %.3f TPS\n", tmend - tmstart, count / (tmend - tmstart));
 
 	xpub.close();
 	
 	printf("thread_publisher: ----- END! count=%d\n\n", count);
-
-	sleep(5);
 
 	pthread_exit(NULL);
 
@@ -91,7 +81,7 @@ void	*thread_send_test(void *info_p)
 	int	loop = MAX_TEST_NUM_TX;			// 100
 
 
-	printf("thread_send_test: loop=%d START!\n", loop);
+	if (_debug > 2) printf("thread_send_test: loop=%d START!\n", loop);
 
 	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
 	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
@@ -117,13 +107,15 @@ void	*thread_send_test(void *info_p)
 
 	txhdr.data_length = bodyszr.size();
 	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &_netparams.PrivHelper, &_netparams.AddrHelper);
+
 	printf("Serialize: body length=%ld\n", bodyszr.size());
 	printf("address  : %s\n", from_addr);
-//	printf("message  : \n"); bodyszr.dump(10, 1);
+	printf("message  : \n"); bodyszr.dump(10, 1);
 	printf("signature: %s\n", txhdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
 	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &_netparams.AddrHelper);
+
 	printf("verify_check=%d\n", verify_check);
 	printf("\n");
 

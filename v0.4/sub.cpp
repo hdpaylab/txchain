@@ -18,7 +18,7 @@ void	*thread_subscriber(void *info_p)
 	const char *filter = ZMQ_FILTER;
 
 
-	printf("SUB : peer=%s START!\n", peer);
+	if (_debug > 2) printf("SUB : peer=%s START!\n", peer);
 
 	// 디버깅 파일 생성 
 	strcpy(tmp, peer);
@@ -57,7 +57,7 @@ void	*thread_subscriber(void *info_p)
 		txdata.orgdataser = s_recv(xsock);
 		count++;
 
-		printf("\n\n=====Subscriber for broadcast: (recv from ZMQ::PUB-SUB)\n");
+		if (_debug > 3) printf("\n\n=====Subscriber for NODE: (ZMQ::PUB-SUB)\n");
 
 		// 필터 제거 
 		const char *filter = txdata.orgdataser.c_str();
@@ -66,21 +66,23 @@ void	*thread_subscriber(void *info_p)
 		txdata.orgdataser = realdata;
 
 		// 헤더와 바디 구분 파싱 
-		tx_header_t *hp = parse_header_body(txdata);
+		parse_header_body(txdata);
 
-		printf("    %s data length=%ld (%s) real length=%ld\n", 
-			get_type_name(hp->type), txdata.orgdataser.size(), ZMQ_FILTER, txdata.orgdataser.size());
+		//if (_debug > 1) 
+		if (txdata.hdr.type != TX_SEND_TOKEN)
+			dump_tx("    Node   : ", txdata);
 
 		// TX 유형별 처리 
 		tx_verify(txdata);
 
-		// 디버깅 위해 파일에 저장 
-		fprintf(outfp, "%7d: len=%ld\n", count, hp->data_length);
-		fflush(outfp);
 #ifdef DEBUG
+		// 디버깅 위해 파일에 저장 
+		string dumpstr = dump_tx("", txdata, 0);
+		fprintf(outfp, "%7d: %s \n", count, dumpstr.c_str());
+		fflush(outfp);
 #else
 		if (count % 100000 == 0)
-			printf("    Processed %d  recvq=%5ld\n", count, _verifyq.size());
+			printf("    SUB: recv %d  verifyq=%ld\n", count, _verifyq.size());
 #endif
 	}
 
@@ -104,7 +106,7 @@ void	*thread_client(void *info_p)
 	char	tmp[256] = {0}, ip_port[100] = {0};
 
 
-	printf("CLIENT: client port=%d START!\n", clientport);
+	if (_debug > 2) printf("CLIENT: client port=%d START!\n", clientport);
 
 	// 디버깅 파일 생성 
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
@@ -135,8 +137,11 @@ void	*thread_client(void *info_p)
 
 		// 헤더와 바디 분리 파싱 
 		tx_header_t *hp = parse_header_body(txdata);
+		txdata.hdr.recvclock = xgetclock();
 
-		printf("\n\n=====Subscriber for client: (recv from ZMQ::REQ-REPLY)\n");
+		if (_debug > 3) printf("\n\n=====Subscriber for CLIENT: (ZMQ::REQ-REPLY)\n");
+
+		if (_debug > 1) dump_tx("    Client : ", txdata);
 
 		// 요청 유형에 따라서 처리: 전체 노드로 broadcast 필요한 경우 1이 리턴됨 
 		int broadcast_tx = tx_verify(txdata);
@@ -145,8 +150,8 @@ void	*thread_client(void *info_p)
 		if (hp->valid == 1 && broadcast_tx)
 		{
 			hp->status = STAT_BCAST_TX;
-			printf("    Add to verifyq: type=%s status=%s\n",
-				get_type_name(hp->type), get_status_name(hp->status));
+
+			if (_debug > 2) dump_tx("    Bcast  : ", txdata);
 
 			_verifyq.push(txdata);	// send to verify.cpp
 		}
@@ -154,8 +159,8 @@ void	*thread_client(void *info_p)
 #ifdef DEBUG
 #else
 		if (count % 10000 == 0)
+			printf("    Client: recv %d \n", count);
 #endif
-			printf("    Client request: count=%d sign=%s\n", count, hp->signature.c_str());
 
 		// Send reply back to client
 		s_send(responder, hp->txid);
@@ -186,9 +191,6 @@ int	tx_verify(txdata_t& txdata)
 	{
 		hp->valid = -1;
 		hp->status = STAT_ADD_TO_MEMPOOL;
-
-		printf("    Add to verifyq: type=%s status=%s\n",
-			get_type_name(hp->type), get_status_name(hp->status));
 
 		_verifyq.push(txdata);			// send to verify.cpp
 	}
@@ -225,7 +227,7 @@ int	tx_verify(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		printf("    CREATE_TOKEN verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		if (_debug > 1) dump_tx("    CREATE_TOKEN: ", txdata);
 
 		return 1;
 	}
@@ -239,7 +241,7 @@ int	tx_verify(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		printf("    SEND_TOKEN verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		if (_debug > 1) dump_tx("    SEND_TOKEN: ", txdata);
 
 		return 1;
 	}
@@ -253,7 +255,7 @@ int	tx_verify(txdata_t& txdata)
 	}
 	else
 	{
-		printf("ERROR: Subscriber: No handling routine for TX type=%s\n",
+		fprintf(stderr, "ERROR: Subscriber: No handling routine for TX type=%s\n",
 			get_type_name(hp->type));
 
 		return 0;

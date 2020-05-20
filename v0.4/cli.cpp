@@ -23,7 +23,7 @@ int	main(int ac, char *av[])
 	}
 	else
 	{
-		snprintf(svr, sizeof(svr), "tcp://%s:%d", "192.168.1.10", DEFAULT_CLIENT_PORT);
+		snprintf(svr, sizeof(svr), "tcp://%s:%d", "192.168.1.11", DEFAULT_CLIENT_PORT);
 	}
 
 	printf("CLIENT: connect to %s (pid=%d)\n\n", svr, getpid());
@@ -63,21 +63,22 @@ int	main(int ac, char *av[])
 		txhdr.data_length = bodyszr.size();
 		txhdr.from_addr = from_addr;
 		txhdr.txclock = xgetclock();
+		txhdr.value = count + 1;
 		txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), 
 					&params.PrivHelper, &params.AddrHelper);
 		seriz_add(hdrszr, txhdr);
 
-		printf("Serialize: hdr  length=%ld\n", hdrszr.size());
-		printf("Serialize: body length=%ld\n", bodyszr.size());
+//		printf("Serialize: hdr  length=%ld\n", hdrszr.size());
+//		printf("Serialize: body length=%ld\n", bodyszr.size());
 //		printf("address  : %s\n", from_addr);
 //		printf("message  : \n"); bodyszr.dump(10, 1);
-		printf("signature: %s\n", txhdr.signature.c_str());
+//		printf("signature: %s\n", txhdr.signature.c_str());
 
 		// 발송 전에 미리 검증 테스트 
 		int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
 					bodyszr.data(), bodyszr.size(), &params.AddrHelper);
-		printf("verify_check=%d\n", verify_check);
-		printf("\n");
+//		printf("verify_check=%d\n", verify_check);
+//		printf("\n");
 
 		bool ret = s_send(requester, hdrszr.getstring() + bodyszr.getstring());
 
@@ -85,9 +86,11 @@ int	main(int ac, char *av[])
 
 #ifdef DEBUG
 		sleepms(10);
+		if (count % 100 == 0)
+			printf("CLIENT: Send %7d: reply=%s\n", count + 1, reply.c_str());
 #else
 		if (count % 10000 == 0)
-#endif
 			printf("CLIENT: Send %7d: reply=%s\n", count + 1, reply.c_str());
+#endif
 	}
 }

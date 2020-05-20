@@ -522,8 +522,11 @@ int	xserialize::check_cur_type(int type)
 {
 	if (getcurtype() != type)
 	{
-		fprintf(stderr, "WARNING: deserialize cur type %s != type %s\n",
-			gettypename(getcurtype()), gettypename(type));
+		if (outbufpos_ < inbufpos_)
+		{
+			fprintf(stderr, "WARNING: deserialize cur type %s != type %s\n",
+				gettypename(getcurtype()), gettypename(type));
+		}
 		return 0;
 	}
 	return 1;

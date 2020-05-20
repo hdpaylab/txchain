@@ -70,6 +70,8 @@ int	seriz_add(xserialize& xsz, tx_header_t& tx)
 	ret = xsz << tx.valid;		// 0=invalid 1=valid -1=none
 	ret = xsz << tx.txid;		// transaction id: sha256(sign)
 	ret = xsz << tx.flag;		// FLAG_xxx
+	ret = xsz << tx.recvclock;	// 수신 clock
+	ret = xsz << tx.value;
 
 	return ret;
 }
@@ -212,6 +214,8 @@ int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 	ret = xsz >> tx.valid;		// 0=invalid 1=valid -1=none
 	ret = xsz >> tx.txid;		// transaction id: sha256(sign)
 	ret = xsz >> tx.flag;		// FLAG_xxx
+	ret = xsz >> tx.recvclock;	// 수신 clock
+	ret = xsz >> tx.value;
 
 	if (dump)
 	{
@@ -228,7 +232,8 @@ int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 			get_status_name(tx.status), tx.status, tx.status);
 		printf("    hdr::valid = %d\n", tx.valid);
 		printf("    hdr::txid = %s (%ld)\n", tx.txid.c_str(), tx.txid.size());
-		printf("    hdr::sent = 0x%08X\n", tx.flag);
+		printf("    hdr::flag = 0x%08X\n", tx.flag);
+		printf("    hdr::recvclock = %.3f\n", tx.recvclock);
 	}
 
 	return ret;
