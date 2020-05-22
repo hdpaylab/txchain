@@ -16,7 +16,7 @@ void	*thread_verifier(void *info_p)
 	const char *filter = ZMQ_FILTER;
 
 
-	if (_debug > 2) printf("Verifier %d START!\n", thrid);
+	logprintf(2, "Verifier %d START!\n", thrid);
 
 	sprintf(tmp, "VER%02d.ver", thrid);	// out file
 	outfp = fopen(tmp, "w+b");
@@ -33,12 +33,11 @@ void	*thread_verifier(void *info_p)
 		count++;
 		txdata = _verifyq.pop();
 
-		if (_debug > 3) printf("\n-----Verifier:\n");
+		logprintf(3, "\n-----Verifier:\n");
 
 		verify_process(txdata);
 
-		string dumpstr = dump_tx("", txdata, 0);
-		fprintf(outfp, "VER%02d: %7d: %s \n", thrid, count, dumpstr.c_str());
+		fprintf(outfp, "VER%02d: %7d: %s \n", thrid, count, dump_tx("", txdata, 0).c_str());
 		fflush(outfp);
 #ifdef DEBUG
 #else
@@ -82,7 +81,7 @@ int	verify_process(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		if (_debug > 2) printf("    VERIFY CREATE_TOKEN:result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		logprintf(2, "    VERIFY CREATE_TOKEN:result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}
 	// client에서 온 TX
 	else if (hp->type == TX_SEND_TOKEN && hp->valid == -1)
@@ -95,7 +94,7 @@ int	verify_process(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		if (_debug > 2) printf("    VERIFY SEND_TOKEN: result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		logprintf(2, "    VERIFY SEND_TOKEN: result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}
 	// Verification success
 	else if (hp->valid)
@@ -109,13 +108,13 @@ int	verify_process(txdata_t& txdata)
 			seriz_add(tmpszr, txdata.hdr);
 			txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체 
 
-			if (_debug > 2) printf("    Add to mempoolq: type=%s status=%s size=%ld\n",
+			logprintf(2, "    Add to mempoolq: type=%s status=%s size=%ld\n",
 				get_type_name(txdata.hdr.type), get_status_name(txdata.hdr.status),
 				hp->data_length);
 
 			mempool_add(txdata);	// put mempool
 
-			if (_debug > 3) printf("    Add to sendq: type=%s status=%s\n",
+			logprintf(3, "    Add to sendq: type=%s status=%s\n",
 				get_type_name(hp->type), get_status_name(hp->status));
 
 			_sendq.push(txdata);	// broadcast to other nodes... (request verification)

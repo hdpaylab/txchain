@@ -18,7 +18,7 @@ void	*thread_subscriber(void *info_p)
 	const char *filter = ZMQ_FILTER;
 
 
-	if (_debug > 2) printf("SUB : peer=%s START!\n", peer);
+	logprintf(2, "SUB : peer=%s START!\n", peer);
 
 	// 디버깅 파일 생성 
 	strcpy(tmp, peer);
@@ -57,7 +57,7 @@ void	*thread_subscriber(void *info_p)
 		txdata.orgdataser = s_recv(xsock);
 		count++;
 
-		if (_debug > 3) printf("\n\n=====Subscriber for NODE: (ZMQ::PUB-SUB)\n");
+		logprintf(3, "\n\n=====Subscriber for NODE: (ZMQ::PUB-SUB)\n");
 
 		// 필터 제거 
 		const char *filter = txdata.orgdataser.c_str();
@@ -68,17 +68,15 @@ void	*thread_subscriber(void *info_p)
 		// 헤더와 바디 구분 파싱 
 		parse_header_body(txdata);
 
-		//if (_debug > 1) 
 		if (txdata.hdr.type != TX_SEND_TOKEN)
-			dump_tx("    Node   : ", txdata);
+			logprintf(2, "%s\n", dump_tx("    Node   : ", txdata, 0).c_str());
 
 		// TX 유형별 처리 
 		tx_verify(txdata);
 
 #ifdef DEBUG
 		// 디버깅 위해 파일에 저장 
-		string dumpstr = dump_tx("", txdata, 0);
-		fprintf(outfp, "%7d: %s \n", count, dumpstr.c_str());
+		fprintf(outfp, "%7d: %s \n", count, dump_tx("", txdata, 0).c_str());
 		fflush(outfp);
 #else
 		if (count % 100000 == 0)
@@ -106,7 +104,7 @@ void	*thread_client(void *info_p)
 	char	tmp[256] = {0}, ip_port[100] = {0};
 
 
-	if (_debug > 2) printf("CLIENT: client port=%d START!\n", clientport);
+	logprintf(2, "CLIENT: client port=%d START!\n", clientport);
 
 	// 디버깅 파일 생성 
 	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
@@ -139,9 +137,9 @@ void	*thread_client(void *info_p)
 		tx_header_t *hp = parse_header_body(txdata);
 		txdata.hdr.recvclock = xgetclock();
 
-		if (_debug > 3) printf("\n\n=====Subscriber for CLIENT: (ZMQ::REQ-REPLY)\n");
+		logprintf(3, "\n\n=====Subscriber for CLIENT: (ZMQ::REQ-REPLY)\n");
 
-		if (_debug > 1) dump_tx("    Client : ", txdata);
+		logprintf(2, "%s\n", dump_tx("    Client : ", txdata, 0).c_str());
 
 		// 요청 유형에 따라서 처리: 전체 노드로 broadcast 필요한 경우 1이 리턴됨 
 		int broadcast_tx = tx_verify(txdata);
@@ -151,7 +149,7 @@ void	*thread_client(void *info_p)
 		{
 			hp->status = STAT_BCAST_TX;
 
-			if (_debug > 2) dump_tx("    Bcast  : ", txdata);
+			logprintf(2, "%s\n", dump_tx("    Bcast  : ", txdata, 0).c_str());
 
 			_verifyq.push(txdata);	// send to verify.cpp
 		}
@@ -213,7 +211,7 @@ int	tx_verify(txdata_t& txdata)
 	// 실제 블록 생성 명령 
 	else if (hp->type == TX_BLOCK_GEN)
 	{
-		ps_block_gen(txdata);
+		ps_block_gen(txdata, _recv_txid_info);
 
 		return 0;
 	}
@@ -227,7 +225,7 @@ int	tx_verify(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		if (_debug > 1) dump_tx("    CREATE_TOKEN: ", txdata);
+		logprintf(1, "%s\n", dump_tx("    CREATE_TOKEN(r&v): ", txdata, 0).c_str());
 
 		return 1;
 	}
@@ -241,7 +239,7 @@ int	tx_verify(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		if (_debug > 1) dump_tx("    SEND_TOKEN: ", txdata);
+		logprintf(1, "%s\n", dump_tx("    SEND_TOKEN(r&v): ", txdata, 0).c_str());
 
 		return 1;
 	}

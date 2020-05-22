@@ -12,7 +12,6 @@
 
 
 int	_nverifier = MAX_VERIFIER;
-int	_debug = 1;		// debugging level
 
 int	_automode = 1;		// auto data generation mode (client input disabled)
 int	_clientport = DEFAULT_CLIENT_PORT;	
@@ -33,6 +32,7 @@ safe_queue<txdata_t>	_leveldbq;	// leveldb queue
 safe_queue<txdata_t>	_consensusq;	// verification result queue
 
 
+void	init();
 void	parse_command_line(int ac, char *av[]);
 void	create_main_threads();
 void	create_subscriber_threads();
@@ -45,12 +45,7 @@ int	main(int ac, char *av[])
 
 	printf("Start txchain main: pid=%d\n", getpid());
 
-	_sendq.setmax(10000);
-	_verifyq.setmax(10000);
-	_mempoolq.setmax(10000);
-	_consensusq.setmax(10000);
-
-	_mempool.resize(1000);
+	init();
 
 	// load params set
 	_netparams = load_params("../lib/params.dat");
@@ -69,6 +64,22 @@ int	main(int ac, char *av[])
 	}
 
 	return 0;
+}
+
+
+void	init()
+{
+	extern FILE *_logfp;
+
+	_sendq.setmax(10000);
+	_verifyq.setmax(10000);
+	_mempoolq.setmax(10000);
+	_consensusq.setmax(10000);
+
+	char	filename[256] = {0};
+	sprintf(filename, "debug-%d.log", _clientport);
+	_logfp = fopen(filename, "a+b");
+	assert(_logfp != NULL);
 }
 
 
@@ -166,10 +177,10 @@ void	create_main_threads()
 
 	// block sync thread
 	printf("Create [block sync] thread\n");
-	ret = pthread_create(&thrid, NULL, thread_block_gen, (void *)&_chainport);
+	ret = pthread_create(&thrid, NULL, thread_txid_info, (void *)&_chainport);
 	if (ret < 0)
 	{
-		perror("thread_block_gen() thread creation error");
+		perror("thread_txid_info() thread creation error");
 		exit(-1);
 	}
 	pthread_detach(thrid);

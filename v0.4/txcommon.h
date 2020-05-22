@@ -81,7 +81,7 @@ void	*thread_send_test(void *info_p);	// main.cpp
 void	*thread_subscriber(void *info_p);	// sub.cpp
 void	*thread_client(void *info_p);		// sub.cpp
 void	*thread_verifier(void *info_p);		// verify.cpp
-void	*thread_block_gen(void *info_p);	// mempool.cpp
+void	*thread_txid_info(void *info_p);	// mempool.cpp
 void	*thread_levledb(void *info_p);		// leveldb.cpp
 void	*thread_consensus(void *info_p);	// consensus.cpp
 
@@ -95,23 +95,35 @@ extern	leveldb	_walletdb;	//
 const char *get_type_name(int type);
 const char *get_status_name(int status);
 tx_header_t	*parse_header_body(txdata_t& txdata);
-void	mempool_update(string txid, int flag);
 string	dump_tx(const char *title, txdata_t& txdata, bool disp = 1);
+int	logprintf(int level, ...);
+string	datestring(time_t tm = 0);
 
 
 // mempool.cpp
-extern	vector<txdata_t> _mempool;		// mempool
-extern	size_t _mempool_count;			// number of mempool
-extern	map<string, size_t> _mempoolmap;	// mempool index (key=txid)
+extern	map<string, txdata_t> _mempoolmap;	// mempool index (key=txid)
 extern	mutex	_mempool_lock;			// mempool lock
 
 int	mempool_add(txdata_t& txdata);
+void	mempool_update(string txid, int flag);
 
 
 // block.cpp
+#define TX_TIME_DIFF	0.1			// mempool에 TX 저장한지 최소 0.1초 지나야 다음 블록 포함시킴 
+
+typedef struct {
+	int	on_air;				// 현대 블록 생성 명령 작동 중이면 1
+	size_t	block_height;			// 블록 번호 
+	string	sign_hash;			// block_gen_req로 보낸 signature의 hash 값 
+	vector<string> txidlist;		// txid list
+}	block_txid_info_t;
+
+extern	block_txid_info_t _self_txid_info;	// 자체적으로 블록 생성을 위한 txidlist
+extern	block_txid_info_t _recv_txid_info;	// 블록 생성을 위해서 다른 노드에서 보낸 txidlist
+
 void	ps_block_gen_req(txdata_t& txdata);
 void	ps_block_gen_reply(txdata_t& txdata);
-void	ps_block_gen(txdata_t& txdata);		// 실제 블록 생성 
+void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info);		// 실제 블록 생성 
 
 
 // consensus.cpp

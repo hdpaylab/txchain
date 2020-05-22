@@ -1,45 +1,38 @@
 #include "txcommon.h"
 
 
-typedef struct {
-	int	on_air;				// 현대 블록 생성 명령 작동 중이면 1
-	size_t	block_height;			// 블록 번호 
-	string	sign_hash;			// block_gen_req로 보낸 signature의 hash 값 
-	vector<size_t> mempoolidx;		// mempool index
-	int	ntx;				// number of tx
-}	last_block_gen_t;
-
-
 size_t	_block_height = 1;			// 다음 생성할 블록 height
 
-last_block_gen_t	_block_gen;
+block_txid_info_t	_self_txid_info;		// 자체적으로 블록 생성을 위한 txidlist
+block_txid_info_t	_recv_txid_info;	// 블록 생성을 위해서 다른 노드에서 보낸 txidlist
 
-map<uint32_t, int>	_block_gen_node;	// key=nodeid value=nfail
+map<uint32_t, int>	_txid_reply_node;	// key=nodeid value=nfail
+
+vector<string>	_next_block_txids;		// txid list of next block
 
 
-int	block_gen_prepare();
-void	send_block_gen(txdata_t& txdata);	// BLOCK 생성 명령 발송 
+size_t	block_gen_prepare();
+void	send_block_gen_reply(txdata_t& txdata);	// BLOCK 생성 명령 발송 
 
 
 //
 // 일정 주기마다 블록 생성 요청을 보내서 합의를 받은 다음 블록 생성함 
 //
-void	*thread_block_gen(void *info_p)
+void	*thread_txid_info(void *info_p)
 {
 	int	chainport = *(int *)info_p;
 	double	blocktime = xgetclock();
 
-	_block_gen.on_air = 0;
-	_block_gen.block_height = _block_height;
-	_block_gen.sign_hash = string();
-	_block_gen.ntx = 0;
+	_self_txid_info.on_air = 0;
+	_self_txid_info.block_height = _block_height;
+	_self_txid_info.sign_hash = string();
 
 	while (1)
 	{
-		if (xgetclock() - blocktime < 5 || _mempool_count <= 0 || _block_gen.on_air == 1)
+		if (xgetclock() - blocktime < 5 || _mempoolmap.size() <= 0 || _self_txid_info.on_air == 1)
 		{
-			if (_debug > 4) printf("%.3f %ld %d\n", 
-					xgetclock() - blocktime, _mempool_count, _block_gen.on_air);
+			logprintf(5, "    Block generation check: %.3f %ld %d\n", 
+					xgetclock() - blocktime, _mempoolmap.size(), _self_txid_info.on_air);
 			sleepms(1000);
 			continue;
 		}
@@ -51,7 +44,7 @@ void	*thread_block_gen(void *info_p)
 			continue;
 		}
 
-		printf("MAKE BLOCK: %d tx sync request...\n", ntx);
+		logprintf(1, "MAKE BLOCK: %d tx sync request...\n", ntx);
 
 		blocktime = xgetclock();
 
@@ -78,51 +71,49 @@ static	const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 // mempool에서 최근 들어온 TX 중에서 sendq로 발송된 것만 목록으로 만듬
 // 각 노드로 보내서 블록 생성 합의 요청함
 //
-int	block_gen_prepare()
+size_t	block_gen_prepare()
 {
 	double	curclock = xgetclock();
 
-	_block_gen.on_air = 1;
+	_self_txid_info.on_air = 1;
 
 	// 최대 10만개 처리 가능
-	_block_gen.mempoolidx.resize(100000);
+	_self_txid_info.txidlist.clear();
 
 	_mempool_lock.lock();
 
-	for (int nn = 0; nn < (ssize_t)_mempool_count; nn++)
+	map<string, txdata_t>::iterator it;
+	for (it = _mempoolmap.begin(); it != _mempoolmap.end(); it++)
 	{
-		txdata_t& txdata = _mempool[nn];
+		string txid = it->first;
+		txdata_t& txdata = it->second;
 
 		if (txdata.hdr.flag & FLAG_TX_LOCK)	// 다른 노드에서 블록 생성하기 위해 TX 잠근 경우 
 			continue;
 		if (!(txdata.hdr.flag & FLAG_SENT_TX))	// 아직 동기화를 위해서 발송하지 않은 경우 
 			continue;
-		if (curclock - txdata.hdr.recvclock < 0.1)	// 수신한지 0.1초 지나지 않은 경우 skip
+		if (curclock - txdata.hdr.recvclock < TX_TIME_DIFF)	// 수신한지 0.1초 지나지 않은 경우 skip
 			continue;
-
-		if (_debug > 3) printf("BLOCK: prepare %d diff=%.3f %s\n", 
-				_block_gen.ntx + 1, curclock - txdata.hdr.recvclock, txdata.hdr.txid.c_str());
 
 		txdata.hdr.flag |= FLAG_TX_LOCK;	// TX LOCK
 
-		_block_gen.mempoolidx[_block_gen.ntx] = nn;	// mempool index
-		_block_gen.ntx++;
-		if (_block_gen.ntx >= 100000)
+		logprintf(1, "    prepare BLOCK: prepare %d diff=%.3f flag=0x%08X %s\n", 
+				_self_txid_info.txidlist.size() + 1, curclock - txdata.hdr.recvclock, 
+				txdata.hdr.flag, txdata.hdr.txid.c_str());
+
+		_self_txid_info.txidlist.push_back(txid);
+		if (_self_txid_info.txidlist.size() >= 100000)
 			break;
 	}
 
 	_mempool_lock.unlock();
 
-	if (_block_gen.ntx <= 0)
+	if (_self_txid_info.txidlist.size() <= 0)
 	{
-		_block_gen.on_air = 0;
+		_self_txid_info.on_air = 0;
 		return 0;
 	}
-	printf("BLOCK_PREPARE: %d tx ready\n", _block_gen.ntx);
-
-	// 블록 내용에 맞게 크기 조정
-//	_block_gen.mempoolidx.resize(_block_gen.ntx);
-//	_block_gen.mempoolidx.shrink_to_fit();
+	logprintf(1, "BLOCK_PREPARE: %d tx ready\n", _self_txid_info.txidlist.size());
 
 
 	txdata_t newtxdata;
@@ -132,13 +123,15 @@ int	block_gen_prepare()
 	// 바디 serialization
 	_mempool_lock.lock();
 
-	for (int nn = 0; nn < _block_gen.ntx; nn++)
+	for (int nn = 0; nn < (ssize_t)_self_txid_info.txidlist.size(); nn++)
 	{
-		txdata_t& curtxdata = _mempool[nn];
-		tx_block_gen_req_t block_txid;
+		string txid = _self_txid_info.txidlist[nn];
+		txid_info_req_t block_txid;
 
-		block_txid.txid = curtxdata.hdr.txid;
+		block_txid.txid = txid;
 		seriz_add(bodyszr, block_txid);
+
+		logprintf(1, "    prepare BLOCK Serialize: txid=%s \n", txid.c_str());
 	}
 
 	_mempool_lock.unlock();
@@ -154,13 +147,12 @@ int	block_gen_prepare()
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
 	seriz_add(hdrszr, hdr);
 
-	printf("    BLOCK_PREPARE: signature: %s\n", hdr.signature.c_str());
+	logprintf(1, "    BLOCK_PREPARE: signature: %s\n", hdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
 	int verify_check = verify_message_bin(from_addr, hdr.signature.c_str(), 
 				bodyszr.data(), bodyszr.size(), &_netparams.AddrHelper);
-	printf("    BLOCK_PREPARE: verify_check=%d\n", verify_check);
-	printf("\n");
+	logprintf(1, "    BLOCK_PREPARE: verify_check=%d\n", verify_check);
 
 	newtxdata.hdr = hdr;
 	newtxdata.hdrser = hdrszr.getstring();
@@ -169,10 +161,10 @@ int	block_gen_prepare()
 	// 발송 
 	_sendq.push(newtxdata);
 
-	_block_gen.block_height = _block_height;
-	_block_gen.sign_hash = sha256(hdr.signature);
+	_self_txid_info.block_height = _block_height;
+	_self_txid_info.sign_hash = sha256(hdr.signature);
 
-	return _block_gen.ntx;
+	return _self_txid_info.txidlist.size();
 }
 
 
@@ -192,7 +184,7 @@ void	ps_block_gen_req(txdata_t& txdata)
 	hp->valid = verify_message_bin(hp->from_addr.c_str(), hp->signature.c_str(), 
 				txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 	hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-	printf("    BLOCK_GEN_REQ verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+	logprintf(1, "    BLOCK_GEN_REQ verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 
 	// 검증 실패하면 폐기 
 	if (hp->valid == 0)
@@ -202,45 +194,50 @@ void	ps_block_gen_req(txdata_t& txdata)
 		return;
 	}
 
-	int	ntotal = 0, nfail = 0;
+	int	nfail = 0;
 
 	_mempool_lock.lock();
 
+	_recv_txid_info.txidlist.clear();
+
 	while (1)
 	{
-		tx_block_gen_req_t block_gen;
+		txid_info_req_t txid_info;
 
 		// TXID 추출 
-		int ret = deseriz(bodyszr, block_gen, 0);
+		int ret = deseriz(bodyszr, txid_info, 0);
 		if (ret == 0)
 			break;
-		ntotal++;
+		string txid = txid_info.txid;
 
 		// mempool에서 해당 TXID 검사 
-		if (_mempoolmap.count(block_gen.txid) <= 0)
+		if (_mempoolmap.count(txid) <= 0)
 		{
-			printf("WARNING: BLOCK_GEN_REQ: TXID NOT FOUND: %s\n", block_gen.txid.c_str());
+			logprintf(1, "WARNING: BLOCK_GEN_REQ: TXID NOT FOUND: %s\n", txid.c_str());
 			nfail++;
 			continue;
 		}
 
-		size_t idx = _mempoolmap[block_gen.txid];
-		txdata_t& curtxdata = _mempool[idx];
-
+		txdata_t& curtxdata = _mempoolmap[txid];
 		curtxdata.hdr.flag |= FLAG_TX_LOCK;
-		if (_debug > 2) printf("    BLOCK_GEN_REQ: %d TX_LOCK TXID=%s\n", ntotal, block_gen.txid.c_str());
+
+		_recv_txid_info.txidlist.push_back(txid);
+
+		logprintf(2, "    BLOCK_GEN_REQ: %d TX_LOCK TXID=%s\n", 
+			_recv_txid_info.txidlist.size(), txid.c_str());
 	}
 
 	_mempool_lock.unlock();
 
-	printf("    BLOCK_GEN_REQ ntotal=%d nfail=%d\n", ntotal, nfail);
+	logprintf(1, "    BLOCK_GEN_REQ ntotal=%d nfail=%d\n", 
+		_recv_txid_info.txidlist.size(), nfail);
 
 	txdata_t newtxdata;
 	tx_header_t hdr;
-	tx_block_gen_reply_t reply;
+	txid_info_reply_t reply;
 
 	// Body serialize
-	reply.ntotal = ntotal;
+	reply.ntotal = _recv_txid_info.txidlist.size();
 	reply.nfail = nfail;
 
 	seriz_add(newbodyszr, reply);
@@ -261,7 +258,7 @@ void	ps_block_gen_req(txdata_t& txdata)
 	newtxdata.hdrser = hdrszr.getstring();
 	newtxdata.bodyser = newbodyszr.getstring();
 
-	printf("    Add to sendq(TX_BLOCK_GEN_REPLY): type=%s nfail=%d\n",
+	logprintf(1, "    Add to sendq(TX_BLOCK_GEN_REPLY): type=%s nfail=%d\n",
 		get_type_name(hdr.type), hdr.status);
 
 	_sendq.push(newtxdata);	// broadcast to other nodes... (request verification)
@@ -275,12 +272,12 @@ void	ps_block_gen_reply(txdata_t& txdata)
 {
 	xserialize bodyszr;
 	tx_header_t *hp = &txdata.hdr;
-	tx_block_gen_reply_t reply;
+	txid_info_reply_t reply;
 
 	bodyszr.setstring(txdata.bodyser);
 	deseriz(bodyszr, reply);
 
-	printf("    TX_BLOCK_GEN_REPLY: fail=%d\n", hp->status);
+	logprintf(1, "    TX_BLOCK_GEN_REPLY: fail=%d\n", hp->status);
 
 	hp->valid = verify_message_bin(hp->from_addr.c_str(), hp->signature.c_str(), 
 				txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
@@ -290,27 +287,27 @@ void	ps_block_gen_reply(txdata_t& txdata)
 
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 
-		_block_gen_node[hp->nodeid] = reply.nfail;
+		_txid_reply_node[hp->nodeid] = reply.nfail;
 
 		// 일정 비율의 노드가 합의한 경우, 블록 생성 명령 발송 
-		for (map<uint32_t,int>::iterator it=_block_gen_node.begin(); it != _block_gen_node.end(); ++it)
+		for (map<uint32_t,int>::iterator it=_txid_reply_node.begin(); it != _txid_reply_node.end(); ++it)
 		{
-			printf("    MAP [%u] => %d\n", it->first, it->second);
+			logprintf(1, "    MAP [%u] => %d\n", it->first, it->second);
 			if (it->second <= 0)
 				nok++;
 		}
 
-		printf("    TX_BLOCK_GEN_REPLY verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
-		printf("    ntotal=%d nfail=%d\n", reply.ntotal, reply.nfail);
+		logprintf(1, "    TX_BLOCK_GEN_REPLY verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		logprintf(1, "    ntotal=%d nfail=%d\n", reply.ntotal, reply.nfail);
 
 		if (nok >= 1)
 		{
-			send_block_gen(txdata);
+			send_block_gen_reply(txdata);
 		}
 	}
 	else
 	{
-		printf("    TX_BLOCK_GEN_REPLY verify FAILED=%d \n", hp->valid);
+		logprintf(1, "    TX_BLOCK_GEN_REPLY verify FAILED=%d \n", hp->valid);
 	}
 }
 
@@ -318,15 +315,15 @@ void	ps_block_gen_reply(txdata_t& txdata)
 //
 // 각 노드에 블록 생성 명령 전송 
 //
-void	send_block_gen(txdata_t& txdata)
+void	send_block_gen_reply(txdata_t& txdata)
 {
 	txdata_t newtxdata;
 	tx_header_t hdr;
-	tx_block_gen_t cmd;
+	tx_txid_info_t cmd;
 	xserialize hdrszr, bodyszr;
 
 	// Body serialize
-	cmd.sign_hash = _block_gen.sign_hash;
+	cmd.sign_hash = _self_txid_info.sign_hash;
 
 	seriz_add(bodyszr, cmd);
 
@@ -345,36 +342,37 @@ void	send_block_gen(txdata_t& txdata)
 	newtxdata.hdrser = hdrszr.getstring();
 	newtxdata.bodyser = bodyszr.getstring();
 
-	printf("    Add to sendq(TX_BLOCK_GEN): type=%s sign_hash=%s\n",
+	logprintf(1, "    Add to sendq(TX_BLOCK_GEN): type=%s sign_hash=%s\n",
 		get_type_name(hdr.type), cmd.sign_hash.c_str());
 
 	_sendq.push(newtxdata);	// broadcast to other nodes... (request verification)
 
 
 	// 블록 생성 
-	ps_block_gen(txdata);
+	ps_block_gen(txdata, _self_txid_info);
 }
 
 
 //
 // 실제 블록 생성 
 //
-void	ps_block_gen(txdata_t& txdata)
+void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 {
 	string	block_txlist;		// 블록의 TX 목록 
 	xserialize blockszr;
 
-	size_t block_height = txdata.hdr.block_height;
+	txid_info.block_height = txdata.hdr.block_height;
 
-	printf("BLOCK_GEN: mempool_count=%ld\n", _mempool_count);
+	logprintf(1, "BLOCK_GEN: mempool size=%ld\n", _mempoolmap.size());
 
 	// 실제 블록 생성: 전체 TX 목록에 대해서 sign 후 저장 (이전 블록 hash 필요)
 	_mempool_lock.lock();
 
 	int ntx = 0;
-	for (ssize_t ii = 0; ii < (ssize_t) _mempool_count; ii++)
+	for (ssize_t ii = 0; ii < (ssize_t)txid_info.txidlist.size(); ii++)
 	{
-		txdata_t& curtxdata = _mempool[ii];
+		string txid = txid_info.txidlist[ii];
+		txdata_t& curtxdata = _mempoolmap[txid];
 
 		if (curtxdata.hdr.flag & FLAG_TX_LOCK)
 		{
@@ -389,52 +387,50 @@ void	ps_block_gen(txdata_t& txdata)
 
 			block_txlist += curtxdata.hdrser + curtxdata.bodyser;	// 원본 serialized 데이터를 연결 
 
-			curtxdata.hdr.flag |= FLAG_TX_LOCK;	// 삭제할 것
+			curtxdata.hdr.flag |= FLAG_TX_DELETE;	// 삭제할 것
 
 			ntx++;
-		//	if (_debug > 2)
-				printf("    Block [%ld] %d hdrsz=%ld bodysz=%ld value=%d\n", 
-					block_height, ntx, curtxdata.hdrser.size(), 
-					curtxdata.bodyser.size(), curtxdata.hdr.value);
+			logprintf(2, "    Block [%ld] %d hdrsz=%ld bodysz=%ld value=%d\n", 
+				txid_info.block_height, ntx, curtxdata.hdrser.size(), 
+				curtxdata.bodyser.size(), curtxdata.hdr.value);
 		}
 		else
 		{
-			printf("WARNING: mempool [%ld] value=%d flag=%08X\n", 
-				ii, curtxdata.hdr.value, curtxdata.hdr.flag);
+			logprintf(5, "    Skipped: mempool [%ld] txid=%s value=%d flag=%08X\n", 
+				ii, curtxdata.hdr.txid.c_str(), curtxdata.hdr.value, curtxdata.hdr.flag);
 		}
 	}
 
 	int ndel = 0;
-	for (ssize_t ii = _mempool_count; ii >= 0; ii--)
+	for (ssize_t ii = 0; ii < (ssize_t)txid_info.txidlist.size(); ii++)
 	{
-		txdata_t& curtxdata = _mempool[ii];
+		string txid = txid_info.txidlist[ii];
+		txdata_t& curtxdata = _mempoolmap[txid];
 
-		if (curtxdata.hdr.flag & FLAG_TX_LOCK)
+		if (curtxdata.hdr.flag & FLAG_TX_DELETE)
 		{
-			if (_debug > 2) printf("    Mempool %ld 삭제: txid=%s\n", ii, curtxdata.hdr.txid.c_str());
+			logprintf(2, "    Mempool %ld 삭제: txid=%s\n", ii, curtxdata.hdr.txid.c_str());
 
-			_mempoolmap.erase(curtxdata.hdr.txid);	// mempoolmap에서 제거 
-			_mempool.erase(_mempool.begin() + ii);	// mempool에서 제거 
-			_mempool_count--;
+			_mempoolmap.erase(txid);	// mempoolmap에서 제거 
 			ndel++;
 		}
 	}
 
 	_mempool_lock.unlock();
 
-	printf("    BLOCK_GEN: ntx=%d ndel=%d \n", ntx, ndel);
+	logprintf(1, "    BLOCK_GEN: ntx=%d ndel=%d \n", txid_info.txidlist.size(), ndel);
 
 	// 블록 정보 setup
 	block_info_t block_info;
 
 	memset(block_info.block_hash, 0, sizeof(block_info.block_hash));
-	block_info.block_height = block_height;
+	block_info.block_height = txid_info.block_height;
 	block_info.gen_addr = from_addr;
 	block_info.signature = sign_message_bin(privkey, block_txlist.c_str(), block_txlist.size(), 
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
 	block_info.prev_block_hash = sha256("이전 블록 hash");
 	block_info.block_clock = xgetclock();
-	block_info.ntx = _block_gen.ntx;
+	block_info.ntx = txid_info.txidlist.size();
 
 	string txhash = sha256(block_txlist);
 	seriz_add(blockszr, block_info);
@@ -446,12 +442,12 @@ void	ps_block_gen(txdata_t& txdata)
 	seriz_add(blockszr, block_info);
 
 	string block_data = blockszr.data() + block_txlist;
+	logprintf(1, "++++++++++블록 생성 완료: %ld 파일 출력 필요\n", block_data.size());
 	printf("++++++++++블록 생성 완료: %ld 파일 출력 필요\n", block_data.size());
 
 	// 다음 블록으로..
-	_block_height = block_height + 1;
+	_block_height = txid_info.block_height + 1;
 
-	_block_gen.mempoolidx.clear();
-	_block_gen.ntx = 0;
-	_block_gen.on_air = 0;
+	txid_info.txidlist.clear();
+	txid_info.on_air = 0;
 }

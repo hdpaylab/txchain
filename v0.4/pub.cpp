@@ -11,7 +11,7 @@ void	*thread_publisher(void *info_p)
 	char	bindstr[100] = {0};
 
 
-	if (_debug > 2) printf("thread_publisher: sendport=%d START!\n", sendport);
+	logprintf(2, "thread_publisher: sendport=%d START!\n", sendport);
 
 	// ZMQ setup: prepare our context and publisher
 	zmq::context_t context_pub(1);
@@ -43,11 +43,10 @@ void	*thread_publisher(void *info_p)
 
 		senddata = string(ZMQ_FILTER) + txdata.hdrser + txdata.bodyser;
 
-		if (_debug > 3) printf("\n-----Publisher for PUB-SUB:\n");
+		logprintf(3, "\n-----Publisher for PUB-SUB:\n");
 
-		//if (_debug > 1) 
 		if (txdata.hdr.type != TX_SEND_TOKEN)
-			dump_tx("    PUBLISH: ", txdata);
+			logprintf(2, "%s\n", dump_tx("    PUBLISH: ", txdata, 0).c_str());
 
 		bool ret = s_send(xpub, senddata);
 
@@ -81,7 +80,7 @@ void	*thread_send_test(void *info_p)
 	int	loop = MAX_TEST_NUM_TX;			// 100
 
 
-	if (_debug > 2) printf("thread_send_test: loop=%d START!\n", loop);
+	logprintf(2, "thread_send_test: loop=%d START!\n", loop);
 
 	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
 	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	

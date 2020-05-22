@@ -6,6 +6,10 @@
 #include "txcommon.h"
 
 
+int	_debug = 1;		// debugging level
+FILE	*_logfp = NULL;
+
+
 const char *get_status_name(int status)
 {
 	switch (status)
@@ -103,7 +107,7 @@ string	dump_tx(const char *title, txdata_t& txdata, bool disp)
 
 	snprintf(buf, sizeof(buf), "%s%-20s %-20s / sz=%-3ld/%-4ld / valid=%d", 
 		title, get_type_name(txdata.hdr.type), 
-		txdata.hdr.status >= 0 ? get_status_name(txdata.hdr.status) : "", 
+		txdata.hdr.status > 0 ? get_status_name(txdata.hdr.status) : "", 
 		txdata.hdrser.size(), txdata.bodyser.size(), txdata.hdr.valid);
 
 	if (disp)
@@ -111,4 +115,55 @@ string	dump_tx(const char *title, txdata_t& txdata, bool disp)
 
 	string retstr = buf;
 	return retstr;
+}
+
+
+int	logprintf(int level, ...)
+{
+	extern FILE	*_logfp;
+	va_list		ap;
+
+	va_start(ap, level);
+
+	if (_logfp == NULL)
+		return 0;
+
+	char *format = va_arg(ap, char *);
+	if (format == NULL)
+		return -1;
+
+	// 출력..
+	if (level <= _debug)
+	{
+		char	*tmpbuf = NULL;
+
+		tmpbuf = (char *) calloc(1, 16 * 1024);
+		vsprintf(tmpbuf, format, ap);
+
+		fprintf(_logfp, "%s %s", datestring().c_str(), tmpbuf);
+
+		free(tmpbuf);
+
+		fflush(_logfp);
+	}
+
+	return 1;
+}
+
+
+string	datestring(time_t tm)
+{
+	struct tm *tp = NULL;
+
+	if (tm == 0)
+		tm = time(NULL);
+	tp = localtime(&tm);
+
+	char	buf[40] = {0};
+	sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d",
+		tp->tm_year + 1900, tp->tm_mon + 1, tp->tm_mday, tp->tm_hour, tp->tm_min, tp->tm_sec);
+
+	string strdate = buf;
+
+	return strdate;
 }

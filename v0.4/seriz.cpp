@@ -25,7 +25,7 @@ int	seriz_add(xserialize& xsz, block_info_t& tx)
 }
 
 
-int	seriz_add(xserialize& xsz, tx_block_gen_req_t& tx)
+int	seriz_add(xserialize& xsz, txid_info_req_t& tx)
 {
 	int ret = xsz << tx.txid;
 
@@ -33,7 +33,7 @@ int	seriz_add(xserialize& xsz, tx_block_gen_req_t& tx)
 }
 
 
-int	seriz_add(xserialize& xsz, tx_block_gen_reply_t& tx)
+int	seriz_add(xserialize& xsz, txid_info_reply_t& tx)
 {
 	int ret = 0;
 	
@@ -44,7 +44,7 @@ int	seriz_add(xserialize& xsz, tx_block_gen_reply_t& tx)
 }
 
 
-int	seriz_add(xserialize& xsz, tx_block_gen_t& tx)
+int	seriz_add(xserialize& xsz, tx_txid_info_t& tx)
 {
 	int ret = 0;
 	
@@ -155,7 +155,7 @@ int	deseriz(xserialize& xsz, block_info_t& tx, int dump)
 }
 
 
-int	deseriz(xserialize& xsz, tx_block_gen_req_t& tx, int dump)
+int	deseriz(xserialize& xsz, txid_info_req_t& tx, int dump)
 {
 	int ret = xsz >> tx.txid;
 
@@ -168,7 +168,7 @@ int	deseriz(xserialize& xsz, tx_block_gen_req_t& tx, int dump)
 }
 
 
-int	deseriz(xserialize& xsz, tx_block_gen_reply_t& tx, int dump)
+int	deseriz(xserialize& xsz, txid_info_reply_t& tx, int dump)
 {
 	int ret = 0;
 
@@ -185,7 +185,7 @@ int	deseriz(xserialize& xsz, tx_block_gen_reply_t& tx, int dump)
 }
 
 
-int	deseriz(xserialize& xsz, tx_block_gen_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_txid_info_t& tx, int dump)
 {
 	int ret = xsz >> tx.sign_hash;
 
