@@ -28,4 +28,4 @@ cli: cli.o seriz.cpp common.cpp
 
 clean:
 	rm -f tx4 cli $(OBJS) *.o *.out *.ver *.a *.log
-	rm -rf system*.db wallet*.db block*.db
+	rm -rf db/* log/*

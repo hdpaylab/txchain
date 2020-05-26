@@ -21,8 +21,7 @@ void	*thread_subscriber(void *info_p)
 	logprintf(2, "SUB : peer=%s START!\n", peer);
 
 	// 디버깅 파일 생성 
-	strcpy(tmp, peer);
-	strcat(tmp, ".out");
+	sprintf(tmp, "log/%s.out", peer);
 	tp = strchr(tmp, ':');
 	assert(tp != NULL);
 	*tp = '_';
@@ -107,7 +106,7 @@ void	*thread_client(void *info_p)
 	logprintf(2, "CLIENT: client port=%d START!\n", clientport);
 
 	// 디버깅 파일 생성 
-	snprintf(tmp, sizeof(tmp), "CLIENT %d.out", clientport);
+	snprintf(tmp, sizeof(tmp), "log/client-%d.out", clientport);
 	FILE *outfp = fopen(tmp, "w+b");	// output file
 	assert(outfp != NULL);
 
@@ -238,6 +237,7 @@ int	tx_verify(txdata_t& txdata)
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
+
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 		logprintf(1, "%s\n", dump_tx("    SEND_TOKEN(r&v): ", txdata, 0).c_str());
 

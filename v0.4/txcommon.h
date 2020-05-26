@@ -19,6 +19,7 @@
 #include <structs/hashes.h>		// CSHA256()
 #include <utils/utilstrencodings.h>	// HexStr()
 #include <sys/time.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <leveldb/c.h>			// xleveldb.cpp
 

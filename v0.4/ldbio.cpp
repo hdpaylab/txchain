@@ -15,10 +15,12 @@ void	*thread_levledb(void *info_p)
 	char	dbname[256] = {0};
 	double	tmstart, tmend;
 
-	sprintf(dbname, "system-%d.db", chainport);
+	mkdir("db", 0755);
+
+	sprintf(dbname, "db/system-%d.db", chainport);
 	_systemdb.open(dbname);
 
-	sprintf(dbname, "wallet-%d.db", chainport);
+	sprintf(dbname, "db/wallet-%d.db", chainport);
 	_walletdb.open(dbname);
 
 	tmstart = xgetclock();

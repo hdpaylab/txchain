@@ -75,8 +75,8 @@ int	main(int ac, char *av[])
 //		printf("signature: %s\n", txhdr.signature.c_str());
 
 		// 발송 전에 미리 검증 테스트 
-		int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
-					bodyszr.data(), bodyszr.size(), &params.AddrHelper);
+//		int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
+//					bodyszr.data(), bodyszr.size(), &params.AddrHelper);
 //		printf("verify_check=%d\n", verify_check);
 //		printf("\n");
 
@@ -86,7 +86,7 @@ int	main(int ac, char *av[])
 
 #ifdef DEBUG
 //		sleepms(10);
-		if (count % 100 == 0)
+		if (count % 1000 == 0)
 			printf("CLIENT: Send %7d: reply=%s\n", count + 1, reply.c_str());
 #else
 		if (count % 10000 == 0)

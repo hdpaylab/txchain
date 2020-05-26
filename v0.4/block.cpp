@@ -1,6 +1,9 @@
 #include "txcommon.h"
 
 
+#define BLOCK_ITV	0.1
+
+
 size_t	_block_height = 1;			// 다음 생성할 블록 height
 
 block_txid_info_t	_self_txid_info;		// 자체적으로 블록 생성을 위한 txidlist
@@ -29,11 +32,11 @@ void	*thread_txid_info(void *info_p)
 
 	while (1)
 	{
-		if (xgetclock() - blocktime < 5 || _mempoolmap.size() <= 0 || _self_txid_info.on_air == 1)
+		if (xgetclock() - blocktime < BLOCK_ITV || _mempoolmap.size() <= 0 || _self_txid_info.on_air == 1)
 		{
 			logprintf(5, "    Block generation check: %.3f %ld %d\n", 
 					xgetclock() - blocktime, _mempoolmap.size(), _self_txid_info.on_air);
-			sleepms(1000);
+			sleepms(100);
 			continue;
 		}
 

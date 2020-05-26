@@ -77,7 +77,7 @@ void	init()
 	_consensusq.setmax(10000);
 
 	char	filename[256] = {0};
-	sprintf(filename, "debug-%d.log", _clientport);
+	sprintf(filename, "log/debug-%d.log", _clientport);
 	_logfp = fopen(filename, "a+b");
 	assert(_logfp != NULL);
 }
