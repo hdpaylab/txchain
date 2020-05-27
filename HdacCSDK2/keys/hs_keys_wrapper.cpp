@@ -22,48 +22,6 @@
 
 using namespace std;
 
-struct PrivateKeyHelperConstant : public IPrivateKeyHelper {
-        PrivateKeyHelperConstant(const char* privateKeyPrefix, const char* addrChecksum) :
-                _privatekeyPrefix(ParseHex(privateKeyPrefix)) {
-                _addrChecksumValue = parseHexToInt32Le(addrChecksum);
-                }
-
-        const std::vector<unsigned char> privkeyPrefix() const override {
-                return _privatekeyPrefix;
-        }
-
-        int32_t addrChecksumValue() const override {
-                return _addrChecksumValue;
-        }
-
-        vector<unsigned char> _privatekeyPrefix;
-        int32_t _addrChecksumValue;
-};
-
-struct WalletAddrHelperConstant : public IWalletAddrHelper {
-        WalletAddrHelperConstant(const char* pubkeyAddrPrefix, const char* scriptAddrPrefix, const char* addrChecksum) :
-                _pubKeyAddrPrefix(ParseHex(pubkeyAddrPrefix)),
-                _scriptAddrPrefix(ParseHex(scriptAddrPrefix)) {
-                _addrChecksumValue = parseHexToInt32Le(addrChecksum);
-                }
-
-        const std::vector<unsigned char> pubkeyAddrPrefix() const override {
-                return _pubKeyAddrPrefix;
-        }
-
-        const std::vector<unsigned char> scriptAddrPrefix() const override {
-                return _scriptAddrPrefix;
-        }
-
-        int32_t addrChecksumValue() const override {
-                return _addrChecksumValue;
-        }
-
-        vector<unsigned char> _pubKeyAddrPrefix;
-        vector<unsigned char> _scriptAddrPrefix;
-        int32_t _addrChecksumValue;
-};
-
 #ifdef _WIN32
 char * create_stream_publish_tx_shp(const char* streamKey, const char* streamItem, const char* createTxid,
 	const char* unspentScriptPubKey, const char* unspentTxid, uint32_t unspentVOut,
@@ -203,6 +161,14 @@ keypairs_type_t *create_key_pairs(const struct PrivateKeyHelpInfo *privatehelper
 #endif	
 	
 	return keys;
+}
+
+KeyPairs create_keypairs(const struct PrivateKeyHelpInfo *privatehelper, const struct WalletAddrHelpInfo *addrhelper)
+{
+	PrivateKeyHelperConstant privHelper(privatehelper->privateKeyPrefix, privatehelper->addrChecksum);
+	WalletAddrHelperConstant addrHelper(addrhelper->pubKeyAddrPrefix, addrhelper->scriptAddrPrefix, addrhelper->addrChecksum);
+
+	return createKeyPairs(privHelper, addrHelper);
 }
 
 unsigned char *create_pub_key_binarys(const struct PrivateKeyHelpInfo *privatehelper,

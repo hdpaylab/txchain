@@ -9,6 +9,25 @@
 int	_debug = 1;		// debugging level
 FILE	*_logfp = NULL;
 
+keypair_t _keypair;		// keypair of this node
+Params_type_t _netparams;
+
+
+// private-key-version = 83                # Version bytes used for exporting private keys.
+// address-checksum-value = 48444143       # Bytes used for XOR in address checksum calculation.
+struct PrivateKeyHelpInfo privinfo = {
+//      "8075fa23", "cb507245"
+        "83", "48444143"
+};
+
+// address-pubkeyhash-version = 28         # Version bytes used for pay-to-pubkeyhash addresses.
+// address-scripthash-version = 08         # Version bytes used for pay-to-scripthash addresses.
+// address-checksum-value = 48444143       # Bytes used for XOR in address checksum calculation.
+struct WalletAddrHelpInfo addrinfo = {
+//      "003fd61c", "0571a3e6", "cb507245"
+        "28", "08", "48444143"
+};
+
 
 const char *get_status_name(int status)
 {
@@ -79,6 +98,73 @@ const char *get_type_name(int type)
 		printf("Unknown type %d\n", type); return "UNKNOWN";
 	}
 }
+
+
+int	load_params_dat(const char *path)
+{
+	// load params set
+	if (path == NULL)
+		_netparams = load_params("params.dat");
+	else
+		_netparams = load_params(path);
+
+//	if (_netparams.error != 0)
+	{
+		_netparams.PrivHelper = privinfo;
+		_netparams.AddrHelper = addrinfo;
+	}
+
+	return _netparams.error;
+}
+
+
+keypair_t create_keypair()
+{
+	keypair_t kp;
+	uchar	masterkey[32] = {0};
+
+	kp = create_keypairs(&_netparams.PrivHelper, &_netparams.AddrHelper);
+
+	printf("\n");
+	printf("address : %s\n", kp.walletAddr.c_str());
+	printf("pubkeyhash : %s\n", kp.pubkeyHash.c_str());
+	printf("pubkey : %s\n", kp.pubkey.c_str());
+	printf("privatekey : %s\n", kp.privateKey.c_str());
+	printf("\n");
+
+	return kp;
+}
+
+
+keypair_t create_keypair(const uchar *privkey, size_t keylen)
+{
+	keypair_t kp;
+
+	assert(keylen == 32);
+
+	bool ret = kp.secret.SetPrivKey(&privkey[0], &privkey[32], true);
+	printf("SetPrivKey %s\n\n", ret ? "OK" : "FAIL");
+
+	EccAutoInitReleaseHandler::initEcc();
+
+
+	PrivateKeyHelperConstant privHelper(_netparams.PrivHelper.privateKeyPrefix, _netparams.PrivHelper.addrChecksum);
+	WalletAddrHelperConstant addrHelper(_netparams.AddrHelper.pubKeyAddrPrefix, _netparams.AddrHelper.scriptAddrPrefix, _netparams.AddrHelper.addrChecksum);
+
+	CBitcoinAddress newaddr(kp.secret.GetPubKey().GetID(), addrHelper);
+	kp.privateKey = CBitcoinSecret(kp.secret, privHelper).ToString();
+	kp.pubkey = HexStr(kp.secret.GetPubKey());
+	kp.pubkeyHash = HexStr(kp.secret.GetPubKey().GetID());
+	kp.walletAddr = newaddr.ToString();
+
+	printf("	privkey		= %s\n", kp.privateKey.c_str());
+	printf("	pubkey		= %s\n", kp.pubkey.c_str());
+	printf("	pubkeyHash	= %s\n", kp.pubkeyHash.c_str());
+	printf("	walletAddr	= %s\n", kp.walletAddr.c_str());
+
+	return kp;
+}
+
 
 
 tx_header_t	*parse_header_body(txdata_t& txdata)

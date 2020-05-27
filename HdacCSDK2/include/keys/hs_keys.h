@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <keys/key.h>
 #include "bitcoinaddress.h"
 /**
  *
@@ -14,6 +15,7 @@
  *
  */
 struct KeyPairs {
+    CKey secret;
     std::string privateKey;
     std::string pubkey;
     std::string pubkeyHash;

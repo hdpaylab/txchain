@@ -9,6 +9,11 @@ Params_type_t load_params(const string& Path)
 	static Params_type_t Params;
 
 	_params = mapFromFileReadAll(Path);
+	if (_params.size() <= 0)
+	{
+		Params.error = -1;
+		return Params;
+	}
 
 	snprintf(Params.PrivHelper.privateKeyPrefix, 
 		sizeof(Params.PrivHelper.privateKeyPrefix), "%s", _params["private-key-version"].data());
@@ -21,6 +26,7 @@ Params_type_t load_params(const string& Path)
 	snprintf(Params.AddrHelper.addrChecksum, 
 		sizeof(Params.AddrHelper.addrChecksum), "%s", _params["address-checksum-value"].data());
 
+	Params.error = 0;
 	return Params;
 }
 

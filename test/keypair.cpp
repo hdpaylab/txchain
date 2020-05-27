@@ -25,7 +25,7 @@ int	main(int ac, char *av[])
 {
 	bool result;
 
-	RpcClient client{"192.168.1.10", 28822, "hdacrpc", "hdac1234", "phdac"};
+	RpcClient client{"192.168.1.11", 28822, "hdacrpc", "hdac1234", "phdac"};
 	KeysHelperWithRpc helper(client);
 
 	CKey secret;
@@ -39,7 +39,7 @@ int	main(int ac, char *av[])
 	memcpy(pubkeybuf, (char *)pubkey.begin(), pubkey.size());
 	printf("Pubkey: "); dumpbin((char *)pubkeybuf, pubkey.size());
 
-	uchar privkeybuf[32] = {0};
+	uchar privkeybuf[64] = {0};
 	memcpy(privkeybuf, (char *)secret.begin(), secret.size());
 	printf("Privkey: "); dumpbin((char *)privkeybuf, secret.size());
 
@@ -62,10 +62,10 @@ int	main(int ac, char *av[])
 	CPrivKey privkey = secret.GetPrivKey();
 
 	result = newsecret.SetPrivKey(privkey, true);
-	printf("SerPrivKey=%s\n\n", result ? "OK" : "FAIL");
+	printf("SetPrivKey=%s\n\n", result ? "OK" : "FAIL");
 
 	result = newsecret.SetPrivKey(&privkeybuf[0], &privkeybuf[32], true);
-	printf("SerPrivKey=%s\n\n", result ? "OK" : "FAIL");
+	printf("SetPrivKey=%s\n\n", result ? "OK" : "FAIL");
 
 	EccAutoInitReleaseHandler::initEcc();		// 반드시 해야 함 
 	CPubKey newpubkey = newsecret.GetPubKey();

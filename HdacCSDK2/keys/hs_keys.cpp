@@ -54,28 +54,29 @@ void	_dumpbin(const char *name, char *buf, size_t bufsz)
  */
 KeyPairs createKeyPairs(const IPrivateKeyHelper &privateHelper, const IWalletAddrHelper &addrHelper)
 {
-    CKey secret;
+    KeyPairs kp;
+
     //secret.MakeNewKey(fCompressed);
-    secret.MakeNewKey(true);
+    kp.secret.MakeNewKey(true);
 
     EccAutoInitReleaseHandler::initEcc();
-    CPubKey pubkey = secret.GetPubKey();
+    CPubKey pubkey = kp.secret.GetPubKey();
 
     char pubkeybuf[66] = {0};
     memcpy(pubkeybuf, pubkey.begin(), pubkey.size());
-    _dumpbin("PubKey", pubkeybuf, pubkey.size());
+//  _dumpbin("PubKey", pubkeybuf, pubkey.size());
 
     char privkeybuf[66] = {0};
-    memcpy(privkeybuf, secret.begin(), secret.size());
-    _dumpbin("PrivKey", privkeybuf, secret.size());
+    memcpy(privkeybuf, kp.secret.begin(), kp.secret.size());
+//  _dumpbin("PrivKey", privkeybuf, kp.secret.size());
 
     CBitcoinAddress addr(pubkey.GetID(), addrHelper);
-    string privateKeyStr = CBitcoinSecret(secret, privateHelper).ToString();
-    string pubkeyStr = HexStr(pubkey);
-    string pubkeyHashStr = HexStr(pubkey.GetID());
-    string walletAddrStr = addr.ToString();
+    kp.privateKey = CBitcoinSecret(kp.secret, privateHelper).ToString();
+    kp.pubkey = HexStr(pubkey);
+    kp.pubkeyHash = HexStr(pubkey.GetID());
+    kp.walletAddr = addr.ToString();
 
-    return KeyPairs{privateKeyStr, pubkeyStr, pubkeyHashStr, walletAddrStr};
+    return kp;
 }
 
 unsigned char *createpubKeyBinarys(const IPrivateKeyHelper &privateHelper, const IWalletAddrHelper &addrHelper)

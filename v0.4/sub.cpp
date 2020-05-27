@@ -21,7 +21,7 @@ void	*thread_subscriber(void *info_p)
 	logprintf(2, "SUB : peer=%s START!\n", peer);
 
 	// 디버깅 파일 생성 
-	sprintf(tmp, "log/%s.out", peer);
+	sprintf(tmp, "logs/%s.out", peer);
 	tp = strchr(tmp, ':');
 	assert(tp != NULL);
 	*tp = '_';
@@ -106,7 +106,7 @@ void	*thread_client(void *info_p)
 	logprintf(2, "CLIENT: client port=%d START!\n", clientport);
 
 	// 디버깅 파일 생성 
-	snprintf(tmp, sizeof(tmp), "log/client-%d.out", clientport);
+	snprintf(tmp, sizeof(tmp), "logs/client-%d.out", clientport);
 	FILE *outfp = fopen(tmp, "w+b");	// output file
 	assert(outfp != NULL);
 

@@ -18,7 +18,7 @@ void	*thread_verifier(void *info_p)
 
 	logprintf(2, "Verifier %d START!\n", thrid);
 
-	sprintf(tmp, "log/verifier-%02d.ver", thrid);	// out file
+	sprintf(tmp, "logs/verifier-%02d.ver", thrid);	// out file
 	outfp = fopen(tmp, "w+b");
 	assert(outfp != NULL);
 

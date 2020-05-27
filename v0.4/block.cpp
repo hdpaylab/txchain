@@ -454,3 +454,133 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 	txid_info.txidlist.clear();
 	txid_info.on_air = 0;
 }
+
+
+int	make_genesis_block(const char *path)
+{
+	char	*block0 = (char *)calloc(1, GENESIS_BLOCK_SIZE);
+	char	*bp = block0;
+
+	assert(block0 != NULL);
+
+	// 랜덤 값으로 채움 
+	for (int ii = 0; ii < GENESIS_BLOCK_SIZE; ii++)
+	{
+		block0[ii] = rand() % 0x00FF;
+	}
+
+	block_header_t hdr;
+
+	hdr.block_size = GENESIS_BLOCK_SIZE;
+	hdr.block_height = 0;
+	hdr.block_version = 0x00000004;
+	memset(hdr.prev_block_hash, 0, sizeof(hdr.prev_block_hash));
+	hdr.block_clock = xgetclock();
+	hdr.block_numtx = 0;
+	hdr.block_bits = 0;
+
+	printf("Writing genesis block:\n");
+	printf("	genesis.block_size	= %lu\n", hdr.block_size);
+	printf("	genesis.block_height	= %lu\n", hdr.block_height);
+	printf("	genesis.block_version	= 0x%08lX\n", hdr.block_version);
+	printf("	genesis.block_clock	= %.3f\n", hdr.block_clock);
+	printf("	genesis.block_numtx	= %lu\n", hdr.block_numtx);
+	printf("	genesis.block_bits	= %u\n", hdr.block_bits);
+
+	memcpy(bp, (void *)&hdr, sizeof(block_header_t));
+	bp += 512;
+
+	printf("Generating genesis block:\n");
+	printf("	privkey		= %s\n", _keypair.privateKey.c_str());
+	printf("\n");
+
+	memcpy(bp, _keypair.secret.begin(), 32);
+//	dumpbin((const char *)bp, 32);
+	bp += 32;
+	
+	char	hashbuf[64] = {0};
+	sha256(hashbuf, (const char *)_keypair.secret.begin(), 32);
+	string hash = hex2bin(hashbuf);
+
+	memcpy(bp, hash.c_str(), 32);
+	bp += 32;
+
+	FILE *fp = fopen(path, "wb");
+	if (fp)
+	{
+		size_t wbytes = fwrite(block0, 1, GENESIS_BLOCK_SIZE, fp);
+		fclose(fp);
+
+		if (wbytes != GENESIS_BLOCK_SIZE)
+		{
+			perror("fwrite");
+			logprintf(0, "ERROR: Genesis block creation failed!\n");
+			return -1;
+		}
+	}
+
+	return 0;
+}
+
+
+int	load_genesis_block(const char *path)
+{
+	char	*block0 = (char *)calloc(1, GENESIS_BLOCK_SIZE);
+	char	*bp = block0;
+
+	assert(block0 != NULL);
+
+	FILE *fp = fopen(path, "rb");
+	if (fp)
+	{
+		size_t rbytes = fread(block0, 1, GENESIS_BLOCK_SIZE, fp);
+		fclose(fp);
+
+		if (rbytes != GENESIS_BLOCK_SIZE)
+		{
+			perror("fread");
+			logprintf(0, "ERROR: Genesis block read failed!\n");
+			return -1;
+		}
+	}
+
+	block_header_t hdr;
+	memcpy(&hdr, bp, sizeof(block_header_t));
+	bp += 512;
+
+	printf("Loading genesis block:\n");
+	printf("	genesis.block_size	= %lu\n", hdr.block_size);
+	printf("	genesis.block_height	= %lu\n", hdr.block_height);
+	printf("	genesis.block_version	= 0x%08lX\n", hdr.block_version);
+	printf("	genesis.block_clock	= %.3f\n", hdr.block_clock);
+	printf("	genesis.block_numtx	= %lu\n", hdr.block_numtx);
+	printf("	genesis.block_bits	= %u\n", hdr.block_bits);
+
+	uchar	masterkey[100] = {0};
+	memcpy(masterkey, bp, 32);
+	bp += 32;
+
+	char	diskhash[64] = {0};
+	memcpy(diskhash, bp, 32);
+	bp += 32;
+
+	printf("Loading keypairs:\n");
+	keypair_t keypair = create_keypair(masterkey, 32);
+
+	char	hashbuf[64] = {0};
+	sha256(hashbuf, (const char *)keypair.secret.begin(), 32);
+	string hash = hex2bin(hashbuf);
+
+	if (memcmp(diskhash, hash.c_str(), 32) != 0)
+	{
+		printf("ERROR: Genesis block private key changed!\n");
+		printf("\n");
+	}
+	else
+	{
+		printf("Genesis block private key verified.\n");
+		printf("\n");
+	}
+
+	return 0;
+}

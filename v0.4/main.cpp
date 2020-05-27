@@ -22,8 +22,6 @@ int	_chainport = DEFAULT_CHAIN_PORT;
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
 
-Params_type_t _netparams;
-
 
 safe_queue<txdata_t>	_sendq;		// send queue for publisher
 safe_queue<txdata_t>	_verifyq;	// stores received tx for verifier
@@ -33,6 +31,8 @@ safe_queue<txdata_t>	_consensusq;	// verification result queue
 
 
 void	init();
+void	init_keypair();
+void	init_block();
 void	parse_command_line(int ac, char *av[]);
 void	create_main_threads();
 void	create_subscriber_threads();
@@ -46,9 +46,6 @@ int	main(int ac, char *av[])
 	printf("Start txchain main: pid=%d\n", getpid());
 
 	init();
-
-	// load params set
-	_netparams = load_params("../lib/params.dat");
 
 	create_main_threads();
 
@@ -76,10 +73,49 @@ void	init()
 	_mempoolq.setmax(10000);
 	_consensusq.setmax(10000);
 
+	init_keypair();
+
 	char	filename[256] = {0};
-	sprintf(filename, "log/debug-%d.log", _clientport);
+	sprintf(filename, "logs/debug-%d.log", _clientport);
 	_logfp = fopen(filename, "a+b");
 	assert(_logfp != NULL);
+
+	init_block();
+}
+
+
+void	init_keypair()
+{
+	load_params_dat();
+
+	_keypair = create_keypair();
+}
+
+
+void	init_block()
+{
+	char	path[256];
+	struct stat st;
+
+	snprintf(path, sizeof(path), "blocks/block-000000.dat");
+	int ret = stat(path, &st);
+	if (ret < 0)
+	{
+		if (make_genesis_block(path) < 0)
+		{
+			logprintf(0, "Genesis block creation failed!\n");
+			exit(-1);
+		}
+	}
+	else if (st.st_size < 64 * 1024)
+	{
+		logprintf(0, "Wrong size genesis block!\n");
+		exit(-1);
+	}
+	else
+	{
+		load_genesis_block(path);
+	}
 }
 
 

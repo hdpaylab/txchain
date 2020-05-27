@@ -1,6 +1,7 @@
 #include <vector>
 #include <string>
 #include <stdint.h>
+#include <keys/hs_keys.h>
 #include <keys/hs_keys_wrapper.h>
 #include <keys/key.h>
 #include <keys/eccautoinitreleasehandler.h>
@@ -32,17 +33,19 @@ struct WalletAddrHelpInfo addrinfo = {
 
 void	test_create_key_pairs(void)
 {
+	KeyPairs keypair = create_keypairs(&privinfo, &addrinfo);
+
+	printf("address : %s\n", keypair.walletAddr.c_str());
+	printf("pubkeyhash : %s\n", keypair.pubkeyHash.c_str());
+	printf("pubkey : %s\n", keypair.pubkey.c_str());
+	printf("privatekey : %s\n", keypair.privateKey.c_str());
+	printf("\n");
+
 	keypairs_type_t *keypairs = create_key_pairs(&privinfo, &addrinfo);
 
 	printf("address : %s\n", keypairs->walletaddr);
-	printf("\n");
-
 	printf("pubkeyhash : %s\n", keypairs->pubkeyhash);
-	printf("\n");
-
 	printf("pubkey : %s\n", keypairs->pubkey);
-	printf("\n");
-
 	printf("privatekey : %s\n", keypairs->privatekey);
 	printf("\n");
 

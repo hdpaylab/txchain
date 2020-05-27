@@ -25,9 +25,9 @@ void	req_rep(int ac, char *av[])
 	zmq::context_t context(1);
 
 	zmq::socket_t requester(context, ZMQ_REQ);
-	requester.connect("tcp://192.168.1.10:7070");
-//	requester.connect("tcp://192.168.1.10:7071");	// 여러 서버로 보낼 때는, N번 보내야 각 서버로 전송됨 
-//	requester.connect("tcp://192.168.1.10:7072");
+	requester.connect("tcp://192.168.1.11:7070");
+//	requester.connect("tcp://192.168.1.11:7071");	// 여러 서버로 보낼 때는, N번 보내야 각 서버로 전송됨 
+//	requester.connect("tcp://192.168.1.11:7072");
 	int nsvr = 1;
 
 	int bufsize = 1 * 1024 * 1024;	// 1MB 버퍼 
@@ -77,7 +77,7 @@ void	push_pull(int direc)
 
 	//  Socket to send messages to
 	zmq::socket_t sender(context, ZMQ_PUSH);
-	sender.connect("tcp://192.168.1.10:5558");
+	sender.connect("tcp://192.168.1.11:5558");
 
 	uint64_t count = 0;
 	uint64_t sendsz = 0, recvsz = 0;

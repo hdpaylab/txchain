@@ -14,8 +14,16 @@
 #include <unistd.h>
 #include <time.h>
 #include <unistd.h>
+#include <stdint.h>
 #include <libpq-fe.h>
+#include <keys/hs_keys.h>		// KeyPairs
 #include <keys/hs_keys_wrapper.h>	// xparams.h
+#include <helpers/hs_helpers.h>
+#include <keys/keyshelper.h>
+#include <keys/key.h>
+#include <keys/bitcoinsecret.h>
+#include <keys/eccautoinitreleasehandler.h>
+#include <keys/bitcoinaddress.h>
 #include <structs/hashes.h>		// CSHA256()
 #include <utils/utilstrencodings.h>	// HexStr()
 #include <sys/time.h>
@@ -56,16 +64,27 @@ using namespace std;
 #define ZMQ_FILTER	"!@#$"			// ZMQ delimiter
 #define TX_DELIM	'|'			// TX delimiter
 
+#define GENESIS_BLOCK_SIZE	(64 * 1024)	// 64KB
+
+typedef unsigned char	uchar;
+
+typedef KeyPairs	keypair_t;
 
 typedef struct {
-	uint32_t	nodeid;
-	int		valid;
-}	node_valid_t;
+	size_t		block_size;
+	uint64_t	block_height;
+	uint64_t	block_version;
+	char		prev_block_hash[32];	// binary (sha256)
+	double		block_clock;
+	uint64_t	block_numtx;
+	uint32_t	block_bits;
+}	block_header_t;
 
 
 // main.cpp
 extern	int	_nverifier;	// current number of verifier threads
 extern	int	_debug;		// debugging level
+extern	keypair_t _keypair;	// keypair of this node
 
 extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
 extern	safe_queue<txdata_t>	_verifyq;	// receive queue for subscriber
@@ -73,9 +92,7 @@ extern	safe_queue<txdata_t>	_mempoolq;	// receive queue for verifier
 extern	safe_queue<txdata_t>	_leveldbq;	// leveldb queue 
 extern	safe_queue<txdata_t>	_consensusq;	// mempool queue (verification reply)
 
-extern	Params_type_t _netparams;			// parameters for sign/verify
-
-extern	map<string, array<node_valid_t, 100>> _csslist;		// consensus list ("txid":"nodeid-valid")
+extern	Params_type_t _netparams;		// parameters for sign/verify
 
 void	*thread_publisher(void *info_p);	// pub.cpp
 void	*thread_send_test(void *info_p);	// main.cpp
@@ -95,6 +112,10 @@ extern	leveldb	_walletdb;	//
 // common.cpp
 const char *get_type_name(int type);
 const char *get_status_name(int status);
+int		load_params_dat(const char *path = "params.dat");
+keypair_t	create_keypair();
+keypair_t	create_keypair(const uchar *privkey, size_t keylen);
+
 tx_header_t	*parse_header_body(txdata_t& txdata);
 string	dump_tx(const char *title, txdata_t& txdata, bool disp = 1);
 int	logprintf(int level, ...);
@@ -125,6 +146,9 @@ extern	block_txid_info_t _recv_txid_info;	// 블록 생성을 위해서 다른 �
 void	ps_block_gen_req(txdata_t& txdata);
 void	ps_block_gen_reply(txdata_t& txdata);
 void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info);		// 실제 블록 생성 
+
+int	make_genesis_block(const char *path);
+int	load_genesis_block(const char *path);
 
 
 // consensus.cpp

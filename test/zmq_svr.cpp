@@ -88,7 +88,7 @@ void	push_pull(int direc)
 	zmq::socket_t sender(context, ZMQ_PUSH);
 	if (direc == 2)		// bi-directional
 	{
-		sender.connect("tcp://192.168.1.10:5557");
+		sender.connect("tcp://192.168.1.11:5557");
 	}
 
 	uint64_t count = 0;

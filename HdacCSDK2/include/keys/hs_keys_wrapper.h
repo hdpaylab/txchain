@@ -17,6 +17,10 @@
 
 #include <stdio.h>
 #include <string>
+#include <vector>
+#include <keys/hs_keys.h>
+
+using namespace std;
 
 typedef struct keypairs {
 	char privatekey[100];
@@ -48,11 +52,57 @@ typedef struct ParamsHelperInfo {
 	keypairs_type_t keypairs;
 	struct PrivateKeyHelpInfo PrivHelper;
 	struct WalletAddrHelpInfo AddrHelper;
+	int	error;
 }Params_type_t;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+struct PrivateKeyHelperConstant : public IPrivateKeyHelper {
+        PrivateKeyHelperConstant(const char* privateKeyPrefix, const char* addrChecksum) :
+                _privatekeyPrefix(ParseHex(privateKeyPrefix)) {
+                _addrChecksumValue = parseHexToInt32Le(addrChecksum);
+                }
+
+        const std::vector<unsigned char> privkeyPrefix() const override {
+                return _privatekeyPrefix;
+        }
+
+        int32_t addrChecksumValue() const override {
+                return _addrChecksumValue;
+        }
+
+        vector<unsigned char> _privatekeyPrefix;
+        int32_t _addrChecksumValue;
+};
+
+struct WalletAddrHelperConstant : public IWalletAddrHelper {
+        WalletAddrHelperConstant(const char* pubkeyAddrPrefix, const char* scriptAddrPrefix, const char* addrChecksum) :
+                _pubKeyAddrPrefix(ParseHex(pubkeyAddrPrefix)),
+                _scriptAddrPrefix(ParseHex(scriptAddrPrefix)) {
+                _addrChecksumValue = parseHexToInt32Le(addrChecksum);
+                }
+
+        const std::vector<unsigned char> pubkeyAddrPrefix() const override {
+                return _pubKeyAddrPrefix;
+        }
+
+        const std::vector<unsigned char> scriptAddrPrefix() const override {
+                return _scriptAddrPrefix;
+        }
+
+        int32_t addrChecksumValue() const override {
+                return _addrChecksumValue;
+        }
+
+        vector<unsigned char> _pubKeyAddrPrefix;
+        vector<unsigned char> _scriptAddrPrefix;
+        int32_t _addrChecksumValue;
+};
+
+
 
 #ifdef _WIN32
 
@@ -82,6 +132,9 @@ keys_wrapper_EXPORT char* create_stream_publish_tx(const char* streamKey, const 
 /// createKeyPairs 함수를 c에서 사용 하기 위해 wrapping 한 함수.
 keys_wrapper_EXPORT keypairs_type_t *create_key_pairs(const struct PrivateKeyHelpInfo *privatehelper,
 		const struct WalletAddrHelpInfo *addrhelper);
+keys_wrapper_EXPORT KeyPairs create_keypairs(const struct PrivateKeyHelpInfo *privatehelper,
+			  		const struct WalletAddrHelpInfo *addrhelper);
+
 /// createpubKeybinarys 함수를 c에서 사용 하기 위해 wrapping 한 함수.
 keys_wrapper_EXPORT unsigned char *create_pub_key_binarys(const struct PrivateKeyHelpInfo *privatehelper,
 		const struct WalletAddrHelpInfo *addrhelper);

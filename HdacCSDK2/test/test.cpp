@@ -1,4 +1,5 @@
 ﻿#include <stdint.h>
+#include <keys/hs_keys.h>
 #include <keys/hs_keys_wrapper.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -41,12 +42,22 @@ void test_create_stream_publish_tx(void)
 
 void test_create_key_pairs(void)
 {
+	auto keypair = create_keypairs(&privinfo, &addrinfo);
+
+	printf("address : %s\n", keypair.walletAddr.c_str());
+	printf("pubkeyhash : %s\n", keypair.pubkeyHash.c_str());
+	printf("pubkey : %s\n", keypair.pubkey.c_str());
+	printf("privatekey : %s\n", keypair.privateKey.c_str());
+	printf("\n");
+
 	keypairs_type_t *keypairs = create_key_pairs(&privinfo, &addrinfo);
 
 	printf("address : %s\n", keypairs->walletaddr);
 	printf("pubkeyhash : %s\n", keypairs->pubkeyhash);
 	printf("pubkey : %s\n", keypairs->pubkey);
 	printf("privatekey : %s\n", keypairs->privatekey);
+	printf("\n");
+
 	free(keypairs);
 }
 
@@ -108,11 +119,11 @@ void test_base58()
 
 int main()
 {
+	test_create_key_pairs();
+
 	test_base58();
 
 	test_create_stream_publish_tx();
-
-	test_create_key_pairs();
 
 	test_create_asset_send_tx();
 	
