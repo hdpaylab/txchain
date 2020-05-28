@@ -116,14 +116,14 @@ void	*thread_send_test(void *info_p)
 	txhdr.data_length = bodyszr.size();
 
 	txhdr.data_length = bodyszr.size();
-	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &_params.PrivHelper, &_params.AddrHelper);
+	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &_netparams.PrivHelper, &_netparams.AddrHelper);
 	printf("Serialize: body length=%ld\n", bodyszr.size());
 	printf("address  : %s\n", from_addr);
 //	printf("message  : \n"); bodyszr.dump(10, 1);
 	printf("signature: %s\n", txhdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
-	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &_params.AddrHelper);
+	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &_netparams.AddrHelper);
 	printf("verify_check=%d\n", verify_check);
 	printf("\n");
 

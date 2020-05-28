@@ -80,7 +80,7 @@ int	tx_process(txdata_t& txdata)
 		string from_addr = create_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}
@@ -92,7 +92,7 @@ int	tx_process(txdata_t& txdata)
 		string from_addr = send_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_params.AddrHelper);
+					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 		printf("    verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
 	}

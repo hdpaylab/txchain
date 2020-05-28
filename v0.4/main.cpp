@@ -73,6 +73,10 @@ void	init()
 	_mempoolq.setmax(10000);
 	_consensusq.setmax(10000);
 
+	mkdir("db", 0700);
+	mkdir("blocks", 0700);
+	mkdir("logs", 0700);
+
 	init_keypair();
 
 	char	filename[256] = {0};
@@ -86,7 +90,7 @@ void	init()
 
 void	init_keypair()
 {
-	load_params_dat();
+	load_params_dat("../lib/params.dat");
 
 	_keypair = create_keypair();
 }
@@ -107,7 +111,7 @@ void	init_block()
 			exit(-1);
 		}
 	}
-	else if (st.st_size < 64 * 1024)
+	else if (st.st_size < GENESIS_BLOCK_SIZE)
 	{
 		logprintf(0, "Wrong size genesis block!\n");
 		exit(-1);

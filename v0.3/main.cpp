@@ -21,7 +21,7 @@ int	_chainport = DEFAULT_CHAIN_PORT;
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
 
-Params_type_t _params;
+Params_type_t _netparams;
 
 
 safe_queue<txdata_t>	_sendq;		// send queue for publisher
@@ -52,7 +52,7 @@ int	main(int ac, char *av[])
 	_mempool.resize(10000);
 
 	// load params set
-	_params = load_params("../lib/params.dat");
+	_netparams = load_params("../lib/params.dat");
 
 	create_main_threads();
 

@@ -474,7 +474,8 @@ int	make_genesis_block(const char *path)
 	hdr.block_size = GENESIS_BLOCK_SIZE;
 	hdr.block_height = 0;
 	hdr.block_version = 0x00000004;
-	memset(hdr.prev_block_hash, 0, sizeof(hdr.prev_block_hash));
+	for (int ii = 0; ii < 32; ii++)
+		hdr.prev_block_hash[ii] = 0;
 	hdr.block_clock = xgetclock();
 	hdr.block_numtx = 0;
 	hdr.block_bits = 0;
@@ -483,27 +484,52 @@ int	make_genesis_block(const char *path)
 	printf("	genesis.block_size	= %lu\n", hdr.block_size);
 	printf("	genesis.block_height	= %lu\n", hdr.block_height);
 	printf("	genesis.block_version	= 0x%08lX\n", hdr.block_version);
+	printf("	genesis.block_hash	= "); dumpbin((const char *)hdr.prev_block_hash, 32);
 	printf("	genesis.block_clock	= %.3f\n", hdr.block_clock);
 	printf("	genesis.block_numtx	= %lu\n", hdr.block_numtx);
 	printf("	genesis.block_bits	= %u\n", hdr.block_bits);
-
-	memcpy(bp, (void *)&hdr, sizeof(block_header_t));
-	bp += 512;
-
-	printf("Generating genesis block:\n");
-	printf("	privkey		= %s\n", _keypair.privateKey.c_str());
 	printf("\n");
 
-	memcpy(bp, _keypair.secret.begin(), 32);
-//	dumpbin((const char *)bp, 32);
-	bp += 32;
-	
-	char	hashbuf[64] = {0};
-	sha256(hashbuf, (const char *)_keypair.secret.begin(), 32);
-	string hash = hex2bin(hashbuf);
+	memcpy(bp, (void *)&hdr, sizeof(block_header_t));	// 헤더 디스크 추가 
+	bp += 518;		// 5.18 ^^
 
-	memcpy(bp, hash.c_str(), 32);
-	bp += 32;
+	// 암호 패스워드 생성 
+	char	passwd[32] = {0};
+	for (int ii = 0; ii < 32; ii++)
+	{
+		srand((uint32_t)(xgetclock() * 1000000));	// micro-second srand()
+		passwd[ii] = rand() % 0x00FF;
+		usleep(rand() % 100 + 1);
+	}
+	printf("Password: "); dumpbin((const char *)passwd, 32);
+
+	memcpy(bp, passwd, 32);			// 패스워드 디스크 추가 
+	bp += 64;
+
+	string basepass((const char *)passwd, 32);
+	string enc_passwd = sha256(basepass, false);	// 실제 암호화 패스워드 
+	
+	printf("Generating genesis block:\n");
+	printf("	privkey		= %s\n", _keypair.privateKey.c_str());
+	printf("	pubkey		= %s\n", _keypair.pubkey.c_str());
+	printf("	pubkeyHash	= %s\n", _keypair.pubkeyHash.c_str());
+	printf("	walletAddr	= %s\n", _keypair.walletAddr.c_str());
+	printf("\n");
+
+	// masterkey의 hash값 구함 
+	string mkey((const char *)_keypair.secret.begin(), 32);
+	printf("Before AES256 encrypt: "); dumpbin((const char *)mkey.c_str(), 32);
+	string mkey_hash = sha256(mkey, false);
+
+	// masterkey 암호화 
+	string enc_mkey = aes256_encrypt(enc_passwd, mkey);
+	printf("After AES256 encrypt: "); dumpbin((const char *)enc_mkey.c_str(), 32);
+
+	memcpy(bp, enc_mkey.c_str(), 32);	// 암호화된 masterkey 디스크 추가 
+	bp += 64;
+	
+	memcpy(bp, mkey_hash.c_str(), 32);	// masterkey hash 디스크 추가 
+	bp += 64;
 
 	FILE *fp = fopen(path, "wb");
 	if (fp)
@@ -546,7 +572,7 @@ int	load_genesis_block(const char *path)
 
 	block_header_t hdr;
 	memcpy(&hdr, bp, sizeof(block_header_t));
-	bp += 512;
+	bp += 518;		// 5.18 ^^
 
 	printf("Loading genesis block:\n");
 	printf("	genesis.block_size	= %lu\n", hdr.block_size);
@@ -556,22 +582,34 @@ int	load_genesis_block(const char *path)
 	printf("	genesis.block_numtx	= %lu\n", hdr.block_numtx);
 	printf("	genesis.block_bits	= %u\n", hdr.block_bits);
 
-	uchar	masterkey[100] = {0};
-	memcpy(masterkey, bp, 32);
-	bp += 32;
+	uchar	passwd[32] = {0};
+	memcpy(passwd, bp, 32);		// masterkey 암호 입수 
+	bp += 64;
+	printf("Password: "); dumpbin((const char *)passwd, 32);
 
-	char	diskhash[64] = {0};
-	memcpy(diskhash, bp, 32);
-	bp += 32;
+	string basepass((const char *)passwd, 32);
+	string dec_passwd = sha256(basepass, false);    // 실제 암호화 패스워드
+
+	uchar	enc_mkey[100] = {0};
+	memcpy(enc_mkey, bp, 32);	// 암호화된 masterkey 입수 
+	bp += 64;
+	printf("Before AES256 decrypt: "); dumpbin((const char *)enc_mkey, 32);
+
+	char	disk_mkey_hash[64] = {0};
+	memcpy(disk_mkey_hash, bp, 32);	// masterkey hash 입수 
+	bp += 64;
+
+	// masterkey 복호화 
+	string tmp_mkey((const char *)enc_mkey, 32);
+	string mkey = aes256_decrypt(dec_passwd, tmp_mkey);
+	printf("After AES256 decrypt: "); dumpbin((const char *)mkey.c_str(), 32);
 
 	printf("Loading keypairs:\n");
-	keypair_t keypair = create_keypair(masterkey, 32);
+	keypair_t keypair = create_keypair((const uchar *)mkey.c_str(), 32);
 
-	char	hashbuf[64] = {0};
-	sha256(hashbuf, (const char *)keypair.secret.begin(), 32);
-	string hash = hex2bin(hashbuf);
+	string mkey_hash = sha256(mkey, false);
 
-	if (memcmp(diskhash, hash.c_str(), 32) != 0)
+	if (memcmp(disk_mkey_hash, mkey_hash.c_str(), 32) != 0)
 	{
 		printf("ERROR: Genesis block private key changed!\n");
 		printf("\n");

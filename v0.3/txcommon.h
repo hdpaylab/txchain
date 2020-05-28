@@ -77,7 +77,7 @@ extern	safe_queue<txdata_t>	_verifyq;	// receive queue for subscriber
 extern	safe_queue<txdata_t>	_mempoolq;	// receive queue for verifier
 extern	safe_queue<txdata_t>	_consensusq;	// mempool queue (verification reply)
 
-extern	Params_type_t _params;			// parameters for sign/verify
+extern	Params_type_t _netparams;			// parameters for sign/verify
 
 extern	map<string, array<node_valid_t, 100>> _csslist;		// consensus list ("txid":"nodeid-valid")
 

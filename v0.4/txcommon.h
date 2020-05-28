@@ -64,7 +64,7 @@ using namespace std;
 #define ZMQ_FILTER	"!@#$"			// ZMQ delimiter
 #define TX_DELIM	'|'			// TX delimiter
 
-#define GENESIS_BLOCK_SIZE	(64 * 1024)	// 64KB
+#define GENESIS_BLOCK_SIZE	(32 * 1024)	// 32KB
 
 typedef unsigned char	uchar;
 
