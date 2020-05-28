@@ -148,7 +148,7 @@ void	ps_block_gen_reply(txdata_t& txdata);
 void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info);		// 실제 블록 생성 
 
 int	make_genesis_block(const char *path);
-int	load_genesis_block(const char *path);
+keypair_t load_genesis_block(const char *path);
 
 
 // consensus.cpp

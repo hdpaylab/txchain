@@ -91,8 +91,6 @@ void	init()
 void	init_keypair()
 {
 	load_params_dat("../lib/params.dat");
-
-	_keypair = create_keypair();
 }
 
 
@@ -105,6 +103,8 @@ void	init_block()
 	int ret = stat(path, &st);
 	if (ret < 0)
 	{
+		_keypair = create_keypair();
+
 		if (make_genesis_block(path) < 0)
 		{
 			logprintf(0, "Genesis block creation failed!\n");
@@ -118,7 +118,7 @@ void	init_block()
 	}
 	else
 	{
-		load_genesis_block(path);
+		_keypair = load_genesis_block(path);
 	}
 }
 

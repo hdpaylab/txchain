@@ -121,7 +121,6 @@ int	load_params_dat(const char *path)
 keypair_t create_keypair()
 {
 	keypair_t kp;
-	uchar	masterkey[32] = {0};
 
 	kp = create_keypairs(&_netparams.PrivHelper, &_netparams.AddrHelper);
 

@@ -549,7 +549,7 @@ int	make_genesis_block(const char *path)
 }
 
 
-int	load_genesis_block(const char *path)
+keypair_t load_genesis_block(const char *path)
 {
 	char	*block0 = (char *)calloc(1, GENESIS_BLOCK_SIZE);
 	char	*bp = block0;
@@ -566,7 +566,7 @@ int	load_genesis_block(const char *path)
 		{
 			perror("fread");
 			logprintf(0, "ERROR: Genesis block read failed!\n");
-			return -1;
+			exit(-1);
 		}
 	}
 
@@ -604,7 +604,7 @@ int	load_genesis_block(const char *path)
 	string mkey = aes256_decrypt(dec_passwd, tmp_mkey);
 	printf("After AES256 decrypt: "); dumpbin((const char *)mkey.c_str(), 32);
 
-	printf("Loading keypairs:\n");
+	printf("\nLoading keypairs:\n");
 	keypair_t keypair = create_keypair((const uchar *)mkey.c_str(), 32);
 
 	string mkey_hash = sha256(mkey, false);
@@ -620,5 +620,5 @@ int	load_genesis_block(const char *path)
 		printf("\n");
 	}
 
-	return 0;
+	return keypair;
 }
