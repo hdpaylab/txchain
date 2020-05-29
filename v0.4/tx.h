@@ -74,19 +74,22 @@ enum {
 typedef struct block_info {
 	block_info()
 	{
-		memset(block_hash, 0, sizeof(block_hash));
+		block_size = 0;
 		block_height = 0;
+		block_version = 0;
 		block_clock = 0;
-		ntx = 0;
+		block_numtx = 0;
 	}
-	char		block_hash[64];		// 블록 해시 sha256(block_info_t + orgdataser 리스트)
+	size_t		block_size;		// 블록 크기 (자신을 제외한 아래 내용)
+	string		block_hash;		// 블록 해시 sha256(block_info_t + orgdataser 리스트)
 						// 아래의 내용에 대한 hash 값임 (자신은 0000으로 초기화된 상태)
-	size_t		block_height;		// 블록 번호 
-	string		gen_addr;		// 블록 생성자
-	string		signature;		// sign(orgdataser 리스트)
+	uint64_t	block_height;		// 블록 번호 
+	uint64_t	block_version;		// 블록 버전 
 	string		prev_block_hash;	// 이전 블록 hash
 	double		block_clock;		// 블록 생성 시각 
-	int		ntx;			// TX 개수 
+	uint64_t	block_numtx;		// TX 개수 
+	string		block_gen_addr;		// 블록 생성자 주소 
+	string		block_signature;	// sign
 }	block_info_t;
 
 

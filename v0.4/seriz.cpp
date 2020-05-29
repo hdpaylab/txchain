@@ -12,14 +12,16 @@ int	seriz_add(xserialize& xsz, block_info_t& tx)
 {
 	int ret = 0;
 	
+	ret = xsz << tx.block_size;		// 블록 크기 (자신을 제외한 아래 내용)
 	ret = xsz << tx.block_hash;		// 블록 해시 sha256(block_info_t + orgdataser 리스트)
 						// 아래의 내용에 대한 hash 값임 (자신은 0000으로 초기화된 상태)
 	ret = xsz << tx.block_height;		// 블록 번호 
-	ret = xsz << tx.gen_addr;		// 블록 생성자
-	ret = xsz << tx.signature;		// sign(orgdataser 리스트)
+	ret = xsz << tx.block_version;		// 블록 버전 
 	ret = xsz << tx.prev_block_hash;	// 이전 블록 hash
 	ret = xsz << tx.block_clock;		// 블록 생성 시각 
-	ret = xsz << tx.ntx;			// TX 개수 
+	ret = xsz << tx.block_numtx;		// TX 개수 
+	ret = xsz << tx.block_gen_addr;		// 블록 생성자 주소 
+	ret = xsz << tx.block_signature;	// sign
 
 	return ret;
 }
@@ -131,24 +133,28 @@ int	deseriz(xserialize& xsz, block_info_t& tx, int dump)
 {
 	int ret = 0;
 
-	ret = xsz >> (char **)&tx.block_hash;	// 블록 해시 sha256(block_info_t + orgdataser 리스트)
+	ret = xsz >> tx.block_size;		// 블록 크기 (자신을 제외한 아래 내용)
+	ret = xsz >> tx.block_hash;		// 블록 해시 sha256(block_info_t + orgdataser 리스트)
 						// 아래의 내용에 대한 hash 값임 (자신은 0000으로 초기화된 상태)
 	ret = xsz >> tx.block_height;		// 블록 번호 
-	ret = xsz >> tx.gen_addr;		// 블록 생성자
-	ret = xsz >> tx.signature;		// sign(orgdataser 리스트)
+	ret = xsz >> tx.block_version;		// 블록 버전 
 	ret = xsz >> tx.prev_block_hash;	// 이전 블록 hash
 	ret = xsz >> tx.block_clock;		// 블록 생성 시각 
-	ret = xsz >> tx.ntx;			// TX 개수 
+	ret = xsz >> tx.block_numtx;		// TX 개수 
+	ret = xsz >> tx.block_gen_addr;		// 블록 생성자 주소 
+	ret = xsz >> tx.block_signature;	// sign
 
 	if (dump)
 	{
-		printf("    block_hash = %s\n", tx.block_hash);
-		printf("    block_height = %lu\n", tx.block_height);
-		printf("    gen_addr = %s\n", tx.gen_addr.c_str());
-		printf("    signature = %s\n", tx.signature.c_str());
-		printf("    prev_block_hash = %s\n", tx.prev_block_hash.c_str());
-		printf("    block_clock = %.3f\n", tx.block_clock);
-		printf("    ntx = %d\n", tx.ntx);
+		printf("    block_size		= %lu\n", tx.block_size);
+		printf("    block_hash		= %s\n", tx.block_hash.c_str()); 
+		printf("    block_height	= %lu\n", tx.block_height);
+		printf("    block_version	= 0x%08lX\n", tx.block_version);
+		printf("    prev_block_hash	= %s\n", tx.prev_block_hash.c_str());
+		printf("    block_clock		= %.3f\n", tx.block_clock);
+		printf("    block_numtx		= %lu\n", tx.block_numtx);
+		printf("    block_gen_addr	= %s\n", tx.block_gen_addr.c_str());
+		printf("    block_signature	= %s\n", tx.block_signature.c_str());
 	}
 
 	return ret;

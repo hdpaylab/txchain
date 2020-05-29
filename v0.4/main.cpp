@@ -11,7 +11,7 @@
 #include "txcommon.h"
 
 
-int	_nverifier = MAX_VERIFIER;
+int	_nverifier = MAX_VERIFY_THREADS;
 
 int	_automode = 1;		// auto data generation mode (client input disabled)
 int	_clientport = DEFAULT_CLIENT_PORT;	
@@ -68,10 +68,10 @@ void	init()
 {
 	extern FILE *_logfp;
 
-	_sendq.setmax(10000);
-	_verifyq.setmax(10000);
-	_mempoolq.setmax(10000);
-	_consensusq.setmax(10000);
+	_sendq.setmax(MAX_PUBLISH_QUEUE_SIZE);
+	_verifyq.setmax(MAX_VERIFY_QUEUE_SIZE);
+	_mempoolq.setmax(MAX_MEMPOOL_QUEUE_SIZE);
+	_consensusq.setmax(MAX_CONSENSUS_QUEUE_SIZE);
 
 	mkdir("db", 0700);
 	mkdir("blocks", 0700);
@@ -99,7 +99,7 @@ void	init_block()
 	char	path[256];
 	struct stat st;
 
-	snprintf(path, sizeof(path), "blocks/block-000000.dat");
+	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
 	int ret = stat(path, &st);
 	if (ret < 0)
 	{

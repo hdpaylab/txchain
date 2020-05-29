@@ -2,6 +2,7 @@
 
 
 leveldb	_systemdb;
+leveldb	_txdb;
 leveldb	_walletdb;
 
 
@@ -13,17 +14,19 @@ void	*thread_levledb(void *info_p)
 	int	chainport = *(int *)info_p;
 	int	count = 0;
 	char	dbname[256] = {0};
-	double	tmstart, tmend;
+
 
 	mkdir("db", 0755);
 
 	sprintf(dbname, "db/system-%d.db", chainport);
 	_systemdb.open(dbname);
 
+	sprintf(dbname, "db/tx-%d.db", chainport);
+	_txdb.open(dbname);
+
 	sprintf(dbname, "db/wallet-%d.db", chainport);
 	_walletdb.open(dbname);
 
-	tmstart = xgetclock();
 
 	while (1)
 	{
@@ -43,11 +46,8 @@ void	*thread_levledb(void *info_p)
 			printf("    leveldb processed %d mempoolq=%5ld\n", count, _mempoolq.size());
 	}
 
-	tmend = xgetclock();
-	printf("LDB : Recv time=%.3f / %.1f/sec\n",
-		tmend - tmstart, count / (tmend - tmstart));
-
 	_systemdb.close();
+	_txdb.close();
 	_walletdb.close();
 
 	return 0;

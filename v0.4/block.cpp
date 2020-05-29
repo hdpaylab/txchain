@@ -1,13 +1,12 @@
 #include "txcommon.h"
 
 
-#define BLOCK_ITV	0.1
-
-
-size_t	_block_height = 1;			// 다음 생성할 블록 height
-
-block_txid_info_t	_self_txid_info;		// 자체적으로 블록 생성을 위한 txidlist
+block_txid_info_t	_self_txid_info;	// 자체적으로 블록 생성을 위한 txidlist
 block_txid_info_t	_recv_txid_info;	// 블록 생성을 위해서 다른 노드에서 보낸 txidlist
+
+block_info_t		_genesis_block_hdr;	// Genesis block header
+block_info_t		_last_block_hdr;	// latest block header
+uint32_t		_last_block_file_no = 0;	// 블록 파일 번호 
 
 map<uint32_t, int>	_txid_reply_node;	// key=nodeid value=nfail
 
@@ -16,6 +15,7 @@ vector<string>	_next_block_txids;		// txid list of next block
 
 size_t	block_gen_prepare();
 void	send_block_gen_reply(txdata_t& txdata);	// BLOCK 생성 명령 발송 
+int	make_block(block_info_t& block_hdr, string& block_data);
 
 
 //
@@ -27,7 +27,7 @@ void	*thread_txid_info(void *info_p)
 	double	blocktime = xgetclock();
 
 	_self_txid_info.on_air = 0;
-	_self_txid_info.block_height = _block_height;
+	_self_txid_info.block_height = _last_block_hdr.block_height + 1;
 	_self_txid_info.sign_hash = string();
 
 	while (1)
@@ -62,12 +62,6 @@ void	*thread_txid_info(void *info_p)
 
 	return 0;
 }
-
-
-// 임시 변수 
-static	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
-static	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
-static	const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 
 
 //
@@ -141,19 +135,19 @@ size_t	block_gen_prepare()
 
 	// 헤더 serialization
 	hdr.nodeid = getpid();	// 임시로 
-	hdr.block_height = _block_height;	// 다음 생성할 블록 번호 
+	hdr.block_height = _last_block_hdr.block_height + 1;	// 다음 생성할 블록 번호 
 	hdr.type = TX_BLOCK_GEN_REQ;
 	hdr.data_length = bodyszr.size();
-	hdr.from_addr = from_addr;
+	hdr.from_addr = _keypair.walletAddr;
 	hdr.txclock = xgetclock();
-	hdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), 
+	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), bodyszr.data(), bodyszr.size(), 
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
 	seriz_add(hdrszr, hdr);
 
 	logprintf(1, "    BLOCK_PREPARE: signature: %s\n", hdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
-	int verify_check = verify_message_bin(from_addr, hdr.signature.c_str(), 
+	int verify_check = verify_message_bin(_keypair.walletAddr.c_str(), hdr.signature.c_str(), 
 				bodyszr.data(), bodyszr.size(), &_netparams.AddrHelper);
 	logprintf(1, "    BLOCK_PREPARE: verify_check=%d\n", verify_check);
 
@@ -164,7 +158,7 @@ size_t	block_gen_prepare()
 	// 발송 
 	_sendq.push(newtxdata);
 
-	_self_txid_info.block_height = _block_height;
+	_self_txid_info.block_height = _last_block_hdr.block_height + 1;
 	_self_txid_info.sign_hash = sha256(hdr.signature);
 
 	return _self_txid_info.txidlist.size();
@@ -250,9 +244,9 @@ void	ps_block_gen_req(txdata_t& txdata)
 	hdr.type = TX_BLOCK_GEN_REPLY;
 	hdr.status = -nfail;
 	hdr.data_length = newbodyszr.size();
-	hdr.from_addr = from_addr;
+	hdr.from_addr = _keypair.walletAddr;
 	hdr.txclock = xgetclock();
-	hdr.signature = sign_message_bin(privkey, newbodyszr.data(), newbodyszr.size(), 
+	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), newbodyszr.data(), newbodyszr.size(), 
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
 	xserialize hdrszr;
 	seriz_add(hdrszr, hdr);
@@ -332,12 +326,12 @@ void	send_block_gen_reply(txdata_t& txdata)
 
 	// Header serialize
 	hdr.nodeid = getpid();
-	hdr.block_height = _block_height;	// 다음 생성할 블록 번호 
+	hdr.block_height = _last_block_hdr.block_height + 1;	// 다음 생성할 블록 번호 
 	hdr.type = TX_BLOCK_GEN;
 	hdr.data_length = bodyszr.size();
-	hdr.from_addr = from_addr;
+	hdr.from_addr = _keypair.walletAddr;
 	hdr.txclock = xgetclock();
-	hdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), 
+	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), bodyszr.data(), bodyszr.size(), 
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
 	seriz_add(hdrszr, hdr);
 
@@ -362,15 +356,15 @@ void	send_block_gen_reply(txdata_t& txdata)
 void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 {
 	string	block_txlist;		// 블록의 TX 목록 
-	xserialize blockszr;
 
-	txid_info.block_height = txdata.hdr.block_height;
+	txid_info.block_height = _last_block_hdr.block_height + 1;
 
-	logprintf(1, "BLOCK_GEN: mempool size=%ld\n", _mempoolmap.size());
+	logprintf(1, "BLOCK_GEN: mempool size=%ld height=%ld\n", _mempoolmap.size(), txid_info.block_height);
 
 	// 실제 블록 생성: 전체 TX 목록에 대해서 sign 후 저장 (이전 블록 hash 필요)
 	_mempool_lock.lock();
 
+	// FLAG_TX_LOCK 표시된 tx는 블록으로 저장될 내용임 
 	int ntx = 0;
 	for (ssize_t ii = 0; ii < (ssize_t)txid_info.txidlist.size(); ii++)
 	{
@@ -404,6 +398,7 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 		}
 	}
 
+	// mempool에서 저장된 내용 삭제 
 	int ndel = 0;
 	for (ssize_t ii = 0; ii < (ssize_t)txid_info.txidlist.size(); ii++)
 	{
@@ -423,39 +418,84 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 
 	logprintf(1, "    BLOCK_GEN: ntx=%d ndel=%d \n", txid_info.txidlist.size(), ndel);
 
-	// 블록 정보 setup
-	block_info_t block_info;
-
-	memset(block_info.block_hash, 0, sizeof(block_info.block_hash));
-	block_info.block_height = txid_info.block_height;
-	block_info.gen_addr = from_addr;
-	block_info.signature = sign_message_bin(privkey, block_txlist.c_str(), block_txlist.size(), 
-				&_netparams.PrivHelper, &_netparams.AddrHelper);
-	block_info.prev_block_hash = sha256("이전 블록 hash");
-	block_info.block_clock = xgetclock();
-	block_info.ntx = txid_info.txidlist.size();
-
 	string txhash = sha256(block_txlist);
-	seriz_add(blockszr, block_info);
+
+	// 블록 정보 setup
+	block_info_t block_hdr;
+
+	block_hdr.block_height = _last_block_hdr.block_height + 1;
+	block_hdr.block_gen_addr = _keypair.walletAddr;
+	block_hdr.block_signature = sign_message_bin(_keypair.privateKey.c_str(), block_txlist.c_str(), block_txlist.size(), 
+				&_netparams.PrivHelper, &_netparams.AddrHelper);
+	block_hdr.prev_block_hash = _last_block_hdr.block_hash;
+	block_hdr.block_clock = xgetclock();
+	block_hdr.block_numtx = txid_info.txidlist.size();
+
+	xserialize blockszr;
+	seriz_add(blockszr, block_hdr);		// block_hash == null && block_size == 0
+
 	string infohash = sha256(blockszr.getstring());
-	string blockhash = sha256(infohash + txhash);
+	block_hdr.block_hash = sha256(infohash + txhash);
 
-	memcpy(block_info.block_hash, blockhash.c_str(), blockhash.size());
+	blockszr.clear();
+	seriz_add(blockszr, block_hdr);	// block_hash == "HASH" && block_size > 0
 
-	seriz_add(blockszr, block_info);
+	block_hdr.block_size = blockszr.size() + block_txlist.size();	// 전체 블록 크기 다시 계산
 
-	string block_data = blockszr.data() + block_txlist;
-	logprintf(1, "++++++++++블록 생성 완료: %ld 파일 출력 필요\n", block_data.size());
-	printf("++++++++++블록 생성 완료: %ld 파일 출력 필요\n", block_data.size());
+	blockszr.clear();
+	seriz_add(blockszr, block_hdr);	// block_hash == null && block_size == 0
+
+	string block_data = blockszr.getstring() + block_txlist;
+
+	assert(block_data.size() == block_hdr.block_size);
+
+	make_block(block_hdr, block_data);
 
 	// 다음 블록으로..
-	_block_height = txid_info.block_height + 1;
+	_last_block_hdr = block_hdr;
 
 	txid_info.txidlist.clear();
 	txid_info.on_air = 0;
 }
 
 
+//
+// 블록 생성:
+//	block_hdr: 현재 저장하려는 블록의 정보 
+//	block_data: 헤더 부분과 TX 리스트가 serialize되어 있음 
+//
+int	make_block(block_info_t& block_hdr, string& block_data)
+{
+	char	path[256] = {0};
+
+	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
+	FILE	*bfp = fopen(path, "a+");
+	if (bfp)
+	{
+		size_t wbytes = fwrite(block_data.c_str(), 1, block_data.size(), bfp);
+		fclose(bfp);
+
+		if (wbytes != block_data.size())
+		{
+			perror("fwrite");
+			logprintf(0, "ERROR: Block %ld write failed to '%s'!\n", block_hdr.block_height, path);
+			return -1;
+		}
+		logprintf(1, "++++++++++블록 %ld 생성 완료: size=%ld \n", block_hdr.block_height, block_data.size());
+		printf("++++++++++블록 %ld 생성 완료: size=%ld \n", block_hdr.block_height, block_data.size());
+	}
+	else
+	{
+		logprintf(0, "ERROR: Cannot open block db file '%s'!\n", path);
+		return -1;
+	}
+	return 0;
+}
+
+
+//
+// Genesis block 최초 생성
+//
 int	make_genesis_block(const char *path)
 {
 	char	*block0 = (char *)calloc(1, GENESIS_BLOCK_SIZE);
@@ -469,28 +509,29 @@ int	make_genesis_block(const char *path)
 		block0[ii] = rand() % 0x00FF;
 	}
 
-	block_header_t hdr;
-
-	hdr.block_size = GENESIS_BLOCK_SIZE;
-	hdr.block_height = 0;
-	hdr.block_version = 0x00000004;
-	for (int ii = 0; ii < 32; ii++)
-		hdr.prev_block_hash[ii] = 0;
-	hdr.block_clock = xgetclock();
-	hdr.block_numtx = 0;
-	hdr.block_bits = 0;
+	_genesis_block_hdr.block_size = GENESIS_BLOCK_SIZE;	// include 8 bytes block_size
+	_genesis_block_hdr.block_height = 0;
+	_genesis_block_hdr.block_version = 0x00000004;
+	_genesis_block_hdr.block_clock = xgetclock();
+	_genesis_block_hdr.block_numtx = 0;
 
 	printf("Writing genesis block:\n");
-	printf("	genesis.block_size	= %lu\n", hdr.block_size);
-	printf("	genesis.block_height	= %lu\n", hdr.block_height);
-	printf("	genesis.block_version	= 0x%08lX\n", hdr.block_version);
-	printf("	genesis.block_hash	= "); dumpbin((const char *)hdr.prev_block_hash, 32);
-	printf("	genesis.block_clock	= %.3f\n", hdr.block_clock);
-	printf("	genesis.block_numtx	= %lu\n", hdr.block_numtx);
-	printf("	genesis.block_bits	= %u\n", hdr.block_bits);
+	printf("	genesis.block_size	= %lu\n", _genesis_block_hdr.block_size);
+	printf("	genesis.block_hash	= %s\n", _genesis_block_hdr.block_hash.c_str()); 
+	printf("	genesis.block_height	= %lu\n", _genesis_block_hdr.block_height);
+	printf("	genesis.block_version	= 0x%08lX\n", _genesis_block_hdr.block_version);
+	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	genesis.block_clock	= %.3f\n", _genesis_block_hdr.block_clock);
+	printf("	genesis.block_numtx	= %lu\n", _genesis_block_hdr.block_numtx);
+	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
 	printf("\n");
 
-	memcpy(bp, (void *)&hdr, sizeof(block_header_t));	// 헤더 디스크 추가 
+	// 헤더를 serialization 
+	xserialize szr;
+	seriz_add(szr, _genesis_block_hdr);
+
+	memcpy(bp, szr.getstring().c_str(), szr.size());	// 헤더 디스크 추가 
 	bp += 518;		// 5.18 ^^
 
 	// 암호 패스워드 생성 
@@ -505,6 +546,11 @@ int	make_genesis_block(const char *path)
 
 	memcpy(bp, passwd, 32);			// 패스워드 디스크 추가 
 	bp += 64;
+
+	passwd[6] = 6;				// 패스워드 변화..
+	passwd[1] = 1;
+	passwd[2] = 2;
+	passwd[0] = 0;
 
 	string basepass((const char *)passwd, 32);
 	string enc_passwd = sha256(basepass, false);	// 실제 암호화 패스워드 
@@ -531,6 +577,7 @@ int	make_genesis_block(const char *path)
 	memcpy(bp, mkey_hash.c_str(), 32);	// masterkey hash 디스크 추가 
 	bp += 64;
 
+	// block0에 기록 
 	FILE *fp = fopen(path, "wb");
 	if (fp)
 	{
@@ -545,10 +592,15 @@ int	make_genesis_block(const char *path)
 		}
 	}
 
+	_last_block_hdr = _genesis_block_hdr;
+
 	return 0;
 }
 
 
+//
+// Genesis block loading: keypair 복구 (masterkey)
+//
 keypair_t load_genesis_block(const char *path)
 {
 	char	*block0 = (char *)calloc(1, GENESIS_BLOCK_SIZE);
@@ -556,6 +608,7 @@ keypair_t load_genesis_block(const char *path)
 
 	assert(block0 != NULL);
 
+	// block0 읽기 
 	FILE *fp = fopen(path, "rb");
 	if (fp)
 	{
@@ -565,27 +618,38 @@ keypair_t load_genesis_block(const char *path)
 		if (rbytes != GENESIS_BLOCK_SIZE)
 		{
 			perror("fread");
-			logprintf(0, "ERROR: Genesis block read failed!\n");
+			logprintf(0, "ERROR: Genesis block read failed! read=%ld bytes\n", rbytes);
 			exit(-1);
 		}
 	}
 
-	block_header_t hdr;
-	memcpy(&hdr, bp, sizeof(block_header_t));
-	bp += 518;		// 5.18 ^^
+	xserialize szr;
+
+	string hdrstr(bp, 518);		// 헤더 부분 deserialize
+	szr.setstring(hdrstr);
+	deseriz(szr, _genesis_block_hdr);
+	bp += 518;			// 5.18 ^^
 
 	printf("Loading genesis block:\n");
-	printf("	genesis.block_size	= %lu\n", hdr.block_size);
-	printf("	genesis.block_height	= %lu\n", hdr.block_height);
-	printf("	genesis.block_version	= 0x%08lX\n", hdr.block_version);
-	printf("	genesis.block_clock	= %.3f\n", hdr.block_clock);
-	printf("	genesis.block_numtx	= %lu\n", hdr.block_numtx);
-	printf("	genesis.block_bits	= %u\n", hdr.block_bits);
+	printf("	genesis.block_size	= %lu\n", _genesis_block_hdr.block_size);
+	printf("	genesis.block_hash	= %s\n", _genesis_block_hdr.block_hash.c_str()); 
+	printf("	genesis.block_height	= %lu\n", _genesis_block_hdr.block_height);
+	printf("	genesis.block_version	= 0x%08lX\n", _genesis_block_hdr.block_version);
+	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	genesis.block_clock	= %.3f\n", _genesis_block_hdr.block_clock);
+	printf("	genesis.block_numtx	= %lu\n", _genesis_block_hdr.block_numtx);
+	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
 
 	uchar	passwd[32] = {0};
 	memcpy(passwd, bp, 32);		// masterkey 암호 입수 
 	bp += 64;
 	printf("Password: "); dumpbin((const char *)passwd, 32);
+
+	passwd[6] = 6;			// 패스워드 변화..
+	passwd[1] = 1;
+	passwd[2] = 2;
+	passwd[0] = 0;
 
 	string basepass((const char *)passwd, 32);
 	string dec_passwd = sha256(basepass, false);    // 실제 암호화 패스워드
@@ -604,15 +668,19 @@ keypair_t load_genesis_block(const char *path)
 	string mkey = aes256_decrypt(dec_passwd, tmp_mkey);
 	printf("After AES256 decrypt: "); dumpbin((const char *)mkey.c_str(), 32);
 
+	// 키페어 복구
 	printf("\nLoading keypairs:\n");
 	keypair_t keypair = create_keypair((const uchar *)mkey.c_str(), 32);
 
+	// 마스터키 hash 구해서 디스크의 hash 값과 일치하는지 비교 
 	string mkey_hash = sha256(mkey, false);
 
+	// genesis 블록 생성시 만든 masterkey의 hash와 master key를 hash한 값이 같아야 master key가 동일하다는 검증이 됨
 	if (memcmp(disk_mkey_hash, mkey_hash.c_str(), 32) != 0)
 	{
-		printf("ERROR: Genesis block private key changed!\n");
+		printf("ERROR: Genesis block private key verification failed!\n");
 		printf("\n");
+		exit(-1);
 	}
 	else
 	{
