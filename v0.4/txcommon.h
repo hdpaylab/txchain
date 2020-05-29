@@ -46,7 +46,7 @@ using namespace std;
 
 
 #define MAX_NODE		100		// 최대 합의용 노드 개수 
-#define BLOCK_ITV		0.1		// 블록 생성 주기 (0.1초)
+#define BLOCK_ITV		1		// 블록 생성 주기 (1초)
 #define GENESIS_BLOCK_SIZE	(32 * 1024)	// 32KB
 
 
@@ -142,6 +142,7 @@ void	ps_block_gen_req(txdata_t& txdata);
 void	ps_block_gen_reply(txdata_t& txdata);
 void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info);		// 실제 블록 생성 
 
+int	check_blocks();
 int	make_genesis_block(const char *path);
 keypair_t load_genesis_block(const char *path);
 

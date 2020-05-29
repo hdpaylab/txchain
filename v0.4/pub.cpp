@@ -142,7 +142,7 @@ void	*thread_send_test(void *info_p)
 
 		txdata.orgdataser = hdrszr.getstring() + bodyszr.getstring();
 
-		printf("    Add to sendq: type=%s status=%s\n",
+		logprintf(2, "    Add to sendq: type=%s status=%s\n",
 			get_type_name(txhdr.type), get_status_name(txhdr.status));
 
 		_sendq.push(txdata);

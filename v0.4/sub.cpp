@@ -224,7 +224,7 @@ int	tx_verify(txdata_t& txdata)
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		logprintf(1, "%s\n", dump_tx("    CREATE_TOKEN(r&v): ", txdata, 0).c_str());
+		logprintf(3, "%s\n", dump_tx("    CREATE_TOKEN(r&v): ", txdata, 0).c_str());
 
 		return 1;
 	}
@@ -239,7 +239,7 @@ int	tx_verify(txdata_t& txdata)
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		logprintf(1, "%s\n", dump_tx("    SEND_TOKEN(r&v): ", txdata, 0).c_str());
+		logprintf(3, "%s\n", dump_tx("    SEND_TOKEN(r&v): ", txdata, 0).c_str());
 
 		return 1;
 	}

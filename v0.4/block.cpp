@@ -94,7 +94,7 @@ size_t	block_gen_prepare()
 
 		txdata.hdr.flag |= FLAG_TX_LOCK;	// TX LOCK
 
-		logprintf(1, "    prepare BLOCK: prepare %d diff=%.3f flag=0x%08X %s\n", 
+		logprintf(3, "    prepare BLOCK: prepare %d diff=%.3f flag=0x%08X %s\n", 
 				_self_txid_info.txidlist.size() + 1, curclock - txdata.hdr.recvclock, 
 				txdata.hdr.flag, txdata.hdr.txid.c_str());
 
@@ -128,7 +128,7 @@ size_t	block_gen_prepare()
 		block_txid.txid = txid;
 		seriz_add(bodyszr, block_txid);
 
-		logprintf(1, "    prepare BLOCK Serialize: txid=%s \n", txid.c_str());
+		logprintf(3, "    prepare BLOCK Serialize: txid=%s \n", txid.c_str());
 	}
 
 	_mempool_lock.unlock();
@@ -255,7 +255,7 @@ void	ps_block_gen_req(txdata_t& txdata)
 	newtxdata.hdrser = hdrszr.getstring();
 	newtxdata.bodyser = newbodyszr.getstring();
 
-	logprintf(1, "    Add to sendq(TX_BLOCK_GEN_REPLY): type=%s nfail=%d\n",
+	logprintf(2, "    Add to sendq(TX_BLOCK_GEN_REPLY): type=%s nfail=%d\n",
 		get_type_name(hdr.type), hdr.status);
 
 	_sendq.push(newtxdata);	// broadcast to other nodes... (request verification)
@@ -274,7 +274,7 @@ void	ps_block_gen_reply(txdata_t& txdata)
 	bodyszr.setstring(txdata.bodyser);
 	deseriz(bodyszr, reply);
 
-	logprintf(1, "    TX_BLOCK_GEN_REPLY: fail=%d\n", hp->status);
+	logprintf(2, "    TX_BLOCK_GEN_REPLY: fail=%d\n", hp->status);
 
 	hp->valid = verify_message_bin(hp->from_addr.c_str(), hp->signature.c_str(), 
 				txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
@@ -289,13 +289,13 @@ void	ps_block_gen_reply(txdata_t& txdata)
 		// 일정 비율의 노드가 합의한 경우, 블록 생성 명령 발송 
 		for (map<uint32_t,int>::iterator it=_txid_reply_node.begin(); it != _txid_reply_node.end(); ++it)
 		{
-			logprintf(1, "    MAP [%u] => %d\n", it->first, it->second);
+			logprintf(3, "    MAP [%u] => %d\n", it->first, it->second);
 			if (it->second <= 0)
 				nok++;
 		}
 
-		logprintf(1, "    TX_BLOCK_GEN_REPLY verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
-		logprintf(1, "    ntotal=%d nfail=%d\n", reply.ntotal, reply.nfail);
+		logprintf(2, "    TX_BLOCK_GEN_REPLY verify result=%d txid=%s\n", hp->valid, hp->txid.c_str());
+		logprintf(2, "    ntotal=%d nfail=%d\n", reply.ntotal, reply.nfail);
 
 		if (nok >= 1)
 		{
@@ -339,7 +339,7 @@ void	send_block_gen_reply(txdata_t& txdata)
 	newtxdata.hdrser = hdrszr.getstring();
 	newtxdata.bodyser = bodyszr.getstring();
 
-	logprintf(1, "    Add to sendq(TX_BLOCK_GEN): type=%s sign_hash=%s\n",
+	logprintf(2, "    Add to sendq(TX_BLOCK_GEN): type=%s sign_hash=%s\n",
 		get_type_name(hdr.type), cmd.sign_hash.c_str());
 
 	_sendq.push(newtxdata);	// broadcast to other nodes... (request verification)
@@ -431,23 +431,21 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 	block_hdr.block_clock = xgetclock();
 	block_hdr.block_numtx = txid_info.txidlist.size();
 
-	xserialize blockszr;
-	seriz_add(blockszr, block_hdr);		// block_hash == null && block_size == 0
+	xserialize hdrszr;
+	seriz_add(hdrszr, block_hdr);		// block_hash == null && block_size == 0
 
-	string infohash = sha256(blockszr.getstring());
+	string infohash = sha256(hdrszr.getstring());
 	block_hdr.block_hash = sha256(infohash + txhash);
 
-	blockszr.clear();
-	seriz_add(blockszr, block_hdr);	// block_hash == "HASH" && block_size > 0
+	hdrszr.clear();
+	seriz_add(hdrszr, block_hdr);	// block_hash == "HASH" && block_size > 0
 
-	block_hdr.block_size = blockszr.size() + block_txlist.size();	// 전체 블록 크기 다시 계산
+	block_hdr.block_size = hdrszr.size() + block_txlist.size();	// 전체 블록 크기 다시 계산
 
-	blockszr.clear();
-	seriz_add(blockszr, block_hdr);	// block_hash == null && block_size == 0
+	hdrszr.clear();
+	seriz_add(hdrszr, block_hdr);	// block_hash == null && block_size == 0
 
-	string block_data = blockszr.getstring() + block_txlist;
-
-	assert(block_data.size() == block_hdr.block_size);
+	string block_data = hdrszr.getstring() + block_txlist;
 
 	make_block(block_hdr, block_data);
 
@@ -469,9 +467,10 @@ int	make_block(block_info_t& block_hdr, string& block_data)
 	char	path[256] = {0};
 
 	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
-	FILE	*bfp = fopen(path, "a+");
+	FILE	*bfp = fopen(path, "r+b");
 	if (bfp)
 	{
+		fseek(bfp, 0L, SEEK_END);
 		size_t wbytes = fwrite(block_data.c_str(), 1, block_data.size(), bfp);
 		fclose(bfp);
 
@@ -482,13 +481,85 @@ int	make_block(block_info_t& block_hdr, string& block_data)
 			return -1;
 		}
 		logprintf(1, "++++++++++블록 %ld 생성 완료: size=%ld \n", block_hdr.block_height, block_data.size());
-		printf("++++++++++블록 %ld 생성 완료: size=%ld \n", block_hdr.block_height, block_data.size());
 	}
 	else
 	{
 		logprintf(0, "ERROR: Cannot open block db file '%s'!\n", path);
 		return -1;
 	}
+	return 0;
+}
+
+
+//
+//
+//
+int	check_blocks()
+{
+	char	path[256] = {0};
+	uint64_t count = 0;
+
+	printf("Checking blocks...\n");
+
+	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
+	FILE	*bfp = fopen(path, "rb");
+	if (bfp == NULL)
+	{
+		logprintf(0, "ERROR: Cannot open block db file '%s'!\n", path);
+		return -1;
+	}
+
+	// Genesis block skip
+	fseek(bfp, GENESIS_BLOCK_SIZE, SEEK_SET);
+
+	for (count = 1; ; count++)
+	{
+		long	start_pos = ftell(bfp);
+		printf("Read block %ld: offset=%ld\n", count, start_pos);
+
+		char	sizebuf[sizeof(size_t) + 1] = {0};	// +1은 serialize type 1바이트 추가 
+		size_t rbytes = fread(sizebuf, 1, sizeof(size_t) + 1, bfp);
+		if (rbytes != sizeof(size_t) + 1)
+			break;
+
+		size_t block_size = *(size_t *)&sizebuf[1];
+		printf("block size=%ld \n", block_size);
+
+		fseek(bfp, start_pos, SEEK_SET);
+		char	*blockbuf = (char *) calloc(1, block_size);
+		if (blockbuf == NULL)
+		{
+			logprintf(0, "WARNING: calloc(%ld) failed at check_block!\n", block_size);
+			continue;
+		}
+
+		rbytes = fread(blockbuf, 1, block_size, bfp);
+		if (rbytes != block_size)
+		{
+			logprintf(0, "WARNING: Block %d read failed!\n", _last_block_hdr.block_height + 1);
+			break;
+		}
+
+		xserialize szr;
+		block_info_t block_hdr;
+
+		szr.setdata(blockbuf, rbytes);
+		deseriz(szr, block_hdr);
+
+		printf("Loading block %ld:\n", block_hdr.block_height);
+		printf("	block_size	= %lu\n", block_hdr.block_size);
+		printf("	block_hash	= %s\n", block_hdr.block_hash.c_str()); 
+		printf("	block_height	= %lu\n", block_hdr.block_height);
+		printf("	block_version	= 0x%08lX\n", block_hdr.block_version);
+		printf("	prev_block_hash	= %s\n", block_hdr.prev_block_hash.c_str()); 
+		printf("	block_clock	= %.3f\n", block_hdr.block_clock);
+		printf("	block_numtx	= %lu\n", block_hdr.block_numtx);
+		printf("	block_gen_addr	= %s\n", block_hdr.block_gen_addr.c_str()); 
+		printf("	block_signature	= %s\n", block_hdr.block_signature.c_str()); 
+		printf("\n");
+	}
+	printf("\n");
+
 	return 0;
 }
 
@@ -516,15 +587,15 @@ int	make_genesis_block(const char *path)
 	_genesis_block_hdr.block_numtx = 0;
 
 	printf("Writing genesis block:\n");
-	printf("	genesis.block_size	= %lu\n", _genesis_block_hdr.block_size);
-	printf("	genesis.block_hash	= %s\n", _genesis_block_hdr.block_hash.c_str()); 
-	printf("	genesis.block_height	= %lu\n", _genesis_block_hdr.block_height);
-	printf("	genesis.block_version	= 0x%08lX\n", _genesis_block_hdr.block_version);
-	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
-	printf("	genesis.block_clock	= %.3f\n", _genesis_block_hdr.block_clock);
-	printf("	genesis.block_numtx	= %lu\n", _genesis_block_hdr.block_numtx);
-	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
-	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	block_size	= %lu\n", _genesis_block_hdr.block_size);
+	printf("	block_hash	= %s\n", _genesis_block_hdr.block_hash.c_str()); 
+	printf("	block_height	= %lu\n", _genesis_block_hdr.block_height);
+	printf("	block_version	= 0x%08lX\n", _genesis_block_hdr.block_version);
+	printf("	prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	block_clock	= %.3f\n", _genesis_block_hdr.block_clock);
+	printf("	block_numtx	= %lu\n", _genesis_block_hdr.block_numtx);
+	printf("	block_gen_addr	= %s\n", _genesis_block_hdr.block_gen_addr.c_str()); 
+	printf("	block_signature	= %s\n", _genesis_block_hdr.block_signature.c_str()); 
 	printf("\n");
 
 	// 헤더를 serialization 

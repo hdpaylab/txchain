@@ -152,7 +152,7 @@ void	send_verify_result(txdata_t& txdata)
 	seriz_add(hdrszr, hdr);
 	txdata.hdrser = hdrszr.getstring();	// 헤더 serialization 교체 
 
-	printf("    Add to sendq(TX_VERIFY_REPLY): type=%s status=%s\n",
+	logprintf(3, "    Add to sendq(TX_VERIFY_REPLY): type=%s status=%s\n",
 		get_type_name(hdr.type), get_status_name(hdr.status));
 
 	_sendq.push(txdata);	// broadcast to other nodes... (request verification)

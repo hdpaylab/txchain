@@ -16,7 +16,7 @@ int	mempool_add(txdata_t& txdata)
 
 	_mempoolmap[txid] = txdata;
 
-	logprintf(1, "    Mempool add [%s] = %s %s flag=0x%08X\n", 
+	logprintf(3, "    Mempool add [%s] = %s %s flag=0x%08X\n", 
 		txid.c_str(), get_type_name(txdata.hdr.type), 
 		txdata.hdr.status > 0 ? get_status_name(txdata.hdr.status) : "", txdata.hdr.flag);
 
@@ -32,11 +32,11 @@ void	mempool_update(string txid, int flag)
 
 	if (_mempoolmap.count(txid) <= 0)
 	{
-		logprintf(1, "WARNING: txid not found in mempool. txid=%s\n", txid.c_str());
+		logprintf(2, "WARNING: txid not found in mempool. txid=%s\n", txid.c_str());
 		return;
 	}
 
-	logprintf(1, "    Mempool update txid=%s flag|=0x%08X\n", txid.c_str(), flag);
+	logprintf(3, "    Mempool update txid=%s flag|=0x%08X\n", txid.c_str(), flag);
 
 	txdata_t& curtxdata = _mempoolmap[txid];
 

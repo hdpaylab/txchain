@@ -120,6 +120,8 @@ void	init_block()
 	{
 		_keypair = load_genesis_block(path);
 	}
+
+	check_blocks();
 }
 
 
