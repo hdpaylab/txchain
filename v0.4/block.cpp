@@ -585,6 +585,11 @@ int	make_genesis_block(const char *path)
 	_genesis_block_hdr.block_version = 0x00000004;
 	_genesis_block_hdr.block_clock = xgetclock();
 	_genesis_block_hdr.block_numtx = 0;
+	_genesis_block_hdr.block_gen_addr = _keypair.walletAddr;
+	// 서명은 address에 대해서 수행함 
+	_genesis_block_hdr.block_signature = sign_message_bin(_keypair.privateKey.c_str(), 
+						_keypair.walletAddr.c_str(), _keypair.walletAddr.size(),
+						&_netparams.PrivHelper, &_netparams.AddrHelper);
 
 	printf("Writing genesis block:\n");
 	printf("	block_size	= %lu\n", _genesis_block_hdr.block_size);
@@ -702,15 +707,15 @@ keypair_t load_genesis_block(const char *path)
 	bp += 518;			// 5.18 ^^
 
 	printf("Loading genesis block:\n");
-	printf("	genesis.block_size	= %lu\n", _genesis_block_hdr.block_size);
-	printf("	genesis.block_hash	= %s\n", _genesis_block_hdr.block_hash.c_str()); 
-	printf("	genesis.block_height	= %lu\n", _genesis_block_hdr.block_height);
-	printf("	genesis.block_version	= 0x%08lX\n", _genesis_block_hdr.block_version);
-	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
-	printf("	genesis.block_clock	= %.3f\n", _genesis_block_hdr.block_clock);
-	printf("	genesis.block_numtx	= %lu\n", _genesis_block_hdr.block_numtx);
-	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
-	printf("	genesis.prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	block_size	= %lu\n", _genesis_block_hdr.block_size);
+	printf("	block_hash	= %s\n", _genesis_block_hdr.block_hash.c_str()); 
+	printf("	block_height	= %lu\n", _genesis_block_hdr.block_height);
+	printf("	block_version	= 0x%08lX\n", _genesis_block_hdr.block_version);
+	printf("	prev_block_hash	= %s\n", _genesis_block_hdr.prev_block_hash.c_str()); 
+	printf("	block_clock	= %.3f\n", _genesis_block_hdr.block_clock);
+	printf("	block_numtx	= %lu\n", _genesis_block_hdr.block_numtx);
+	printf("	block_gen_addr	= %s\n", _genesis_block_hdr.block_gen_addr.c_str()); 
+	printf("	block_signature	= %s\n", _genesis_block_hdr.block_signature.c_str()); 
 
 	uchar	passwd[32] = {0};
 	memcpy(passwd, bp, 32);		// masterkey 암호 입수 
@@ -753,11 +758,18 @@ keypair_t load_genesis_block(const char *path)
 		printf("\n");
 		exit(-1);
 	}
-	else
-	{
-		printf("Genesis block private key verified.\n");
-		printf("\n");
-	}
+
+	// 복구된 키페어의 정보와 헤더의 주소가 일치해야 함 
+	assert(keypair.walletAddr == _genesis_block_hdr.block_gen_addr);
+
+	int verify_check = verify_message_bin(_genesis_block_hdr.block_gen_addr.c_str(), 
+				_genesis_block_hdr.block_signature.c_str(), 
+				_genesis_block_hdr.block_gen_addr.c_str(), 
+				_genesis_block_hdr.block_gen_addr.size(), &_netparams.AddrHelper);
+	assert(verify_check == 1);
+
+	printf("Genesis block private key and signature verified.\n");
+	printf("\n");
 
 	return keypair;
 }
