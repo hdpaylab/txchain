@@ -133,7 +133,7 @@ void	*thread_client(void *info_p)
 		count++;
 
 		// 헤더와 바디 분리 파싱 
-		tx_header_t *hp = parse_header_body(txdata);
+		parse_header_body(txdata);
 		txdata.hdr.recvclock = xgetclock();
 
 		logprintf(3, "\n\n=====Subscriber for CLIENT: (ZMQ::REQ-REPLY)\n");
@@ -144,9 +144,9 @@ void	*thread_client(void *info_p)
 		int broadcast_tx = tx_verify(txdata);
 
 		// 정상적으로 검증되고 전체 노드로 broadcast 필요한 tx인 경우 (verify는 중복 처리 안함)
-		if (hp->valid == 1 && broadcast_tx)
+		if (txdata.hdr.valid == 1 && broadcast_tx)
 		{
-			hp->status = STAT_BCAST_TX;
+			txdata.hdr.status = STAT_BCAST_TX;
 
 			logprintf(2, "%s\n", dump_tx("    Bcast  : ", txdata, 0).c_str());
 
@@ -160,7 +160,7 @@ void	*thread_client(void *info_p)
 #endif
 
 		// Send reply back to client
-		s_send(responder, hp->txid);
+		s_send(responder, txdata.hdr.txid);
 	}
 
 	fclose(outfp);

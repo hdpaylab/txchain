@@ -154,7 +154,7 @@ typedef struct tx_self_txid_info_reply {
 
 typedef struct {
 	string		sign_hash;
-}	tx_txid_info_t;
+}	tx_sign_hash_t;
 
 
 typedef struct {
@@ -351,7 +351,7 @@ typedef struct {
 int	seriz_add(xserialize& xsz, block_info_t& tx);
 int	seriz_add(xserialize& xsz, txid_info_req_t& tx);
 int	seriz_add(xserialize& xsz, txid_info_reply_t& tx);
-int	seriz_add(xserialize& xsz, tx_txid_info_t& tx);
+int	seriz_add(xserialize& xsz, tx_sign_hash_t& tx);
 int	seriz_add(xserialize& xsz, tx_send_token_t& tx);
 int	seriz_add(xserialize& xsz, tx_header_t& tx);
 int	seriz_add(xserialize& xsz, tx_create_token_t& tx);
@@ -360,7 +360,7 @@ int	seriz_add(xserialize& xsz, tx_verify_reply_t& tx);
 int	deseriz(xserialize& xsz, block_info_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, txid_info_req_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, txid_info_reply_t& tx, int dump = 0);
-int	deseriz(xserialize& xsz, tx_txid_info_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_sign_hash_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_header_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump = 0);

@@ -107,7 +107,7 @@ int		load_params_dat(const char *path = "params.dat");
 keypair_t	create_keypair();
 keypair_t	create_keypair(const uchar *privkey, size_t keylen);
 
-tx_header_t	*parse_header_body(txdata_t& txdata);
+tx_header_t&	parse_header_body(txdata_t& txdata);
 string	dump_tx(const char *title, txdata_t& txdata, bool disp = 1);
 int	logprintf(int level, ...);
 string	datestring(time_t tm = 0);

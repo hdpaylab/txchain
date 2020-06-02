@@ -46,7 +46,7 @@ int	seriz_add(xserialize& xsz, txid_info_reply_t& tx)
 }
 
 
-int	seriz_add(xserialize& xsz, tx_txid_info_t& tx)
+int	seriz_add(xserialize& xsz, tx_sign_hash_t& tx)
 {
 	int ret = 0;
 	
@@ -191,7 +191,7 @@ int	deseriz(xserialize& xsz, txid_info_reply_t& tx, int dump)
 }
 
 
-int	deseriz(xserialize& xsz, tx_txid_info_t& tx, int dump)
+int	deseriz(xserialize& xsz, tx_sign_hash_t& tx, int dump)
 {
 	int ret = xsz >> tx.sign_hash;
 

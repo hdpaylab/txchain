@@ -55,9 +55,13 @@ void	*thread_publisher(void *info_p)
 		if (_sendq.size() > 9000)
 			sleepms(1);
 #ifdef DEBUG
+		if (count % 1000 == 0)
+			printf("    Publish: broadcast %d  sendq=%5ld  ret=%d\n",
+				count, _sendq.size(), ret);
 #else
 		if (count % 100000 == 0)
-			printf("    Publish: broadcast %d  sendq=%5ld\n", count, _sendq.size());
+			printf("    Publish: broadcast %d  sendq=%5ld  ret=%d\n",
+				count, _sendq.size(), ret);
 #endif
 	}
 
@@ -80,7 +84,7 @@ void	*thread_send_test(void *info_p)
 	int	loop = MAX_TEST_NUM_TX;			// 100
 
 
-	logprintf(2, "thread_send_test: loop=%d START!\n", loop);
+	logprintf(3, "thread_send_test: sendport=%d loop=%d START!\n", sendport, loop);
 
 	const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
 	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
