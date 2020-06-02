@@ -66,14 +66,29 @@ int	seriz_add(xserialize& xsz, tx_header_t& tx)
 	ret = xsz << tx.signature;	// signature of data
 	ret = xsz << tx.from_addr;	// 데이터 부분에 from_addr가 없는 경우에 사용
 	ret = xsz << tx.txclock;	// tx generation clock
+	ret = xsz << tx.recvclock;	// 수신 clock
 
 	ret = xsz << tx.block_height;	// 블록 번호
 	ret = xsz << tx.status;		// STAT_VERIFY_xx
 	ret = xsz << tx.valid;		// 0=invalid 1=valid -1=none
 	ret = xsz << tx.txid;		// transaction id: sha256(sign)
 	ret = xsz << tx.flag;		// FLAG_xxx
-	ret = xsz << tx.recvclock;	// 수신 clock
 	ret = xsz << tx.value;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, file_tx_header_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.nodeid;		// node id
+	ret = xsz << tx.type;		// TX_xxx
+	ret = xsz << tx.data_length;	// sign data length
+	ret = xsz << tx.signature;	// signature of data
+	ret = xsz << tx.txclock;	// tx generation clock
+	ret = xsz << tx.recvclock;	// 수신 clock
 
 	return ret;
 }
@@ -214,13 +229,13 @@ int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 	ret = xsz >> tx.signature;	// signature of data
 	ret = xsz >> tx.from_addr;	// 데이터 부분에 from_addr가 없는 경우에 사용
 	ret = xsz >> tx.txclock;	// tx generation clock
+	ret = xsz >> tx.recvclock;	// 수신 clock
 
 	ret = xsz >> tx.block_height;	// 블록 번호
 	ret = xsz >> tx.status;		// STAT_VERIFY_xx
 	ret = xsz >> tx.valid;		// 0=invalid 1=valid -1=none
 	ret = xsz >> tx.txid;		// transaction id: sha256(sign)
 	ret = xsz >> tx.flag;		// FLAG_xxx
-	ret = xsz >> tx.recvclock;	// 수신 clock
 	ret = xsz >> tx.value;
 
 	if (dump)
@@ -232,6 +247,7 @@ int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 		printf("    hdr::signature = %s (%ld)\n", tx.signature.c_str(), tx.signature.size());
 		printf("    hdr::from_addr = %s (%ld)\n", tx.from_addr.c_str(), tx.from_addr.size());
 		printf("    hdr::txclock = %.3f\n", tx.txclock);
+		printf("    hdr::recvclock = %.3f\n", tx.recvclock);
 
 		printf("    hdr::block_height = %lu\n", tx.block_height);
 		printf("    hdr::status = %s (%u == 0x%08X)\n", 
@@ -239,6 +255,31 @@ int	deseriz(xserialize& xsz, tx_header_t& tx, int dump)
 		printf("    hdr::valid = %d\n", tx.valid);
 		printf("    hdr::txid = %s (%ld)\n", tx.txid.c_str(), tx.txid.size());
 		printf("    hdr::flag = 0x%08X\n", tx.flag);
+		printf("    hdr::value = %d == 0x%08X\n", tx.value, tx.value);
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, file_tx_header_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.nodeid;		// node id
+	ret = xsz >> tx.type;		// TX_xxx
+	ret = xsz >> tx.data_length;	// sign data length
+	ret = xsz >> tx.signature;	// signature of data
+	ret = xsz >> tx.txclock;	// tx generation clock
+	ret = xsz >> tx.recvclock;	// 수신 clock
+
+	if (dump)
+	{
+		printf("    hdr::nodeid = %u\n", tx.nodeid);
+		printf("    hdr::type = %s (%u == 0x%08X)\n", get_type_name(tx.type), tx.type, tx.type);
+		printf("    hdr::data length = %ld\n", tx.data_length);
+		printf("    hdr::signature = %s (%ld)\n", tx.signature.c_str(), tx.signature.size());
+		printf("    hdr::txclock = %.3f\n", tx.txclock);
 		printf("    hdr::recvclock = %.3f\n", tx.recvclock);
 	}
 

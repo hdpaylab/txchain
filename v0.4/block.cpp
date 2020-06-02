@@ -1,3 +1,9 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// TX size: 80 bytes
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #include "txcommon.h"
 
 
@@ -377,21 +383,23 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 
 		if (curtxdata.hdr.flag & FLAG_TX_LOCK)
 		{
-			xserialize hdrszr;
+			file_tx_header_t fhdr;
+
 			txdata_t newtxdata = curtxdata;
 
 			parse_header_body(newtxdata);
 
-			newtxdata.hdr.status = 0;
-			newtxdata.hdr.valid = 1;
-			newtxdata.hdr.block_height = txid_info.block_height;
-		//	newtxdata.hdr.txid = string();
-			newtxdata.hdr.recvclock = xgetclock();
+			fhdr.nodeid = newtxdata.hdr.nodeid;
+			fhdr.type = newtxdata.hdr.type;
+			fhdr.data_length = newtxdata.hdr.data_length;
+			fhdr.signature = newtxdata.hdr.signature;
+			fhdr.txclock = newtxdata.hdr.txclock;
+			fhdr.recvclock = newtxdata.hdr.recvclock;
 
-			seriz_add(hdrszr, newtxdata.hdr);
-			newtxdata.hdrser = hdrszr.getstring();	// 헤더 교체 
+			xserialize hdrszr;
+			seriz_add(hdrszr, fhdr);
 
-			block_txlist += newtxdata.hdrser + newtxdata.bodyser;	// 원본 serialized 데이터를 연결 
+			block_txlist += hdrszr.getstring() + newtxdata.bodyser;	// 원본 serialized 데이터를 연결 
 
 			curtxdata.hdr.flag |= FLAG_TX_DELETE;	// 삭제할 것
 
@@ -572,29 +580,20 @@ int	check_blocks()
 		// TX list dump
 		for (ssize_t ntx = 0; ntx < (ssize_t)block_hdr.block_numtx; ntx++)
 		{
-			tx_header_t hdr;
+			file_tx_header_t fhdr;
 			txid_info_req_t tx;
 
-			deseriz(szr, hdr);
+			deseriz(szr, fhdr);
 
-			printf("BLOCK %ld TX %ld:\n", hdr.block_height, ntx);
-			printf("    nodeid	= %u\n", hdr.nodeid);
-			printf("    type	= %s (%u == 0x%08X)\n", 
-				get_type_name(hdr.type), hdr.type, hdr.type);
-			printf("    data length	= %ld\n", hdr.data_length);
-			printf("    signature	= %s (%ld)\n", hdr.signature.c_str(), hdr.signature.size());
-			printf("    from_addr	= %s (%ld)\n", hdr.from_addr.c_str(), hdr.from_addr.size());
-			printf("    txclock	= %.3f\n", hdr.txclock);
+			printf("BLOCK %ld TX %ld:\n", block_hdr.block_height, ntx);
+			printf("    nodeid	= %u\n", fhdr.nodeid);
+			printf("    type	= %s (%u == 0x%08X)\n", get_type_name(fhdr.type), fhdr.type, fhdr.type);
+			printf("    data length	= %ld\n", fhdr.data_length);
+			printf("    signature	= %s (%ld)\n", fhdr.signature.c_str(), fhdr.signature.size());
+			printf("    txclock	= %.3f\n", fhdr.txclock);
+			printf("    recvclock	= %.3f\n", fhdr.recvclock);
 
-			printf("    block_height= %lu\n", hdr.block_height);
-			printf("    status	= %s (%u == 0x%08X)\n", 
-				get_status_name(hdr.status), hdr.status, hdr.status);
-			printf("    valid	= %d\n", hdr.valid);
-			printf("    txid	= %s (%ld)\n", hdr.txid.c_str(), hdr.txid.size());
-			printf("    flag	= 0x%08X\n", hdr.flag);
-			printf("    recvclock	= %.3f\n", hdr.recvclock);
-
-			if (hdr.type == TX_SEND_TOKEN)
+			if (fhdr.type == TX_SEND_TOKEN)
 			{
 				tx_send_token_t tx;
 

@@ -100,30 +100,48 @@ typedef struct tx_header {
 		type = 0;
 		data_length = 0;
 		txclock = 0;
+		recvclock = 0;
 
 		block_height = 0;
 		status = 0;
 		valid = -1;
 		flag = 0;
-		recvclock = 0;
 	}
-// 블록 저장시 변경되지 않는 값 
 	uint32_t	nodeid;		// node id
 	uint32_t	type;		// TX_xxx
 	size_t		data_length;	// sign data length
 	string		signature;	// signature of data
 	string		from_addr;	// 데이터 부분에 from_addr가 없는 경우에 사용
 	double		txclock;	// tx generation clock
+	double		recvclock;	// 수신 clock
 
-// 내부용: status는 노드 간 상태 전달용으로 사용함. 블록 저장시 초기화 필요함 
+	// 내부용: status는 노드 간 상태 전달용으로 사용함. 블록 저장시 초기화 필요함 
 	size_t		block_height;	// 블록 번호
 	uint32_t	status;		// STAT_VERIFY_xx
 	int		valid;		// 0=invalid 1=valid -1=none
 	string		txid;		// transaction id: sha256(sign)
 	int		flag;		// FLAG_xxx bit mask
-	double		recvclock;	// 수신 clock
 	int		value;
 }	tx_header_t;
+
+
+// 파일 저장용 TX
+typedef struct file_tx_header {
+	file_tx_header()
+	{
+		nodeid = 0;
+		type = 0;
+		data_length = 0;
+		txclock = 0;
+		recvclock = 0;
+	}
+	uint32_t	nodeid;		// node id
+	uint32_t	type;		// TX_xxx
+	size_t		data_length;	// sign data length
+	string		signature;	// signature of data
+	double		txclock;	// tx generation clock
+	double		recvclock;	// 수신 clock
+}	file_tx_header_t;
 
 
 // tx 원본은 orgdataser에 저장
@@ -354,6 +372,7 @@ int	seriz_add(xserialize& xsz, txid_info_reply_t& tx);
 int	seriz_add(xserialize& xsz, tx_sign_hash_t& tx);
 int	seriz_add(xserialize& xsz, tx_send_token_t& tx);
 int	seriz_add(xserialize& xsz, tx_header_t& tx);
+int	seriz_add(xserialize& xsz, file_tx_header_t& tx);
 int	seriz_add(xserialize& xsz, tx_create_token_t& tx);
 int	seriz_add(xserialize& xsz, tx_verify_reply_t& tx);
 
@@ -363,6 +382,7 @@ int	deseriz(xserialize& xsz, txid_info_reply_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_sign_hash_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_header_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, file_tx_header_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_verify_reply_t& tx, int dump = 0);
 
