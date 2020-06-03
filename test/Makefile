@@ -10,7 +10,7 @@ INCLUDE	= -I./ -I/usr/include/postgresql -I../HdacCSDK2/include -I../lib
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
 
-TXLIB	= ../lib/txlib.a ../HdacCSDK2/hdaclib.a
+TXLIB	= ../lib/txlib.a ../HdacCSDK2/hdaclib.a $(SDKLIBS)
 
 
 all: bigint_ex keypair keypair_ex leveldb_test leveldbex \
@@ -18,7 +18,7 @@ all: bigint_ex keypair keypair_ex leveldb_test leveldbex \
 	zmq_cli zmq_msvr zmq_svr test_params \
 	test_aes test_base58 test_base64 test_hashlib test_md5 \
 	test_rc4 test_sha1 test_sha256 test_sha512 \
-	test_cssmap test_array
+	test_cssmap test_array test_simple_sv
 
 bigint_ex: bigint_ex.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) -o $@ bigint_ex.cpp $(TXLIB) $(LIBS) $(SDKLIBS) 
@@ -91,6 +91,9 @@ test_cssmap: test_cssmap.cpp $(TXLIB)
 test_array: test_array.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) $@.cpp -o $@ $(TXLIB)
 
+test_simple_sv: test_simple_sv.cpp $(TXLIB)
+	$(CC) $(CPPFLAGS) $@.cpp -o $@ $(TXLIB)
+
 
 clean:
 	rm -f $(OBJS) *.o *.out *.ver *.log
@@ -99,5 +102,5 @@ clean:
 		zmq_cli zmq_msvr zmq_svr test_params \
 		test_aes test_base58 test_base64 test_hashlib test_md5 \
 		test_rc4 test_sha1 test_sha256 test_sha512 \
-		test_cssmap test_array 
+		test_cssmap test_array test_simple_sv
 	rm -rf level.db
