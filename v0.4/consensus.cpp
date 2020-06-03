@@ -12,6 +12,8 @@ void	*thread_consensus(void *info_p)
 	int	chainport = *(int *)info_p;
 	int	count = 0;
 
+	logprintf(3, "thread_consensus(): chainport=%d\n", chainport);
+
 	while (1)
 	{
 		txdata_t txdata;
@@ -24,10 +26,14 @@ void	*thread_consensus(void *info_p)
 		update_consensus(txdata);
 
 #ifdef DEBUG
+	//	if (count % 10000 == 0)
+			printf("    Consensus processed %d  consensusq=%ld\n",
+				count, _consensusq.size());
 #else
 		if (count % 10000 == 0)
+			printf("    Consensus processed %d  consensusq=%ld\n",
+				count, _consensusq.size());
 #endif
-			printf("    Consensus processed %d  consensusq=%ld\n", count, _consensusq.size());
 	}
 
 	fprintf(stderr, "\nConsensus END!\n");

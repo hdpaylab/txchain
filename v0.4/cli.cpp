@@ -85,12 +85,14 @@ int	main(int ac, char *av[])
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
-//		sleepms(10);
+		sleepms(10);
 		if (count % 1000 == 0)
-			printf("CLIENT: Send %7d: reply=%s\n", count + 1, reply.c_str());
+			printf("CLIENT: Send %7d: reply=%s  ret=%d\n",
+				count + 1, reply.c_str(), ret);
 #else
 		if (count % 10000 == 0)
-			printf("CLIENT: Send %7d: reply=%s\n", count + 1, reply.c_str());
+			printf("CLIENT: Send %7d: reply=%s  ret=%d\n", 
+				count + 1, reply.c_str(), ret);
 #endif
 	}
 }

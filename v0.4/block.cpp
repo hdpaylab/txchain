@@ -1,3 +1,9 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// TX size: 80 bytes
+//
+////////////////////////////////////////////////////////////////////////////////
+
 #include "txcommon.h"
 
 
@@ -25,6 +31,9 @@ void	*thread_txid_info(void *info_p)
 {
 	int	chainport = *(int *)info_p;
 	double	blocktime = xgetclock();
+
+
+	logprintf(3, "thread_txid_info(): chainport=%d\n", chainport);
 
 	_self_txid_info.on_air = 0;
 	_self_txid_info.block_height = _last_block_hdr.block_height + 1;
@@ -316,7 +325,7 @@ void	send_block_gen_reply(txdata_t& txdata)
 {
 	txdata_t newtxdata;
 	tx_header_t hdr;
-	tx_txid_info_t cmd;
+	tx_sign_hash_t cmd;
 	xserialize hdrszr, bodyszr;
 
 	// Body serialize
@@ -359,55 +368,63 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 
 	txid_info.block_height = _last_block_hdr.block_height + 1;
 
-	logprintf(1, "BLOCK_GEN: mempool size=%ld height=%ld\n", _mempoolmap.size(), txid_info.block_height);
+	logprintf(1, "BLOCK_GEN: mempool size=%ld height=%ld\n", 
+		_mempoolmap.size(), txid_info.block_height);
 
 	// 실제 블록 생성: 전체 TX 목록에 대해서 sign 후 저장 (이전 블록 hash 필요)
 	_mempool_lock.lock();
 
 	// FLAG_TX_LOCK 표시된 tx는 블록으로 저장될 내용임 
-	int ntx = 0;
-	for (ssize_t ii = 0; ii < (ssize_t)txid_info.txidlist.size(); ii++)
+	int marktx = 0;
+	for (ssize_t ntx = 0; ntx < (ssize_t)txid_info.txidlist.size(); ntx++)
 	{
-		string txid = txid_info.txidlist[ii];
+		string txid = txid_info.txidlist[ntx];
 		txdata_t& curtxdata = _mempoolmap[txid];
 
 		if (curtxdata.hdr.flag & FLAG_TX_LOCK)
 		{
+			file_tx_header_t fhdr;
+
+			txdata_t newtxdata = curtxdata;
+
+			parse_header_body(newtxdata);
+
+			fhdr.nodeid = newtxdata.hdr.nodeid;
+			fhdr.type = newtxdata.hdr.type;
+			fhdr.data_length = newtxdata.hdr.data_length;
+			fhdr.signature = newtxdata.hdr.signature;
+			fhdr.txclock = newtxdata.hdr.txclock;
+			fhdr.recvclock = newtxdata.hdr.recvclock;
+
 			xserialize hdrszr;
+			seriz_add(hdrszr, fhdr);
 
-			curtxdata.hdr.status = 0;
-			curtxdata.hdr.valid = 1;
-			curtxdata.hdr.txid = string();
-
-			seriz_add(hdrszr, curtxdata.hdr);
-			curtxdata.hdrser = hdrszr.getstring();	// 헤더 교체 
-
-			block_txlist += curtxdata.hdrser + curtxdata.bodyser;	// 원본 serialized 데이터를 연결 
+			block_txlist += hdrszr.getstring() + newtxdata.bodyser;	// 원본 serialized 데이터를 연결 
 
 			curtxdata.hdr.flag |= FLAG_TX_DELETE;	// 삭제할 것
 
-			ntx++;
+			marktx++;
 			logprintf(2, "    Block [%ld] %d hdrsz=%ld bodysz=%ld value=%d\n", 
-				txid_info.block_height, ntx, curtxdata.hdrser.size(), 
-				curtxdata.bodyser.size(), curtxdata.hdr.value);
+				txid_info.block_height, marktx, newtxdata.hdrser.size(), 
+				newtxdata.bodyser.size(), newtxdata.hdr.value);
 		}
 		else
 		{
 			logprintf(5, "    Skipped: mempool [%ld] txid=%s value=%d flag=%08X\n", 
-				ii, curtxdata.hdr.txid.c_str(), curtxdata.hdr.value, curtxdata.hdr.flag);
+				marktx, curtxdata.hdr.txid.c_str(), curtxdata.hdr.value, curtxdata.hdr.flag);
 		}
 	}
 
 	// mempool에서 저장된 내용 삭제 
 	int ndel = 0;
-	for (ssize_t ii = 0; ii < (ssize_t)txid_info.txidlist.size(); ii++)
+	for (ssize_t ntx = 0; ntx < (ssize_t)txid_info.txidlist.size(); ntx++)
 	{
-		string txid = txid_info.txidlist[ii];
+		string txid = txid_info.txidlist[ntx];
 		txdata_t& curtxdata = _mempoolmap[txid];
 
 		if (curtxdata.hdr.flag & FLAG_TX_DELETE)
 		{
-			logprintf(2, "    Mempool %ld 삭제: txid=%s\n", ii, curtxdata.hdr.txid.c_str());
+			logprintf(2, "    Mempool %ld 삭제: txid=%s\n", ntx, curtxdata.hdr.txid.c_str());
 
 			_mempoolmap.erase(txid);	// mempoolmap에서 제거 
 			ndel++;
@@ -416,7 +433,8 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 
 	_mempool_lock.unlock();
 
-	logprintf(1, "    BLOCK_GEN: ntx=%d ndel=%d \n", txid_info.txidlist.size(), ndel);
+	logprintf(1, "    BLOCK_GEN: txtotal=%ld / marktx=%d ndel=%d \n",
+		txid_info.txidlist.size(), marktx, ndel);
 
 	string txhash = sha256(block_txlist);
 
@@ -472,6 +490,7 @@ int	make_block(block_info_t& block_hdr, string& block_data)
 	{
 		fseek(bfp, 0L, SEEK_END);
 		size_t wbytes = fwrite(block_data.c_str(), 1, block_data.size(), bfp);
+		fflush(bfp);
 		fclose(bfp);
 
 		if (wbytes != block_data.size())
@@ -497,7 +516,7 @@ int	make_block(block_info_t& block_hdr, string& block_data)
 int	check_blocks()
 {
 	char	path[256] = {0};
-	uint64_t count = 0;
+	uint64_t nblock = 0;
 
 	printf("Checking blocks...\n");
 
@@ -512,10 +531,10 @@ int	check_blocks()
 	// Genesis block skip
 	fseek(bfp, GENESIS_BLOCK_SIZE, SEEK_SET);
 
-	for (count = 1; ; count++)
+	for (nblock = 1; ; nblock++)
 	{
 		long	start_pos = ftell(bfp);
-		printf("Read block %ld: offset=%ld\n", count, start_pos);
+		printf("Read block %ld: offset=%ld\n", nblock, start_pos);
 
 		char	sizebuf[sizeof(size_t) + 1] = {0};	// +1은 serialize type 1바이트 추가 
 		size_t rbytes = fread(sizebuf, 1, sizeof(size_t) + 1, bfp);
@@ -546,7 +565,7 @@ int	check_blocks()
 		szr.setdata(blockbuf, rbytes);
 		deseriz(szr, block_hdr);
 
-		printf("Loading block %ld:\n", block_hdr.block_height);
+		printf("Loading BLOCK %ld: %ld bytes\n", block_hdr.block_height, block_size);
 		printf("	block_size	= %lu\n", block_hdr.block_size);
 		printf("	block_hash	= %s\n", block_hdr.block_hash.c_str()); 
 		printf("	block_height	= %lu\n", block_hdr.block_height);
@@ -556,6 +575,43 @@ int	check_blocks()
 		printf("	block_numtx	= %lu\n", block_hdr.block_numtx);
 		printf("	block_gen_addr	= %s\n", block_hdr.block_gen_addr.c_str()); 
 		printf("	block_signature	= %s\n", block_hdr.block_signature.c_str()); 
+		printf("\n");
+
+		// TX list dump
+		for (ssize_t ntx = 0; ntx < (ssize_t)block_hdr.block_numtx; ntx++)
+		{
+			file_tx_header_t fhdr;
+			txid_info_req_t tx;
+
+			deseriz(szr, fhdr);
+
+			printf("BLOCK %ld TX %ld:\n", block_hdr.block_height, ntx);
+			printf("    nodeid	= %u\n", fhdr.nodeid);
+			printf("    type	= %s (%u == 0x%08X)\n", get_type_name(fhdr.type), fhdr.type, fhdr.type);
+			printf("    data length	= %ld\n", fhdr.data_length);
+			printf("    signature	= %s (%ld)\n", fhdr.signature.c_str(), fhdr.signature.size());
+			printf("    txclock	= %.3f\n", fhdr.txclock);
+			printf("    recvclock	= %.3f\n", fhdr.recvclock);
+
+			if (fhdr.type == TX_SEND_TOKEN)
+			{
+				tx_send_token_t tx;
+
+				deseriz(szr, tx);
+
+				printf("    tx type: SEND_TOKEN:\n");
+				printf("	from_addr	= %s\n", tx.from_addr.c_str());
+				printf("	to_addr		= %s\n", tx.to_addr.c_str());
+				printf("	token_name	= %s\n", tx.token_name.c_str());
+				printf("	amount		= %.6f\n", tx.amount);
+				printf("	native_amount	= %.6f\n", tx.native_amount);
+				printf("	fee		= %.6f\n", tx.fee);
+				printf("	user_data	= %s\n", tx.user_data.c_str());
+			}
+			printf("\n");
+
+			sleepms(10);
+		}
 		printf("\n");
 	}
 	printf("\n");
@@ -575,9 +631,9 @@ int	make_genesis_block(const char *path)
 	assert(block0 != NULL);
 
 	// 랜덤 값으로 채움 
-	for (int ii = 0; ii < GENESIS_BLOCK_SIZE; ii++)
+	for (int idx = 0; idx < GENESIS_BLOCK_SIZE; idx++)
 	{
-		block0[ii] = rand() % 0x00FF;
+		block0[idx] = rand() % 0x00FF;
 	}
 
 	_genesis_block_hdr.block_size = GENESIS_BLOCK_SIZE;	// include 8 bytes block_size
@@ -654,11 +710,12 @@ int	make_genesis_block(const char *path)
 	bp += 64;
 
 	// block0에 기록 
-	FILE *fp = fopen(path, "wb");
-	if (fp)
+	FILE *bfp = fopen(path, "wb");
+	if (bfp)
 	{
-		size_t wbytes = fwrite(block0, 1, GENESIS_BLOCK_SIZE, fp);
-		fclose(fp);
+		size_t wbytes = fwrite(block0, 1, GENESIS_BLOCK_SIZE, bfp);
+		fflush(bfp);
+		fclose(bfp);
 
 		if (wbytes != GENESIS_BLOCK_SIZE)
 		{
@@ -685,11 +742,11 @@ keypair_t load_genesis_block(const char *path)
 	assert(block0 != NULL);
 
 	// block0 읽기 
-	FILE *fp = fopen(path, "rb");
-	if (fp)
+	FILE *bfp = fopen(path, "rb");
+	if (bfp)
 	{
-		size_t rbytes = fread(block0, 1, GENESIS_BLOCK_SIZE, fp);
-		fclose(fp);
+		size_t rbytes = fread(block0, 1, GENESIS_BLOCK_SIZE, bfp);
+		fclose(bfp);
 
 		if (rbytes != GENESIS_BLOCK_SIZE)
 		{
