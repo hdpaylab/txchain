@@ -1,3 +1,9 @@
+//
+// Sign: 2500 / sec
+// Verify: 3300 / sec
+//
+
+#include <string.h>
 #include "openssl/evp.h"
 #include "openssl/err.h"
 #include "openssl/ec.h"
@@ -13,22 +19,12 @@
 #endif
 
 
-void SignAndVerifyTest()
+EC_KEY          *ecKey = NULL;
+
+
+void	KeyGenInit()
 {
-	SHA256_CTX      c;
-	EC_KEY          *ecKey = NULL;
 	int             nidEcc;
-	unsigned char   m[SHA256_DIGEST_LENGTH];
-	unsigned char   sig[256];                   // Must greater than ECDSA_size(ecKey)
-	unsigned int    lenSig;
-	int             iRet;
-
-
-	// Generate Hash for signing
-	SHA256_Init(&c);
-	SHA256_Update(&c, "This is Data for Signing.", 25);
-	SHA256_Final(m, &c);
-	OPENSSL_cleanse(&c, sizeof(c));
 
 	// Set Key Type.
 	nidEcc = OBJ_txt2nid("secp256k1");
@@ -38,18 +34,45 @@ void SignAndVerifyTest()
 	// Generate Key.
 	EC_KEY_generate_key(ecKey);
 
+}
+
+void	KeyGenFinal()
+{
+	EC_KEY_free(ecKey);
+}
+
+void SignAndVerifyTest()
+{
+	SHA256_CTX      c;
+	unsigned char   msg[SHA256_DIGEST_LENGTH];
+	static unsigned char   sig[256];                   // Must greater than ECDSA_size(ecKey)
+	static unsigned int    lenSig;
+	static int first = 1;
+	int             iRet;
+
+
+	// Generate Hash for signing
+	SHA256_Init(&c);
+	SHA256_Update(&c, "This is Data for Signing.", 25);
+	SHA256_Final(msg, &c);
+	OPENSSL_cleanse(&c, sizeof(c));
+
+//	memset(msg, 0, sizeof(msg));
+
 	// Sign Message Digest.
-	ECDSA_sign(0, m, SHA256_DIGEST_LENGTH, sig, &lenSig, ecKey);
-	iRet = ECDSA_verify(0, m, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
-	printf("Before Fake : Verify Result is %d \n", iRet);
+	if (first)
+	{
+		first = 0;
+		ECDSA_sign(0, msg, SHA256_DIGEST_LENGTH, sig, &lenSig, ecKey);
+	}
+//	iRet = ECDSA_verify(0, msg, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
+//	printf("Before Fake : Verify Result is %d \n", iRet);
 
 	// Change Message Digest.
-	m[0]++;
-	iRet = ECDSA_verify(0, m, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
-	printf("After Fake  : Verify Result is %d \n", iRet);
-	puts("\n------------------------------\n");
-
-	EC_KEY_free(ecKey);
+//	msg[0]++;
+//	iRet = ECDSA_verify(0, msg, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
+//	printf("After Fake  : Verify Result is %d \n", iRet);
+//	puts("\n------------------------------\n");
 }
 
 
@@ -58,7 +81,12 @@ int main()
 	OpenSSL_add_all_algorithms();
 	ERR_load_crypto_strings();
 
-	SignAndVerifyTest();
+	KeyGenInit();
+
+	for (int ii = 0; ii < 10000; ii++)
+	{
+		SignAndVerifyTest();
+	}
 
 	ERR_print_errors_fp(stderr);
 

@@ -389,6 +389,7 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 
 			parse_header_body(newtxdata);
 
+			// 파일 저장용 헤더는 필수 정보만 저장 (TX당 250바이트)
 			fhdr.nodeid = newtxdata.hdr.nodeid;
 			fhdr.type = newtxdata.hdr.type;
 			fhdr.data_length = newtxdata.hdr.data_length;
@@ -465,6 +466,7 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 
 	string block_data = hdrszr.getstring() + block_txlist;
 
+	// 블록 파일에 저장
 	make_block(block_hdr, block_data);
 
 	// 다음 블록으로..
@@ -483,13 +485,25 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 int	make_block(block_info_t& block_hdr, string& block_data)
 {
 	char	path[256] = {0};
+	size_t	block_sp_len = strlen(BLOCK_SEPERATOR);
 
 	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
 	FILE	*bfp = fopen(path, "r+b");
 	if (bfp)
 	{
 		fseek(bfp, 0L, SEEK_END);
-		size_t wbytes = fwrite(block_data.c_str(), 1, block_data.size(), bfp);
+
+		// 구분자 먼저 저장 
+		size_t wbytes = fwrite(BLOCK_SEPERATOR, 1, block_sp_len, bfp);
+		if (wbytes != block_sp_len)
+		{
+			perror("fwrite");
+			logprintf(0, "ERROR: Block seperator write failed to '%s'!\n", path);
+			return -1;
+		}
+
+		// 블록 내용 저장 
+		wbytes = fwrite(block_data.c_str(), 1, block_data.size(), bfp);
 		fflush(bfp);
 		fclose(bfp);
 
@@ -511,12 +525,13 @@ int	make_block(block_info_t& block_hdr, string& block_data)
 
 
 //
-//
+// 블록 체크: 블록과 TX dump
 //
 int	check_blocks()
 {
 	char	path[256] = {0};
 	uint64_t nblock = 0;
+	size_t	block_sp_len = strlen(BLOCK_SEPERATOR);
 
 	printf("Checking blocks...\n");
 
@@ -528,17 +543,36 @@ int	check_blocks()
 		return -1;
 	}
 
-	// Genesis block skip
+	// Skip genesis block 
 	fseek(bfp, GENESIS_BLOCK_SIZE, SEEK_SET);
+	printf("Skip genesis block...\n");
 
 	for (nblock = 1; ; nblock++)
 	{
+		char	sizebuf[sizeof(size_t) + 1] = {0};	// +1은 serialize type 1바이트 추가 
+
+		size_t rbytes = fread(sizebuf, 1, block_sp_len, bfp);
+		if (rbytes <= 0)
+			break;
+
+		// 블록 구분자를 읽어서 맞는지 확인해야 함 (블록 손상된 경우 처리를 위해)
+		if (rbytes != block_sp_len)
+		{
+			logprintf(0, "WARNING: Block seperator read failed!\n");
+			continue;
+		}
+		if (memcmp(sizebuf, BLOCK_SEPERATOR, block_sp_len) != 0)
+		{
+			logprintf(0, "WARNING: Invalid block seperator %.4s\n", sizebuf);
+			continue;
+		}
+
 		long	start_pos = ftell(bfp);
 		printf("Read block %ld: offset=%ld\n", nblock, start_pos);
 
-		char	sizebuf[sizeof(size_t) + 1] = {0};	// +1은 serialize type 1바이트 추가 
-		size_t rbytes = fread(sizebuf, 1, sizeof(size_t) + 1, bfp);
-		if (rbytes != sizeof(size_t) + 1)
+		// 블록 길이 읽기 
+		rbytes = fread(sizebuf, 1, sizeof(size_t), bfp);
+		if (rbytes != sizeof(size_t))
 			break;
 
 		size_t block_size = *(size_t *)&sizebuf[1];
@@ -552,6 +586,7 @@ int	check_blocks()
 			continue;
 		}
 
+		// 실제 블록 읽기 
 		rbytes = fread(blockbuf, 1, block_size, bfp);
 		if (rbytes != block_size)
 		{
@@ -565,6 +600,7 @@ int	check_blocks()
 		szr.setdata(blockbuf, rbytes);
 		deseriz(szr, block_hdr);
 
+		// 블록 헤더 출력 
 		printf("Loading BLOCK %ld: %ld bytes\n", block_hdr.block_height, block_size);
 		printf("	block_size	= %lu\n", block_hdr.block_size);
 		printf("	block_hash	= %s\n", block_hdr.block_hash.c_str()); 
@@ -577,7 +613,7 @@ int	check_blocks()
 		printf("	block_signature	= %s\n", block_hdr.block_signature.c_str()); 
 		printf("\n");
 
-		// TX list dump
+		// 블록의 TX list dump
 		for (ssize_t ntx = 0; ntx < (ssize_t)block_hdr.block_numtx; ntx++)
 		{
 			file_tx_header_t fhdr;
@@ -609,8 +645,6 @@ int	check_blocks()
 				printf("	user_data	= %s\n", tx.user_data.c_str());
 			}
 			printf("\n");
-
-			sleepms(10);
 		}
 		printf("\n");
 	}
@@ -686,6 +720,10 @@ int	make_genesis_block(const char *path)
 
 	string basepass((const char *)passwd, 32);
 	string enc_passwd = sha256(basepass, false);	// 실제 암호화 패스워드 
+
+	// 내용 삭제 
+	memset(passwd, 0, sizeof(passwd));
+	clear_string(basepass);
 	
 	printf("Generating genesis block:\n");
 	printf("	privkey		= %s\n", _keypair.privateKey.c_str());
@@ -708,6 +746,11 @@ int	make_genesis_block(const char *path)
 	
 	memcpy(bp, mkey_hash.c_str(), 32);	// masterkey hash 디스크 추가 
 	bp += 64;
+
+	// 내용 삭제함 
+	clear_string(enc_passwd);
+	clear_string(enc_mkey);
+	clear_string(mkey_hash);
 
 	// block0에 기록 
 	FILE *bfp = fopen(path, "wb");

@@ -39,10 +39,14 @@ int	main(int ac, char *av[])
 	if (ac == 1 && av[0] == 0)
 		ac = ac;
 
-	const char *aa = "AB";
+	const char *aa = "ABCDEF";
 
-	string ss(aa, 2);
+	string ss(aa, 6);
 	printf("LEN=%ld\n", ss.length());
+
+	char *dd = (char *)ss.data();
+	memset(dd, 'A', 3);
+	printf("ss=%s\n", ss.c_str());
 
 	const char *sp = ss.c_str();
 	printf("sp=%s sp[2]=0x%02X\n", sp, sp[2]);
@@ -53,7 +57,7 @@ int	main(int ac, char *av[])
 
 //	mutex_test_vector();
 
-	test_queue();
+//	test_queue();
 }
 
 

@@ -227,7 +227,7 @@ int	logprintf(int level, ...)
 		vsprintf(tmpbuf, format, ap);
 
 		fprintf(_logfp, "%s %s", datestring().c_str(), tmpbuf);
-		fprintf(stdout, "%s %s", datestring().c_str(), tmpbuf);
+	//	fprintf(stdout, "%s %s", datestring().c_str(), tmpbuf);
 
 		free(tmpbuf);
 
@@ -253,4 +253,14 @@ string	datestring(time_t tm)
 	string strdate = buf;
 
 	return strdate;
+}
+
+
+string	clear_string(string& ss)
+{
+	char	*ee = (char *) ss.data();
+
+	memset(ee, 0, ss.size());
+
+	return ss;
 }

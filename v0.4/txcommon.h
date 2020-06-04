@@ -39,15 +39,16 @@ using namespace std;
 #include "tx.h"
 
 
-#define DEBUG		1		// for debugging
-#define DEBUG_SLEEP_MS	1000
-#define MAX_TEST_NUM_TX	1000000		// tx count for test..
+#define DEBUG			1		// for debugging
+#define DEBUG_SLEEP_MS		1000
+#define MAX_TEST_NUM_TX		1000000		// tx count for test..
 
 
 
 #define MAX_NODE		100		// 최대 합의용 노드 개수 
 #define BLOCK_ITV		1		// 블록 생성 주기 (1초)
 #define GENESIS_BLOCK_SIZE	(32 * 1024)	// 32KB
+#define BLOCK_SEPERATOR		"B||B"		// inter-block seperator of block file
 
 
 #define MAX_VERIFY_THREADS	4		// number of verifier threads
@@ -111,6 +112,7 @@ tx_header_t&	parse_header_body(txdata_t& txdata);
 string	dump_tx(const char *title, txdata_t& txdata, bool disp = 1);
 int	logprintf(int level, ...);
 string	datestring(time_t tm = 0);
+string	clear_string(string& ss);
 
 
 // mempool.cpp

@@ -77,6 +77,8 @@ void	*thread_subscriber(void *info_p)
 		// 디버깅 위해 파일에 저장 
 		fprintf(outfp, "%7d: %s \n", count, dump_tx("", txdata, 0).c_str());
 		fflush(outfp);
+		if (count % 1000 == 0)
+			printf("    SUB: recv %d  verifyq=%ld\n", count, _verifyq.size());
 #else
 		if (count % 100000 == 0)
 			printf("    SUB: recv %d  verifyq=%ld\n", count, _verifyq.size());
@@ -154,6 +156,8 @@ void	*thread_client(void *info_p)
 		}
 
 #ifdef DEBUG
+		if (count % 1000 == 0)
+			printf("    Client: recv %d \n", count);
 #else
 		if (count % 10000 == 0)
 			printf("    Client: recv %d \n", count);

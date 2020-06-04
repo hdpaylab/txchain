@@ -41,7 +41,7 @@ int	main(int ac, char *av[])
 	const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
 	const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 
-	for (int count = 0; count < 1000000; count++)
+	for (int count = 0; count < 10000000; count++)
 	{
 		xserialize hdrszr, bodyszr;
 		tx_header_t	txhdr;
@@ -85,7 +85,7 @@ int	main(int ac, char *av[])
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
-		sleepms(10);
+		sleepms(1);
 		if (count % 1000 == 0)
 			printf("CLIENT: Send %7d: reply=%s  ret=%d\n",
 				count + 1, reply.c_str(), ret);
