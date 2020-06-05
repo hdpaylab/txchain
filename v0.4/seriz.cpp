@@ -113,6 +113,7 @@ int	seriz_add(xserialize& xsz, tx_create_token_t& tx)
 	ret = xsz << tx.quantity;       // 발행 수량
 	ret = xsz << tx.smallest_unit;  // 최소 단위
 	ret = xsz << tx.native_amount;  // native 수량
+	ret = xsz << tx.fee;
 
 	ret = xsz << tx.access;         // "1"=1time / "##"=N번 추가 생성 가능 / "forever"=계속 생성 가능
 	ret = xsz << tx.start_time;     // token 시작 시간 (0이면 즉시)
@@ -311,6 +312,7 @@ int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump)
 	ret = xsz >> tx.quantity;       // 발행 수량
 	ret = xsz >> tx.smallest_unit;  // 최소 단위
 	ret = xsz >> tx.native_amount;  // native 수량
+	ret = xsz >> tx.fee;
 
 	ret = xsz >> tx.access;         // "1"=1time / "##"=N번 추가 생성 가능 / "forever"=계속 생성 가능
 	ret = xsz >> tx.start_time;     // token 시작 시간 (0이면 즉시)
@@ -327,6 +329,7 @@ int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump)
 		printf("    quantity = %lu\n", tx.quantity);
 		printf("    smallest_unit = %lu\n", tx.smallest_unit);
 		printf("    native_amount = %lu\n", tx.native_amount);
+		printf("    fee = %.6f\n", tx.fee);
 
 		printf("    access = %s\n", tx.access.c_str());
 		printf("    start_time = %ld\n", tx.start_time);

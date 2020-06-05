@@ -155,10 +155,11 @@ void	*thread_send_test(void *info_p)
 			sleepms(1);
 #ifdef DEBUG
 		sleep(1);
+		printf("    Auto sender: send %d  sendq=%5ld\n", ii, _sendq.size());
 #else
 		if (ii % 100000 == 0)
-#endif
 			printf("    Auto sender: send %d  sendq=%5ld\n", ii, _sendq.size());
+#endif
 	}
 
 	printf("thread_send_test: ----- END!\n\n");

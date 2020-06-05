@@ -6,7 +6,8 @@
 #include "txcommon.h"
 
 
-int	_debug = 1;		// debugging level
+options_t	_options;		// global _options
+
 FILE	*_logfp = NULL;
 
 keypair_t _keypair;		// keypair of this node
@@ -219,7 +220,7 @@ int	logprintf(int level, ...)
 		return -1;
 
 	// 출력..
-	if (level <= _debug)
+	if (level <= _options.debug)
 	{
 		char	*tmpbuf = NULL;
 

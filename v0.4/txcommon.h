@@ -70,11 +70,21 @@ typedef unsigned char	uchar;
 
 typedef KeyPairs	keypair_t;
 
+typedef struct {
+	int		debug;
+
+	int		auto_mode;
+	int		client_port;
+	int		chain_port;
+
+	int		block_check;
+	uint32_t	max_node;
+	uint32_t	max_verifier;
+}	options_t;
+
 
 // main.cpp
-extern	int	_debug;		// debugging level
-extern	int	_nverifier;	// current number of verifier threads
-extern	int	_clientport;	// client connection port
+extern	options_t _options;	// _options
 extern	keypair_t _keypair;	// keypair of this node
 
 extern	safe_queue<txdata_t>	_sendq;		// send queue for publisher
@@ -150,7 +160,12 @@ keypair_t load_genesis_block(const char *path);
 
 
 // consensus.cpp
-extern	cssmap	_cssmap;		// consensus.cpp
+extern	cssmap	_cssmap;			// consensus.cpp
+
+
+// cmd.cpp
+bool	cmd_create_token(txdata_t& txdata, tx_create_token_t& create_token);
+bool	cmd_send_token(txdata_t& txdata, tx_send_token_t& send_token);
 
 
 #endif	// __COMMON_H

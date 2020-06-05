@@ -487,7 +487,7 @@ int	make_block(block_info_t& block_hdr, string& block_data)
 	char	path[256] = {0};
 	size_t	block_sp_len = strlen(BLOCK_SEPERATOR);
 
-	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
+	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _options.client_port);
 	FILE	*bfp = fopen(path, "r+b");
 	if (bfp)
 	{
@@ -535,7 +535,7 @@ int	check_blocks()
 
 	printf("Checking blocks...\n");
 
-	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
+	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _options.client_port);
 	FILE	*bfp = fopen(path, "rb");
 	if (bfp == NULL)
 	{

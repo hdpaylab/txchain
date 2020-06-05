@@ -10,7 +10,7 @@ INCLUDE	= -I/usr/include/postgresql -I../HdacCSDK2/include -I../lib -I../lib2
 CPPFLAGS = -O2 $(INCLUDE) -Wall -W -std=c++11 -Wwrite-strings -Wno-unused-parameter -fno-strict-aliasing
 
 SRCS2	= main.cpp sub.cpp verify.cpp pub.cpp mempool.cpp block.cpp ldbio.cpp \
-	consensus.cpp seriz.cpp common.cpp 
+	consensus.cpp seriz.cpp common.cpp cmd.cpp
 
 OBJS2	= $(SRCS2:.cpp=.o)
 

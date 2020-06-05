@@ -197,8 +197,9 @@ typedef struct tx_create_token {
 	uint64_t	quantity;	// 발행 수량
 	uint64_t	smallest_unit;	// 최소 단위
 	uint64_t	native_amount;	// native 수량
+	double		fee;
 
-	string		access;		// "1"=1time / "##"=N번 추가 생성 가능 / "forever"=계속 생성 가능
+	string		access;		// "1"=1time / "##"=N번 추가 생성 가능 / "0"=계속 생성 가능
 	time_t		start_time;	// token 시작 시간 (0이면 즉시)
 	time_t		expire_time;	// token 중단 시간 (0이면 계속)
 

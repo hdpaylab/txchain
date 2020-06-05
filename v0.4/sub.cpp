@@ -146,7 +146,7 @@ void	*thread_client(void *info_p)
 		int broadcast_tx = tx_verify(txdata);
 
 		// 정상적으로 검증되고 전체 노드로 broadcast 필요한 tx인 경우 (verify는 중복 처리 안함)
-		if (txdata.hdr.valid == 1 && broadcast_tx)
+		if (txdata.hdr.valid == 1 && broadcast_tx == 1)
 		{
 			txdata.hdr.status = STAT_BCAST_TX;
 
@@ -156,11 +156,11 @@ void	*thread_client(void *info_p)
 		}
 
 #ifdef DEBUG
-		if (count % 1000 == 0)
-			printf("    Client: recv %d \n", count);
+	//	if (count % 1000 == 0)
+			printf("    Client: recv %d: %s \n", count, get_type_name(txdata.hdr.type));
 #else
 		if (count % 10000 == 0)
-			printf("    Client: recv %d \n", count);
+			printf("    Client: recv %d: %s \n", count, get_type_name(txdata.hdr.type));
 #endif
 
 		// Send reply back to client
@@ -200,23 +200,17 @@ int	tx_verify(txdata_t& txdata)
 	else if (hp->type == TX_BLOCK_GEN_REQ)
 	{
 		ps_block_gen_req(txdata);
-
-		return 0;
 	}
 	// 블록 생성과 관련된 응답을 받음 
 	// 각 서버별로 응답을 모아서, 일정 비율 이상이면 블록 발행 
 	else if (hp->type == TX_BLOCK_GEN_REPLY)
 	{
 		ps_block_gen_reply(txdata);
-
-		return 0;
 	}
 	// 실제 블록 생성 명령 
 	else if (hp->type == TX_BLOCK_GEN)
 	{
 		ps_block_gen(txdata, _recv_txid_info);
-
-		return 0;
 	}
 	else if (hp->type == TX_CREATE_TOKEN)
 	{
@@ -229,6 +223,9 @@ int	tx_verify(txdata_t& txdata)
 					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 		logprintf(3, "%s\n", dump_tx("    CREATE_TOKEN(r&v): ", txdata, 0).c_str());
+
+		if (cmd_create_token(txdata, create_token) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
 
 		return 1;
 	}
@@ -245,6 +242,9 @@ int	tx_verify(txdata_t& txdata)
 		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 		logprintf(3, "%s\n", dump_tx("    SEND_TOKEN(r&v): ", txdata, 0).c_str());
 
+		if (cmd_send_token(txdata, send_token) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+
 		return 1;
 	}
 	else if (hp->type == TX_VERIFY_REPLY)
@@ -252,16 +252,12 @@ int	tx_verify(txdata_t& txdata)
 		tx_verify_reply_t verify_reply;
 
 		deseriz(bodyszr, verify_reply, 1);
-
-		return 0;
 	}
 	else
 	{
 		fprintf(stderr, "ERROR: Subscriber: No handling routine for TX type=%s\n",
 			get_type_name(hp->type));
-
-		return 0;
 	}
 
-	return 0;
+	return 0;	// DO NOT BROADCAST
 }

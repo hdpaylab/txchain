@@ -11,14 +11,6 @@
 #include "txcommon.h"
 
 
-int	_nverifier = MAX_VERIFY_THREADS;
-
-int	_automode = 1;		// auto data generation mode (client input disabled)
-int	_clientport = DEFAULT_CLIENT_PORT;	
-
-int	_maxnode = 1;		// 
-int	_chainport = DEFAULT_CHAIN_PORT;
-
 int	_npeer = 0;
 char	_peerlist[MAX_NODE + 1][40] = {0};
 
@@ -41,6 +33,13 @@ void	create_verifier_threads(int nverifiers);
 
 int	main(int ac, char *av[])
 {
+	// default values 
+	_options.auto_mode = 1;
+	_options.max_node = 1;
+	_options.max_verifier = MAX_VERIFY_THREADS;
+	_options.client_port = DEFAULT_CLIENT_PORT;	
+	_options.chain_port = DEFAULT_CHAIN_PORT;
+
 	parse_command_line(ac, av);
 
 	printf("Start txchain main: pid=%d\n", getpid());
@@ -51,7 +50,7 @@ int	main(int ac, char *av[])
 
 	create_subscriber_threads();			// SUBSCRIBER
 
-	create_verifier_threads(_nverifier);		// VERIFIER
+	create_verifier_threads(_options.max_verifier);		// VERIFIER
 
 	while (1)
 	{
@@ -80,7 +79,7 @@ void	init()
 	init_keypair();
 
 	char	filename[256] = {0};
-	sprintf(filename, "logs/debug-%d.log", _clientport);
+	sprintf(filename, "logs/debug-%d.log", _options.client_port);
 	_logfp = fopen(filename, "a+b");
 	assert(_logfp != NULL);
 
@@ -99,7 +98,7 @@ void	init_block()
 	char	path[256];
 	struct stat st;
 
-	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _clientport);
+	snprintf(path, sizeof(path), "blocks/block-%06d-%d.dat", _last_block_file_no, _options.client_port);
 	int ret = stat(path, &st);
 	if (ret < 0)
 	{
@@ -121,7 +120,10 @@ void	init_block()
 		_keypair = load_genesis_block(path);
 	}
 
-	check_blocks();
+	if (_options.block_check)
+	{
+		check_blocks();
+	}
 }
 
 
@@ -136,46 +138,56 @@ void	parse_command_line(int ac, char *av[])
 
 	if (ac >= 2 && strncmp(av[1], "-c", 2) == 0)
 	{
-		_automode = 0;
-		_clientport = atoi(&av[1][2]);
-		if (_clientport <= 0)
-			_clientport = DEFAULT_CLIENT_PORT;
+		_options.auto_mode = 0;
+		_options.client_port = atoi(&av[1][2]);
+		if (_options.client_port <= 0)
+			_options.client_port = DEFAULT_CLIENT_PORT;
 		ac--, av++;
 	}
-	printf("Auto mode = %d\n", _automode);
-	printf("Client port = %d\n", _clientport);
+	printf("Auto mode = %d\n", _options.auto_mode);
+	printf("Client port = %d\n", _options.client_port);
+
+	if (ac >= 2 && strcmp(av[1], "--block_check") == 0)
+	{
+		if (av[1][13] == '=' && isdigit(av[1][14]))
+			_options.block_check = atoi(&av[1][14]);
+		else
+			_options.block_check = 1;
+		ac--, av++;
+	}
+	printf("Block check = %d\n", _options.block_check);
 
 	// get maxnode 
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
-		_maxnode = atoi(av[1]);
-		if (_maxnode > 100)
-			_maxnode = 100;	// ?ִ? node?? 100????..
+		_options.max_node = atoi(av[1]);
+		if (_options.max_node > 100)
+			_options.max_node = 100;	// ?ִ? node?? 100????..
 		ac--, av++;
 	}
-	printf("Max node = %d\n", _maxnode);
+	printf("Max node = %d\n", _options.max_node);
 
 
 	// get chain port
 	if (ac >= 2 && atoi(av[1]) > 0)
 	{
-		_chainport = atoi(av[1]);
-		if (_chainport <= 10 || _chainport > 65535)
+		_options.chain_port = atoi(av[1]);
+		if (_options.chain_port <= 10 || _options.chain_port > 65535)
 		{
 			fprintf(stderr, "ERROR: port range error (1 ~ 65535)\n");
 			exit(-1);
 		}
 		ac--, av++;
 	}
-	printf("Chain port = %d\n", _chainport);
+	printf("Chain port = %d\n", _options.chain_port);
 
 
 	// get peer list
 	for (ii = 1; ii < ac && _npeer < MAX_NODE; ii++)
 	{
-		if (_npeer > _maxnode)
+		if ((uint32_t)_npeer > _options.max_node)
 		{
-			fprintf(stderr, "WARNING: Number of peer %d > Max node %d\n", _npeer, _maxnode);
+			fprintf(stderr, "WARNING: Number of peer %d > Max node %d\n", _npeer, _options.max_node);
 			continue;
 		}
 
@@ -193,8 +205,8 @@ void	create_main_threads()
 	int	ret = 0;
 
 	// Send thread
-	printf("Create [publisher] thread: sendport=%d\n", _chainport);
-	ret = pthread_create(&thrid, NULL, thread_publisher, (void *)&_chainport);
+	printf("Create [publisher] thread: sendport=%d\n", _options.chain_port);
+	ret = pthread_create(&thrid, NULL, thread_publisher, (void *)&_options.chain_port);
 	if (ret < 0)
 	{
 		perror("thread_publisher() thread creation error");
@@ -204,10 +216,10 @@ void	create_main_threads()
 	sleepms(1);
 
 	// Send test thread
-	if (_automode)
+	if (_options.auto_mode)
 	{
-		printf("Create [send test] thread\n");
-		ret = pthread_create(&thrid, NULL, thread_send_test, (void *)&_chainport);
+		printf("Create [send test] thread: auto mode=%d\n", _options.auto_mode);
+		ret = pthread_create(&thrid, NULL, thread_send_test, (void *)&_options.chain_port);
 		if (ret < 0)
 		{
 			perror("thread_send_test() thread creation error");
@@ -219,7 +231,7 @@ void	create_main_threads()
 
 	// block sync thread
 	printf("Create [block sync] thread\n");
-	ret = pthread_create(&thrid, NULL, thread_txid_info, (void *)&_chainport);
+	ret = pthread_create(&thrid, NULL, thread_txid_info, (void *)&_options.chain_port);
 	if (ret < 0)
 	{
 		perror("thread_txid_info() thread creation error");
@@ -230,7 +242,7 @@ void	create_main_threads()
 
 	// level db thread
 	printf("Create [leveldb] thread\n");
-	ret = pthread_create(&thrid, NULL, thread_levledb, (void *)&_chainport);
+	ret = pthread_create(&thrid, NULL, thread_levledb, (void *)&_options.chain_port);
 	if (ret < 0)
 	{
 		perror("thread_levledb() thread creation error");
@@ -246,10 +258,10 @@ void	create_subscriber_threads()
 	int	ret = 0;
 
 	// Client thread
-	if (_automode == 0)
+	if (_options.auto_mode == 0)
 	{
 		printf("Create [client] thread\n");
-		ret = pthread_create(&cthrid, NULL, thread_client, (void *)&_clientport);
+		ret = pthread_create(&cthrid, NULL, thread_client, (void *)&_options.client_port);
 		if (ret < 0)
 		{
 			perror("thread_client() thread creation error");
@@ -272,7 +284,7 @@ void	create_subscriber_threads()
 		}
 
 		// skip subscriber on self node
-		if (_maxnode > 1 && atoi(tp+1) == _chainport)
+		if (_options.max_node > 1 && atoi(tp+1) == (int)_options.chain_port)
 		{
 			printf("Peer %s skipped.\n", peer);
 			printf("\n");
@@ -299,7 +311,7 @@ void	create_verifier_threads(int nverifiers)
 
 	// consensus thread
 	printf("Create [consensus] thread\n");
-	int ret = pthread_create(&cthrid, NULL, thread_consensus, (void *)&_chainport);
+	int ret = pthread_create(&cthrid, NULL, thread_consensus, (void *)&_options.chain_port);
 	if (ret < 0)
 	{
 		perror("thread_consensus() thread creation error");
