@@ -13,16 +13,28 @@
 #include "txcommon.h"
 
 
-const char *privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// privkey
-const char *from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
-const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
+const char *_privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// _privkey
+const char *_from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
+const char *_to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 
 
 Params_type_t _cliparams;
 
 
-string	create_token(string token_name);
-string	send_token(string token_name);
+string	create_token(string from_addr, string to_addr, string token_name);
+string	send_token(string from_addr, string to_addr, string token_name);
+string	create_channel(string from_addr, string to_addr, string channel_name);
+string publish_channel(string from_addr, string channel_name, string key, string value);
+string create_contract(string from_addr, string to_addr, string contract_name, string program);
+string destroy(string from_addr, string type_name, string object_name, string action);
+string grant(string _from_addr, string _to_addr, string channel_name, string perm);
+string revoke(string _from_addr, string _to_addr, string channel_name, string perm);
+string create_wallet(string from_addr, string to_addr, string wallet_name);
+string create_account(string from_addr, string account_name);
+string control(string from_addr, string cmd, string arg1 = " ", string arg2 = " ", 
+	string arg3 = " ", string arg4 = " ", string arg5 = " ");
+
+string make_header(int type, string _from_addr, string sbody);
 
 
 int	main(int ac, char *av[])
@@ -49,63 +61,139 @@ int	main(int ac, char *av[])
 	_cliparams = load_params("../lib/params.dat");
 
 
-	string data = create_token("");
-
+	string data = create_token(_from_addr, _to_addr, "");
 	bool ret = s_send(requester, data);
-
 	string reply = s_recv(requester);
 
 	printf("CLIENT: Create COIN: reply=%s  ret=%d\n", reply.c_str(), ret);
 
 
-	data = create_token("XTOKEN");
-
+	data = create_token(_from_addr, _to_addr, "XTOKEN");
 	ret = s_send(requester, data);
-
 	reply = s_recv(requester);
 
-	printf("CLIENT: Create XTOKEN: reply=%s  ret=%d\n", reply.c_str(), ret);
-
+	printf("CLIENT: Create token XTOKEN: reply=%s  ret=%d\n", reply.c_str(), ret);
 
 	for (int count = 0; count < 2; count++)
 	{
-		string data = send_token("");		// coin
-
+		string data = send_token(_from_addr, _to_addr, "");		// coin
 		bool ret = s_send(requester, data);
-
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
 		sleepms(1);
 		if (count % 1000 == 0)
-			printf("CLIENT: Send %7d: reply=%s  ret=%d\n",
+			printf("CLIENT: Send coin %7d: reply=%s  ret=%d\n",
 				count + 1, reply.c_str(), ret);
 #else
 		if (count % 10000 == 0)
-			printf("CLIENT: Send %7d: reply=%s  ret=%d\n", 
+			printf("CLIENT: Send coin %7d: reply=%s  ret=%d\n", 
 				count + 1, reply.c_str(), ret);
 #endif
 	}
 
 	for (int count = 0; count < 2; count++)
 	{
-		string data = send_token("XTOKEN");
-
+		string data = send_token(_from_addr, _to_addr, "XTOKEN");
 		bool ret = s_send(requester, data);
-
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
 		sleepms(1);
 		if (count % 1000 == 0)
-			printf("CLIENT: Send %7d: reply=%s  ret=%d\n",
+			printf("CLIENT: Send token %7d: reply=%s  ret=%d\n",
 				count + 1, reply.c_str(), ret);
 #else
 		if (count % 10000 == 0)
-			printf("CLIENT: Send %7d: reply=%s  ret=%d\n", 
+			printf("CLIENT: Send token %7d: reply=%s  ret=%d\n", 
 				count + 1, reply.c_str(), ret);
 #endif
 	}
+
+	data = create_channel(_from_addr, _to_addr, "CH1");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send create_channel(CH1): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = create_channel(_from_addr, _to_addr, "CH2");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send create_channel(CH1): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = publish_channel(_from_addr, "CH1", "key1", "data1");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send publish_channel(CH1): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = publish_channel(_from_addr, "CH2", "key2", "data2");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send publish_channel(CH2): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = create_contract(_from_addr, _to_addr, "CT1", "program");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send create_contract(CT1, program): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = destroy(_from_addr, "token", "XTOKEN", "dsttroy");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send destroy(token XTOKEN destroy): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = grant(_from_addr, _to_addr, "chennel", "admin,read,write");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send grant(from, to, channel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = revoke(_from_addr, _to_addr, "chennel", "admin,read,write");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send revoke(from, to, chennel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = create_wallet(_from_addr, _to_addr, "MYWALLET");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send create_wallet(MYWALLET): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = create_account(_from_addr, "ACC");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send create_account(ACC): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+//	data = control(_from_addr, "listblock", "1");
+//	ret = s_send(requester, data);
+//	reply = s_recv(requester);
+//	printf("CLIENT: Send control(listblock, 1): reply=%s  ret=%d\n", reply.c_str(), ret);
+}
+
+
+string make_header(int type, string from_addr, string sbody)
+{
+	tx_header_t txhdr;
+
+	txhdr.nodeid = getpid();	// 임시로 
+	txhdr.type = type;
+	txhdr.data_length = sbody.size();
+	txhdr.from_addr = from_addr;
+	txhdr.txclock = xgetclock();
+	txhdr.signature = sign_message_bin(_privkey, sbody.c_str(), sbody.size(), 
+				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
+
+	string shdr = txhdr.serialize();
+
+	printf("%s:\n", get_type_name(type));
+	printf("    Serialize: hdr  length=%ld\n", shdr.size());
+	printf("    Serialize: body length=%ld\n", sbody.size());
+	printf("    Address  : %s\n", from_addr.c_str());
+	printf("    Signature: %s\n", txhdr.signature.c_str());
+
+	// 발송 전에 미리 검증 테스트 
+	int verify_check = verify_message_bin(from_addr.c_str(), txhdr.signature.c_str(), 
+				sbody.c_str(), sbody.size(), &_cliparams.AddrHelper);
+	printf("    verify_check=%d\n", verify_check);
+	printf("\n");
+
+	return shdr;
 }
 
 
@@ -114,7 +202,7 @@ int	main(int ac, char *av[])
 // - TX 기록 TXID 반환
 // - leveldb에 엔트리 생성 (코인 관련)
 //
-string	create_token(string token_name)
+string	create_token(string from_addr, string to_addr, string token_name)
 {
 	static	int	count = 0;
 
@@ -125,7 +213,7 @@ string	create_token(string token_name)
 	count++;
 
 	txcreate.from_addr = from_addr;
-	txcreate.to_addr = from_addr;
+	txcreate.to_addr = to_addr;
 	txcreate.token_name = token_name;
 	txcreate.quantity = 100000000;
 	txcreate.smallest_unit = 0.0001;
@@ -136,42 +224,17 @@ string	create_token(string token_name)
 
 	string sbody = txcreate.serialize();
 
-	txhdr.nodeid = getpid();	// 임시로 
-	txhdr.type = TX_CREATE_TOKEN;
-	txhdr.data_length = sbody.size();
-	txhdr.from_addr = from_addr;
-	txhdr.txclock = xgetclock();
-	txhdr.value = count;
-	txhdr.signature = sign_message_bin(privkey, sbody.c_str(), sbody.size(), 
-				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
-
-	string shdr = txhdr.serialize();
-
-	printf("CREATE_TOKEN:\n");
-	printf("    Serialize: hdr  length=%ld\n", shdr.size());
-	printf("    Serialize: body length=%ld\n", sbody.size());
-	printf("    Address  : %s\n", from_addr);
-	printf("    Signature: %s\n", txhdr.signature.c_str());
-
-	// 발송 전에 미리 검증 테스트 
-	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
-				sbody.c_str(), sbody.size(), &_cliparams.AddrHelper);
-	printf("    verify_check=%d\n", verify_check);
-	printf("\n");
+	string shdr = make_header(TX_CREATE_TOKEN, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string	send_token(string token_name)
+string	send_token(string from_addr, string to_addr, string token_name)
 {
-	static	int	count = 0;
-
 	tx_header_t	txhdr;
 	tx_send_token_t	txsend;
 	char		tmp[256] = {0};
-
-	count++;
 
 	txsend.from_addr = from_addr;
 	txsend.to_addr = to_addr;
@@ -184,28 +247,201 @@ string	send_token(string token_name)
 
 	string sbody = txsend.serialize();
 
-	txhdr.nodeid = getpid();	// 임시로 
-	txhdr.type = TX_SEND_TOKEN;
-	txhdr.data_length = sbody.size();
-	txhdr.from_addr = from_addr;
-	txhdr.txclock = xgetclock();
-	txhdr.value = count;
-	txhdr.signature = sign_message_bin(privkey, sbody.c_str(), sbody.size(), 
-				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
+	string shdr = make_header(TX_SEND_TOKEN, from_addr, sbody);
 
-	string shdr = txhdr.serialize();
+	return shdr + sbody;
+}
 
-	printf("SEND_TOKEN:\n");
-	printf("    Serialize: hdr  length=%ld\n", shdr.size());
-	printf("    Serialize: body length=%ld\n", sbody.size());
-	printf("    Address  : %s\n", from_addr);
-	printf("    Signature: %s\n", txhdr.signature.c_str());
 
-	// 발송 전에 미리 검증 테스트 
-	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
-				sbody.c_str(), sbody.size(), &_cliparams.AddrHelper);
-	printf("    verify_check=%d\n", verify_check);
-	printf("\n");
+string	create_channel(string from_addr, string to_addr, string channel_name)
+{
+	tx_header_t	txhdr;
+	tx_create_channel_t	txchannel;
+	char		tmp[256] = {0};
+
+	txchannel.from_addr = from_addr;
+	txchannel.to_addr = to_addr;
+	txchannel.channel_name = channel_name;
+	txchannel.access = "anyone read write";
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txchannel.user_data = tmp;
+
+	string sbody = txchannel.serialize();
+
+	string shdr = make_header(TX_CREATE_CHANNEL, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string publish_channel(string from_addr, string channel_name, string key, string value)
+{
+	tx_header_t	txhdr;
+	tx_publish_channel_t	txpublish;
+	char		tmp[256] = {0};
+
+	txpublish.from_addr = from_addr;
+	txpublish.channel_name = channel_name;
+	txpublish.key = key;
+	txpublish.value = value;
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txpublish.user_data = tmp;
+
+	string sbody = txpublish.serialize();
+
+	string shdr = make_header(TX_PUBLISH_CHANNEL, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string create_contract(string from_addr, string to_addr, string contract_name, string program)
+{
+	tx_header_t	txhdr;
+	tx_create_contract_t	txpublish;
+	char		tmp[256] = {0};
+
+	txpublish.from_addr = from_addr;
+	txpublish.to_addr = to_addr;
+	txpublish.contract_name = contract_name;
+	txpublish.program = program;
+	txpublish.access = "anyone";
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txpublish.user_data = tmp;
+
+	string sbody = txpublish.serialize();
+
+	string shdr = make_header(TX_CREATE_CONTRACT, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string destroy(string from_addr, string type_name, string target_name, string action)
+{
+	tx_header_t	txhdr;
+	tx_destroy_t	txdestroy;
+	char		tmp[256] = {0};
+
+	txdestroy.from_addr = from_addr;
+	txdestroy.type_name = type_name;
+	txdestroy.target_name = target_name;
+	txdestroy.action = action;
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txdestroy.user_data = tmp;
+
+	string sbody = txdestroy.serialize();
+
+	string shdr = make_header(TX_DESTROY, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string grant(string from_addr, string to_addr, string type_name, string perm)
+{
+	tx_header_t	txhdr;
+	tx_grant_t	txgrant;
+	char		tmp[256] = {0};
+
+	txgrant.from_addr = from_addr;
+	txgrant.to_addr = to_addr;
+	txgrant.isgrant = true;
+	txgrant.type_name = type_name;
+	txgrant.permission = perm;
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txgrant.user_data = tmp;
+
+	string sbody = txgrant.serialize();
+
+	string shdr = make_header(TX_GRANT, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string revoke(string from_addr, string to_addr, string type_name, string perm)
+{
+	tx_header_t	txhdr;
+	tx_grant_t	txrevoke;
+	char		tmp[256] = {0};
+
+	txrevoke.from_addr = from_addr;
+	txrevoke.to_addr = to_addr;
+	txrevoke.isgrant = false;
+	txrevoke.type_name = type_name;
+	txrevoke.permission = perm;
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txrevoke.user_data = tmp;
+
+	string sbody = txrevoke.serialize();
+
+	string shdr = make_header(TX_REVOKE, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string create_wallet(string from_addr, string to_addr, string wallet_name)
+{
+	tx_header_t	txhdr;
+	tx_create_wallet_t	txwallet;
+	char		tmp[256] = {0};
+
+	txwallet.from_addr = from_addr;
+	txwallet.to_addr = to_addr;
+	txwallet.wallet_name = wallet_name;
+	txwallet.access = "local";
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txwallet.user_data = tmp;
+
+	string sbody = txwallet.serialize();
+
+	string shdr = make_header(TX_CREATE_WALLET, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string create_account(string from_addr, string account_name)
+{
+	tx_header_t	txhdr;
+	tx_create_account_t	txaccount;
+	char		tmp[256] = {0};
+
+	txaccount.from_addr = from_addr;
+	txaccount.account_name = account_name;
+	txaccount.access = "local";
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txaccount.user_data = tmp;
+
+	string sbody = txaccount.serialize();
+
+	string shdr = make_header(TX_CREATE_ACCOUNT, from_addr, sbody);
+
+	return shdr + sbody;
+}
+
+
+string control(string from_addr, string cmd, string arg1, string arg2, string arg3, string arg4, string arg5)
+{
+	tx_header_t	txhdr;
+	tx_control_t	txcontrol;
+	char		tmp[256] = {0};
+
+	txcontrol.from_addr = from_addr;
+	txcontrol.command = cmd;
+	txcontrol.arg1 = arg1;
+	txcontrol.arg2 = arg2;
+	txcontrol.arg3 = arg3;
+	txcontrol.arg4 = arg4;
+	txcontrol.arg5 = arg5;
+	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
+	txcontrol.user_data = tmp;
+
+	string sbody = txcontrol.serialize();
+
+	string shdr = make_header(TX_CONTROL, from_addr, sbody);
 
 	return shdr + sbody;
 }

@@ -166,6 +166,15 @@ extern	cssmap	_cssmap;			// consensus.cpp
 // cmd.cpp
 bool	cmd_create_token(txdata_t& txdata, tx_create_token_t& create_token);
 bool	cmd_send_token(txdata_t& txdata, tx_send_token_t& send_token);
+bool	cmd_create_channel(txdata_t& txdata, tx_create_channel_t& create_channel);
+bool	cmd_publish_channel(txdata_t& txdata, tx_publish_channel_t& publish_channel);
+bool	cmd_create_contract(txdata_t& txdata, tx_create_contract_t& create_contract);
+bool	cmd_destroy(txdata_t& txdata, tx_destroy_t& destroy);
+bool	cmd_grant(txdata_t& txdata, tx_grant_t& grant);
+bool	cmd_revoke(txdata_t& txdata, tx_grant_t& revoke);
+bool	cmd_create_wallet(txdata_t& txdata, tx_create_wallet_t& create_wallet);
+bool	cmd_create_account(txdata_t& txdata, tx_create_account_t& create_account);
+bool	cmd_control(txdata_t& txdata, tx_control_t& control);
 
 
 #endif	// __COMMON_H

@@ -12,13 +12,13 @@ double	update_balance(string token_name, string addr, double amount);
 bool	cmd_create_token(txdata_t& txdata, tx_create_token_t& create_token)
 {
 	string key = "TOKEN::" + create_token.token_name;
-	string token_name = _walletdb.get(key);
+	string token_name = _systemdb.get(key);
 	if (token_name == "")
 	{
 		key = "TOKEN::" + create_token.token_name;
 		string data = txdata.bodyser;
-		_walletdb.put(key, data);
-		printf("CREATE_TOKEN: write to WALLETDB: key=%s data=%ld\n", key.c_str(), data.size());
+		_systemdb.put(key, data);
+		printf("CREATE_TOKEN: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
 		double total = create_token.quantity / create_token.smallest_unit;
 
 		// 수신 주소 잔액 조정 
@@ -40,7 +40,7 @@ bool	cmd_create_token(txdata_t& txdata, tx_create_token_t& create_token)
 bool	cmd_send_token(txdata_t& txdata, tx_send_token_t& send_token)
 {
 	string key = "TOKEN::" + send_token.token_name;
-	string token_name = _walletdb.get(key);
+	string token_name = _systemdb.get(key);
 	if (token_name == "")
 	{
 		logprintf(0, "ERROR: Token '%s' not found!\n", send_token.token_name.c_str());
@@ -98,3 +98,159 @@ double	update_balance(string token_name, string addr, double amount)
 
 	return final_balance;
 }
+
+
+bool	cmd_create_channel(txdata_t& txdata, tx_create_channel_t& create_channel)
+{
+	string key = "CHANNEL::" + create_channel.channel_name;
+	string channel_name = _systemdb.get(key);
+
+	// 채널이 없으면 신규 생성 
+	if (channel_name == "")
+	{
+		key = "CHANNEL::" + create_channel.channel_name;
+		string data = txdata.bodyser;
+		_systemdb.put(key, data);
+		printf("CREATE_CHANNEL: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+	}
+	else
+	{
+		logprintf(0, "ERROR: Channel '%s' exists!\n", create_channel.channel_name.c_str());
+		return false;
+	}
+	return true;
+}
+
+
+bool	cmd_publish_channel(txdata_t& txdata, tx_publish_channel_t& publish_channel)
+{
+	string key = "CHANNEL::" + publish_channel.channel_name;
+	string channel_name = _systemdb.get(key);
+	if (channel_name == "")
+	{
+		logprintf(0, "ERROR: Channel '%s' not found!\n", publish_channel.channel_name.c_str());
+		return false;
+	}
+
+	// 데이터 저장 
+	key = publish_channel.channel_name + "::" + publish_channel.key;
+	string data = txdata.bodyser;
+	_txdb.put(key, data);
+
+	logprintf(0, "Publish to channel %s ok: from=%s key=%s value=%s\n",
+		publish_channel.channel_name.c_str(), publish_channel.from_addr.c_str(), 
+		publish_channel.key.c_str(), publish_channel.value.c_str());
+
+	return true;
+}
+
+
+bool	cmd_create_contract(txdata_t& txdata, tx_create_contract_t& create_contract)
+{
+	string key = "CONTRACT::" + create_contract.contract_name;
+	string contract_name = _systemdb.get(key);
+
+	// 채널이 없으면 신규 생성 
+	if (contract_name == "")
+	{
+		key = "CONTRACT::" + create_contract.contract_name;
+		string data = txdata.bodyser;
+		_systemdb.put(key, data);
+		printf("CREATE_CONTRACT: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+	}
+	else
+	{
+		logprintf(0, "ERROR: Contract '%s' exists!\n", create_contract.contract_name.c_str());
+		return false;
+	}
+	return true;
+}
+
+
+bool	cmd_destroy(txdata_t& txdata, tx_destroy_t& destroy)
+{
+	string key = "DESTROY::" + destroy.type_name + "::" + destroy.target_name;
+	string data = txdata.bodyser;
+	_systemdb.put(key, data);
+	printf("DESTROY: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+
+	return true;
+}
+
+
+bool	cmd_grant(txdata_t& txdata, tx_grant_t& grant)
+{
+	if (grant.isgrant)
+	{
+		string key = "GRANT::" + grant.type_name + "::" + grant.to_addr;
+		string data = txdata.bodyser;
+		_systemdb.put(key, data);
+		printf("GRANT: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+	}
+	else
+	{
+		string key = "REVOKE::" + grant.type_name + "::" + grant.to_addr;
+		string data = txdata.bodyser;
+		_systemdb.put(key, data);
+		printf("REVOKE: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+	}
+
+	return true;
+}
+
+
+bool	cmd_create_wallet(txdata_t& txdata, tx_create_wallet_t& create_wallet)
+{
+	string key = "WALLET::" + create_wallet.wallet_name;
+	string wallet_name = _systemdb.get(key);
+
+	// 채널이 없으면 신규 생성 
+	if (wallet_name == "")
+	{
+		key = "WALLET::" + create_wallet.wallet_name;
+		string data = txdata.bodyser;
+		_systemdb.put(key, data);
+		printf("CREATE_WALLET: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+	}
+	else
+	{
+		logprintf(0, "ERROR: Wallet '%s' exists!\n", create_wallet.wallet_name.c_str());
+		return false;
+	}
+	return true;
+}
+
+
+bool	cmd_create_account(txdata_t& txdata, tx_create_account_t& create_account)
+{
+	string key = "ACCOUNT::" + create_account.account_name;
+	string account_name = _systemdb.get(key);
+
+	// 채널이 없으면 신규 생성 
+	if (account_name == "")
+	{
+		key = "ACCOUNT::" + create_account.account_name;
+		string data = txdata.bodyser;
+		_systemdb.put(key, data);
+		printf("CREATE_ACCOUNT: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+	}
+	else
+	{
+		logprintf(0, "ERROR: Account '%s' exists!\n", create_account.account_name.c_str());
+		return false;
+	}
+	return true;
+}
+
+
+bool	cmd_control(txdata_t& txdata, tx_control_t& control)
+{
+	string key = "CONTROL::" + control.from_addr;
+	string data = txdata.bodyser;
+	_systemdb.put(key, data);
+	printf("CREATE_CONTROL: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+
+	return true;
+}
+
+

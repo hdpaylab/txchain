@@ -55,7 +55,8 @@ enum {
 	TX_CREATE_CONTRACT	= 1300,
 
 	// Permission commands
-	TX_GRANT_REVOKE		= 1400,
+	TX_GRANT		= 1400,
+	TX_REVOKE,
 	TX_DESTROY,
 
 	// Wallet commands
@@ -68,6 +69,9 @@ enum {
 	TX_CREATE_ACCOUNT	= 1600,		// Account has several addresses
 	TX_SET_ACCOUNT,
 	TX_LIST_ACCOUNT,
+
+	// Control commands
+	TX_CONTROL		= 1700,
 };
 
 
@@ -115,6 +119,7 @@ typedef struct tx_header {
 		status = 0;
 		valid = -1;
 		flag = 0;
+		value = 0;
 	}
 	string serialize()
 	{
@@ -312,11 +317,21 @@ typedef struct tx_create_channel {
 		start_time = 0;
 		expire_time = 0;
 	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_create_channel& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
 	string		to_addr;
 	string		channel_name;	// 256 bytes
 
-	string		access;		// "local" "permission" "anyone read" "anyone read write"
+	string		access;		// "local" "permission" "anyone read" 
+					// "anyone write" "anyone read write"
 	time_t		start_time;	// channel 시작 시간 (0이면 즉시)
 	time_t		expire_time;	// channel 중단 시간 (0이면 계속)
 
@@ -325,8 +340,16 @@ typedef struct tx_create_channel {
 
 
 typedef struct tx_publish_channel {
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_publish_channel& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
-	string		to_addr;
 	string		channel_name;	// 256 bytes
 	string		key;		// 256 bytes
 	string		value;		// size limit: max tx size
@@ -341,9 +364,19 @@ typedef struct tx_create_contract {
 		start_time = 0;
 		expire_time = 0;
 	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_create_contract& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
 	string		to_addr;
 	string		contract_name;	// 256 bytes
+	string		program;
 
 	string		access;		// "local" "permission" "anyone"
 	time_t		start_time;	// contract 시작 시간 (0이면 즉시)
@@ -354,35 +387,55 @@ typedef struct tx_create_contract {
 
 
 // Destroy object: master only
-typedef struct {
+typedef struct tx_destroy {
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_destroy& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
-	string		to_addr;
-	string		target_name;	// TOKEN / CHANNEL / CONTRACT
+	string		type_name;	// token / channel / contract
+	string		target_name;	// XTOKEN / CH1 ...
 	string		action;		// "pause" "stop" "start" "destroy"
 
 	string		user_data;
 }	tx_destroy_t;
 
 
-typedef struct tx_grant_revoke {
-	tx_grant_revoke()
+typedef struct tx_grant {
+	tx_grant()
 	{
 		start_time = 0;
 		expire_time = 0;
 	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_grant& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
 	string		to_addr;
-	string		permission;	// TOKEN: issue, admin
-					// CHANNEL: admin, read, write,
-					// CONTRACT: admin, read
-					// WALLET: admin, read, send
-					// ACCOUNT: admin, read
+	int		isgrant;	// true=grant(권한 부여) false=revoke(권한 제거)
+	string		type_name;	// token / channel / contract
+	string		permission;	// token: issue, admin
+					// channel: admin, read, write,
+					// contract: admin, read
+					// wallet: admin, read(recv), send(write)
+					// account: admin, read
 
 	time_t		start_time;	// permission 시작 시간 (0이면 즉시)
 	time_t		expire_time;	// permission 중단 시간 (0이면 계속)
 
 	string		user_data;
-}	tx_grant_revoke_t;
+}	tx_grant_t;
 
 
 typedef struct tx_create_wallet {
@@ -390,6 +443,15 @@ typedef struct tx_create_wallet {
 	{
 		start_time = 0;
 		expire_time = 0;
+	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_create_wallet& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
 	}
 	string		from_addr;
 	string		to_addr;
@@ -409,8 +471,16 @@ typedef struct tx_create_account {
 		start_time = 0;
 		expire_time = 0;
 	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_create_account& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
-	string		to_addr;
 	string		account_name;
 
 	string		access;		// "local" "permission" "anyone add delete"
@@ -426,17 +496,38 @@ typedef struct tx_create_account {
 // setwallet ADDR WALLET	=> put wallet.db key=WALLET::list value=ADDR ADDR ...
 // listwallet WALLET		=> get wallet.db key=WALLET::list result=JSON array
 // create keypair
-typedef struct {
+typedef struct tx_control {
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_control& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
-	string		to_addr;
 	string		command;
+	string		arg1;
+	string		arg2;
+	string		arg3;
+	string		arg4;
+	string		arg5;
 
 	string		user_data;
 }	tx_control_t;
 
 
-typedef struct {
+typedef struct txstat {
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct txstat& tx);
+		xserialize szr;
 
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	uint32_t	sender_id;	// seed=01
 	double		timeout_clock;  // network timeout clock (default: 10 sec)
 	double		recv_clock;	// receive clock
@@ -457,16 +548,34 @@ int	seriz_add(xserialize& xsz, tx_header_t& tx);
 int	seriz_add(xserialize& xsz, file_tx_header_t& tx);
 int	seriz_add(xserialize& xsz, tx_create_token_t& tx);
 int	seriz_add(xserialize& xsz, tx_verify_reply_t& tx);
+int	seriz_add(xserialize& xsz, tx_create_channel_t& tx);
+int	seriz_add(xserialize& xsz, tx_publish_channel_t& tx);
+int	seriz_add(xserialize& xsz, tx_create_contract_t& tx);
+int	seriz_add(xserialize& xsz, tx_destroy_t& tx);
+int	seriz_add(xserialize& xsz, tx_grant_t& tx);
+int	seriz_add(xserialize& xsz, tx_create_wallet_t& tx);
+int	seriz_add(xserialize& xsz, tx_create_account_t& tx);
+int	seriz_add(xserialize& xsz, tx_control_t& tx);
+int	seriz_add(xserialize& xsz, txstat_t& tx);
 
 int	deseriz(xserialize& xsz, block_info_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, txid_info_req_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, txid_info_reply_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_sign_hash_t& tx, int dump = 0);
-int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_header_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, file_tx_header_t& tx, int dump = 0);
-int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_verify_reply_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_create_channel_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_publish_channel_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_create_contract_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_destroy_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_grant_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_create_wallet_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_create_account_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, tx_control_t& tx, int dump = 0);
+int	deseriz(xserialize& xsz, txstat_t& tx, int dump = 0);
 
 
 #endif	// __TX_H

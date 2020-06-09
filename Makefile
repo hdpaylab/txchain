@@ -40,4 +40,5 @@ clean:
 	cd v0.1; make clean; cd ..
 	cd v0.2; make clean; cd ..
 	cd v0.3; make clean; cd ..
+	cd v0.4; make clean; cd ..
 	cd test; make clean; cd ..

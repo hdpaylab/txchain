@@ -84,7 +84,8 @@ const char *get_type_name(int type)
 
         case TX_CREATE_CONTRACT:	return "TX_CREATE_CONTRACT"; 
 
-        case TX_GRANT_REVOKE:		return "TX_GRANT_REVOKE"; 
+        case TX_GRANT:			return "TX_GRANT"; 
+        case TX_REVOKE:			return "TX_REVOKE"; 
         case TX_DESTROY:		return "TX_DESTROY"; 
 
         case TX_CREATE_WALLET:		return "TX_CREATE_WALLET"; 

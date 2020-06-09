@@ -142,6 +142,164 @@ int	seriz_add(xserialize& xsz, tx_send_token_t& tx)
 }
 
 
+int	seriz_add(xserialize& xsz, tx_create_channel_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.to_addr;
+	ret = xsz << tx.channel_name;	// 256 bytes
+
+	ret = xsz << tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz << tx.start_time;	// channel 시작 시간 (0이면 즉시)
+	ret = xsz << tx.expire_time;	// channel 중단 시간 (0이면 계속)
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, tx_publish_channel_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.channel_name;	// 256 bytes
+	ret = xsz << tx.key;		// 256 bytes
+	ret = xsz << tx.value;		// size limit: max tx size
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, tx_create_contract_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.to_addr;
+	ret = xsz << tx.contract_name;	// 256 bytes
+	ret = xsz << tx.program;
+
+	ret = xsz << tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz << tx.start_time;	// channel 시작 시간 (0이면 즉시)
+	ret = xsz << tx.expire_time;	// channel 중단 시간 (0이면 계속)
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, tx_destroy_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.target_name;	// TOKEN / CHANNEL / CONTRACT
+	ret = xsz << tx.action;		// "pause" "stop" "start" "destroy"
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, tx_grant_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.to_addr;
+	ret = xsz << tx.isgrant;
+	ret = xsz << tx.type_name;	// token, channel, contract, wallet, account
+	ret = xsz << tx.permission;	// TOKEN: issue, admin
+					// CHANNEL: admin, read, write,
+					// CONTRACT: admin, read
+					// WALLET: admin, read, send
+					// ACCOUNT: admin, read
+
+	ret = xsz << tx.start_time;	// permission 시작 시간 (0이면 즉시)
+	ret = xsz << tx.expire_time;	// permission 중단 시간 (0이면 계속)
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, tx_create_wallet_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.to_addr;
+	ret = xsz << tx.wallet_name;
+
+	ret = xsz << tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz << tx.start_time;	// 시작 시간 (0이면 즉시)
+	ret = xsz << tx.expire_time;	// 중단 시간 (0이면 계속)
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, tx_create_account_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.account_name;
+
+	ret = xsz << tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz << tx.start_time;	// 시작 시간 (0이면 즉시)
+	ret = xsz << tx.expire_time;	// 중단 시간 (0이면 계속)
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, tx_control_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.from_addr;
+	ret = xsz << tx.command;
+	ret = xsz << tx.arg1;
+	ret = xsz << tx.arg2;
+	ret = xsz << tx.arg3;
+	ret = xsz << tx.arg4;
+	ret = xsz << tx.arg5;
+
+	ret = xsz << tx.user_data;
+
+	return ret;
+}
+
+
+int	seriz_add(xserialize& xsz, txstat_t& tx)
+{
+	int ret = 0;
+
+	ret = xsz << tx.sender_id;	// seed=01
+	ret = xsz << tx.timeout_clock;  // network timeout clock (default: 10 sec)
+	ret = xsz << tx.recv_clock;	// receive clock
+	ret = xsz << tx.send_clock;	// send clock for consensus
+	ret = xsz << tx.reply_clock;	//
+	ret = xsz << tx.reply_ok;	// map 필요
+	ret = xsz << tx.reply_fail;	// map 필요
+
+	return ret;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////
 // De-serialize
 
@@ -349,9 +507,11 @@ int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump)
 	ret = xsz >> tx.from_addr;
 	ret = xsz >> tx.to_addr;
 	ret = xsz >> tx.token_name;
+
 	ret = xsz >> tx.amount;
 	ret = xsz >> tx.native_amount;
 	ret = xsz >> tx.fee;
+
 	ret = xsz >> tx.user_data;
 
 	if (dump)
@@ -359,10 +519,279 @@ int	deseriz(xserialize& xsz, tx_send_token_t& tx, int dump)
 		printf("    from_addr = %s\n", tx.from_addr.c_str());
 		printf("    to_addr = %s\n", tx.to_addr.c_str());
 		printf("    token_name = %s\n", tx.token_name.c_str());
+
 		printf("    amount = %.6f\n", tx.amount);
 		printf("    native_amount = %.6f\n", tx.native_amount);
 		printf("    fee = %.6f\n", tx.fee);
+
 		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_create_channel_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.to_addr;
+	ret = xsz >> tx.channel_name;	// 256 bytes
+
+	ret = xsz >> tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz >> tx.start_time;	// channel 시작 시간 (0이면 즉시)
+	ret = xsz >> tx.expire_time;	// channel 중단 시간 (0이면 계속)
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    to_addr = %s\n", tx.to_addr.c_str());
+		printf("    channel_name = %s\n", tx.channel_name.c_str());
+
+		printf("    access = %s\n", tx.access.c_str());
+		printf("    start_time = %ld\n", tx.start_time);
+		printf("    expire_time = %ld\n", tx.expire_time);
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_publish_channel_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.channel_name;	// 256 bytes
+	ret = xsz >> tx.key;		// 256 bytes
+	ret = xsz >> tx.value;		// size limit: max tx size
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    channel_name = %s\n", tx.channel_name.c_str());
+
+		printf("    key = %s\n", tx.key.c_str());
+		printf("    value = %s\n", tx.value.c_str());
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_create_contract_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.to_addr;
+	ret = xsz >> tx.contract_name;	// 256 bytes
+	ret = xsz >> tx.program;
+
+	ret = xsz >> tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz >> tx.start_time;	// channel 시작 시간 (0이면 즉시)
+	ret = xsz >> tx.expire_time;	// channel 중단 시간 (0이면 계속)
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    to_addr = %s\n", tx.to_addr.c_str());
+		printf("    contract_name = %s\n", tx.contract_name.c_str());
+		printf("    program = %s\n", tx.program.c_str());
+
+		printf("    access = %s\n", tx.access.c_str());
+		printf("    start_time = %ld\n", tx.start_time);
+		printf("    expire_time = %ld\n", tx.expire_time);
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_destroy_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.target_name;	// TOKEN / CHANNEL / CONTRACT
+	ret = xsz >> tx.action;		// "pause" "stop" "start" "destroy"
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    target_name = %s\n", tx.target_name.c_str());
+		printf("    action = %s\n", tx.action.c_str());
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_grant_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.to_addr;
+	ret = xsz >> tx.isgrant;
+	ret = xsz >> tx.type_name;	// token, channel, contract, wallet, account
+	ret = xsz >> tx.permission;	// TOKEN: issue, admin
+					// CHANNEL: admin, read, write,
+					// CONTRACT: admin, read
+					// WALLET: admin, read, send
+					// ACCOUNT: admin, read
+
+	ret = xsz >> tx.start_time;	// permission 시작 시간 (0이면 즉시)
+	ret = xsz >> tx.expire_time;	// permission 중단 시간 (0이면 계속)
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    to_addr = %s\n", tx.to_addr.c_str());
+		printf("    permission = %s\n", tx.permission.c_str());
+
+		printf("    start_time = %ld\n", tx.start_time);
+		printf("    expire_time = %ld\n", tx.expire_time);
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_create_wallet_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.to_addr;
+	ret = xsz >> tx.wallet_name;
+
+	ret = xsz >> tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz >> tx.start_time;	// 시작 시간 (0이면 즉시)
+	ret = xsz >> tx.expire_time;	// 중단 시간 (0이면 계속)
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    to_addr = %s\n", tx.to_addr.c_str());
+		printf("    wallet_name = %s\n", tx.wallet_name.c_str());
+
+		printf("    access = %s\n", tx.access.c_str());
+		printf("    start_time = %ld\n", tx.start_time);
+		printf("    expire_time = %ld\n", tx.expire_time);
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_create_account_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.account_name;
+
+	ret = xsz >> tx.access;		// "local" "permission" "anyone read" "anyone read write"
+	ret = xsz >> tx.start_time;	// 시작 시간 (0이면 즉시)
+	ret = xsz >> tx.expire_time;	// 중단 시간 (0이면 계속)
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    account_name = %s\n", tx.account_name.c_str());
+
+		printf("    access = %s\n", tx.access.c_str());
+		printf("    start_time = %ld\n", tx.start_time);
+		printf("    expire_time = %ld\n", tx.expire_time);
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, tx_control_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.from_addr;
+	ret = xsz >> tx.command;
+	ret = xsz >> tx.arg1;
+	ret = xsz >> tx.arg2;
+	ret = xsz >> tx.arg3;
+	ret = xsz >> tx.arg4;
+	ret = xsz >> tx.arg5;
+
+	ret = xsz >> tx.user_data;
+
+	if (dump)
+	{
+		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    command = %s\n", tx.command.c_str());
+		printf("    arg1 = %s\n", tx.arg1.c_str());
+		printf("    arg2 = %s\n", tx.arg2.c_str());
+		printf("    arg3 = %s\n", tx.arg3.c_str());
+		printf("    arg4 = %s\n", tx.arg4.c_str());
+		printf("    arg5 = %s\n", tx.arg5.c_str());
+
+		printf("    user_data = %s\n", tx.user_data.c_str());
+	}
+
+	return ret;
+}
+
+
+int	deseriz(xserialize& xsz, txstat_t& tx, int dump)
+{
+	int ret = 0;
+
+	ret = xsz >> tx.sender_id;	// seed=01
+	ret = xsz >> tx.timeout_clock;  // network timeout clock (default: 10 sec)
+	ret = xsz >> tx.recv_clock;	// receive clock
+	ret = xsz >> tx.send_clock;	// send clock for consensus
+
+	ret = xsz >> tx.reply_clock;	//
+	ret = xsz >> tx.reply_ok;	// map 필요
+	ret = xsz >> tx.reply_fail;	// map 필요
+
+	if (dump)
+	{
+		printf("    sender_id = %u\n", tx.sender_id);
+		printf("    timeout_clock = %.3f\n", tx.timeout_clock);
+		printf("    recv_clock = %.3f\n", tx.recv_clock);
+		printf("    send_clock = %.3f\n", tx.send_clock);
+		printf("    reply_clock = %.3f\n", tx.reply_clock);
+		printf("    reply_ok = %u\n", tx.reply_ok);
+		printf("    reply_fail = %u\n", tx.reply_fail);
 	}
 
 	return ret;

@@ -2,6 +2,7 @@
 
 
 int	tx_verify(txdata_t& txdata);
+void	verify_sign(string from_addr, tx_header_t *hp, txdata_t& txdata);
 
 
 //
@@ -212,6 +213,12 @@ int	tx_verify(txdata_t& txdata)
 	{
 		ps_block_gen(txdata, _recv_txid_info);
 	}
+	else if (hp->type == TX_VERIFY_REPLY)
+	{
+		tx_verify_reply_t verify_reply;
+
+		deseriz(bodyszr, verify_reply, 1);
+	}
 	else if (hp->type == TX_CREATE_TOKEN)
 	{
 		tx_create_token_t create_token;
@@ -219,14 +226,12 @@ int	tx_verify(txdata_t& txdata)
 		deseriz(bodyszr, create_token, 0);
 		from_addr = create_token.from_addr;
 
-		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
-		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		logprintf(3, "%s\n", dump_tx("    CREATE_TOKEN(r&v): ", txdata, 0).c_str());
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    CREATE_TOKEN: ", txdata, 0).c_str());
 
 		if (cmd_create_token(txdata, create_token) == false)
 			return 0;		// ERROR: DO NOT BROADCAST
-
 		return 1;
 	}
 	else if (hp->type == TX_SEND_TOKEN)
@@ -236,22 +241,133 @@ int	tx_verify(txdata_t& txdata)
 		deseriz(bodyszr, send_token, 0);
 		from_addr = send_token.from_addr;
 
-		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
-					txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
+		verify_sign(from_addr, hp, txdata);
 
-		hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
-		logprintf(3, "%s\n", dump_tx("    SEND_TOKEN(r&v): ", txdata, 0).c_str());
+		logprintf(3, "%s\n", dump_tx("    SEND_TOKEN: ", txdata, 0).c_str());
 
 		if (cmd_send_token(txdata, send_token) == false)
 			return 0;		// ERROR: DO NOT BROADCAST
-
 		return 1;
 	}
-	else if (hp->type == TX_VERIFY_REPLY)
+	else if (hp->type == TX_CREATE_CHANNEL)
 	{
-		tx_verify_reply_t verify_reply;
+		tx_create_channel_t create_channel;
 
-		deseriz(bodyszr, verify_reply, 1);
+		deseriz(bodyszr, create_channel, 0);
+		from_addr = create_channel.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    CREATE_CHANNEL: ", txdata, 0).c_str());
+
+		if (cmd_create_channel(txdata, create_channel) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
+	}
+	else if (hp->type == TX_PUBLISH_CHANNEL)
+	{
+		tx_publish_channel_t publish_channel;
+
+		deseriz(bodyszr, publish_channel, 0);
+		from_addr = publish_channel.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    PUBLISH_CHANNEL: ", txdata, 0).c_str());
+
+		if (cmd_publish_channel(txdata, publish_channel) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
+	}
+	else if (hp->type == TX_CREATE_CONTRACT)
+	{
+		tx_create_contract_t create_contract;
+
+		deseriz(bodyszr, create_contract, 0);
+		from_addr = create_contract.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    CREATE_CONTRACT: ", txdata, 0).c_str());
+
+		if (cmd_create_contract(txdata, create_contract) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
+	}
+	else if (hp->type == TX_DESTROY)
+	{
+		tx_destroy_t destroy;
+
+		deseriz(bodyszr, destroy, 0);
+		from_addr = destroy.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    DESTROY: ", txdata, 0).c_str());
+
+		if (cmd_destroy(txdata, destroy) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
+	}
+	else if (hp->type == TX_GRANT || hp->type == TX_REVOKE)
+	{
+		tx_grant_t grant;
+
+		deseriz(bodyszr, grant, 0);
+		from_addr = grant.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    GRANT: ", txdata, 0).c_str());
+
+		if (cmd_grant(txdata, grant) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
+	}
+	else if (hp->type == TX_CREATE_WALLET)
+	{
+		tx_create_wallet_t create_wallet;
+
+		deseriz(bodyszr, create_wallet, 0);
+		from_addr = create_wallet.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    CREATE_WALLET: ", txdata, 0).c_str());
+
+		if (cmd_create_wallet(txdata, create_wallet) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
+	}
+	else if (hp->type == TX_CREATE_ACCOUNT)
+	{
+		tx_create_account_t create_account;
+
+		deseriz(bodyszr, create_account, 0);
+		from_addr = create_account.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    CREATE_ACCOUNT: ", txdata, 0).c_str());
+
+		if (cmd_create_account(txdata, create_account) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
+	}
+	else if (hp->type == TX_CONTROL)
+	{
+		tx_control_t control;
+
+		deseriz(bodyszr, control, 0);
+		from_addr = control.from_addr;
+
+		verify_sign(from_addr, hp, txdata);
+
+		logprintf(3, "%s\n", dump_tx("    CONTROL: ", txdata, 0).c_str());
+
+		if (cmd_control(txdata, control) == false)
+			return 0;		// ERROR: DO NOT BROADCAST
+		return 1;
 	}
 	else
 	{
@@ -260,4 +376,13 @@ int	tx_verify(txdata_t& txdata)
 	}
 
 	return 0;	// DO NOT BROADCAST
+}
+
+
+void	verify_sign(string from_addr, tx_header_t *hp, txdata_t& txdata)
+{
+	hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
+			txdata.bodyser.c_str(), hp->data_length, &_netparams.AddrHelper);
+
+	hp->txid = hp->valid ? sha256(hp->signature) : "ERROR: Transaction verification failed!";
 }
