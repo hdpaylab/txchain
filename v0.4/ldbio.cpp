@@ -56,11 +56,7 @@ void	*thread_levledb(void *info_p)
 
 int	db_process(txdata_t& txdata)
 {
-	tx_send_token_t txsend;
-	xserialize hdrszr, bodyszr;
-	string	key;
-
-	key = txdata.hdr.txid;
+	string	key = txdata.hdr.txid;
 
 	printf("    Save: key=%s  / data length=%ld\n", key.c_str(), txdata.bodyser.size());
 

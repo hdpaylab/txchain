@@ -103,27 +103,25 @@ void	*thread_send_test(void *info_p)
 	txsend.amount = 123.456;
 	txsend.user_data = "TEST SEND TOKEN by THREAD";
 
-	xserialize hdrszr, bodyszr;
+	string sbody = txsend.serialize();
 
-	seriz_add(bodyszr, txsend);
-	txhdr.data_length = bodyszr.size();
+	txhdr.data_length = sbody.size();
+	txhdr.signature = sign_message_bin(privkey, sbody.c_str(), sbody.size(), &_netparams.PrivHelper, &_netparams.AddrHelper);
 
-	txhdr.data_length = bodyszr.size();
-	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), &_netparams.PrivHelper, &_netparams.AddrHelper);
-
-	printf("Serialize: body length=%ld\n", bodyszr.size());
+	printf("Serialize: body length=%ld\n", sbody.size());
 	printf("address  : %s\n", from_addr);
-	printf("message  : \n"); bodyszr.dump(10, 1);
+//	printf("message  : \n"); bodyszr.dump(10, 1);
 	printf("signature: %s\n", txhdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
-	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), bodyszr.data(), bodyszr.size(), &_netparams.AddrHelper);
+	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
+				sbody.c_str(), sbody.size(), &_netparams.AddrHelper);
 
 	printf("verify_check=%d\n", verify_check);
 	printf("\n");
 
 	// sign은 verify 테스트 전에 serialize하면 안됨..
-	seriz_add(hdrszr, txhdr);
+	string shdr = txhdr.serialize();
 
 	for (int ii = 0; ii < loop; ii++)
 	{
@@ -135,16 +133,14 @@ void	*thread_send_test(void *info_p)
 		txhdr.status = 0;
 		txhdr.data_length = 0;
 		txhdr.valid = verify_check;
-
 		txhdr.txid = sha256(txhdr.signature);
 
 		printf("	SEND REPLY valid=%d\n", txhdr.valid);
 
-		xserialize hdrszr;
-		seriz_add(hdrszr, txhdr);
+		string shdr = txhdr.serialize();
 		*/
 
-		txdata.orgdataser = hdrszr.getstring() + bodyszr.getstring();
+		txdata.orgdataser = shdr + sbody;
 
 		logprintf(2, "    Add to sendq: type=%s status=%s\n",
 			get_type_name(txhdr.type), get_status_name(txhdr.status));

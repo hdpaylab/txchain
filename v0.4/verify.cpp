@@ -104,9 +104,7 @@ int	verify_process(txdata_t& txdata)
 		{
 			hp->nodeid = getpid();
 
-			xserialize tmpszr;
-			seriz_add(tmpszr, txdata.hdr);
-			txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체 
+			txdata.hdrser = txdata.hdr.serialize();	// 헤더 serialization 교체 
 
 			logprintf(2, "    Add to mempoolq: type=%s status=%s size=%ld\n",
 				get_type_name(txdata.hdr.type), get_status_name(txdata.hdr.status),
@@ -139,7 +137,6 @@ int	verify_process(txdata_t& txdata)
 void	send_verify_result(txdata_t& txdata)
 {
 	tx_header_t hdr;
-	xserialize hdrszr;
 
 	hdr.nodeid = getpid();
 	hdr.type = TX_VERIFY_REPLY;
@@ -149,8 +146,7 @@ void	send_verify_result(txdata_t& txdata)
 	hdr.signature = txdata.hdr.signature;
 	hdr.txid = sha256(txdata.hdr.signature);
 
-	seriz_add(hdrszr, hdr);
-	txdata.hdrser = hdrszr.getstring();	// 헤더 serialization 교체 
+	txdata.hdrser = hdr.serialize();	// 헤더 serialization 교체 
 
 	logprintf(3, "    Add to sendq(TX_VERIFY_REPLY): type=%s status=%s\n",
 		get_type_name(hdr.type), get_status_name(hdr.status));

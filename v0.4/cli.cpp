@@ -21,8 +21,8 @@ const char *to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
 Params_type_t _cliparams;
 
 
-string	create_token();
-string	send_token();
+string	create_token(string token_name);
+string	send_token(string token_name);
 
 
 int	main(int ac, char *av[])
@@ -49,18 +49,47 @@ int	main(int ac, char *av[])
 	_cliparams = load_params("../lib/params.dat");
 
 
-	string data = create_token();
+	string data = create_token("");
 
 	bool ret = s_send(requester, data);
 
 	string reply = s_recv(requester);
 
-	printf("CLIENT: Create: reply=%s  ret=%d\n", reply.c_str(), ret);
+	printf("CLIENT: Create COIN: reply=%s  ret=%d\n", reply.c_str(), ret);
+
+
+	data = create_token("XTOKEN");
+
+	ret = s_send(requester, data);
+
+	reply = s_recv(requester);
+
+	printf("CLIENT: Create XTOKEN: reply=%s  ret=%d\n", reply.c_str(), ret);
 
 
 	for (int count = 0; count < 2; count++)
 	{
-		string data = send_token();
+		string data = send_token("");		// coin
+
+		bool ret = s_send(requester, data);
+
+		string reply = s_recv(requester);
+
+#ifdef DEBUG
+		sleepms(1);
+		if (count % 1000 == 0)
+			printf("CLIENT: Send %7d: reply=%s  ret=%d\n",
+				count + 1, reply.c_str(), ret);
+#else
+		if (count % 10000 == 0)
+			printf("CLIENT: Send %7d: reply=%s  ret=%d\n", 
+				count + 1, reply.c_str(), ret);
+#endif
+	}
+
+	for (int count = 0; count < 2; count++)
+	{
+		string data = send_token("XTOKEN");
 
 		bool ret = s_send(requester, data);
 
@@ -85,11 +114,10 @@ int	main(int ac, char *av[])
 // - TX 기록 TXID 반환
 // - leveldb에 엔트리 생성 (코인 관련)
 //
-string	create_token()
+string	create_token(string token_name)
 {
 	static	int	count = 0;
 
-	xserialize hdrszr, bodyszr;
 	tx_header_t	txhdr;
 	tx_create_token_t txcreate;
 	char		tmp[256] = {0};
@@ -97,8 +125,8 @@ string	create_token()
 	count++;
 
 	txcreate.from_addr = from_addr;
-	txcreate.to_addr = to_addr;
-	txcreate.token_name = "XTOKEN";
+	txcreate.to_addr = from_addr;
+	txcreate.token_name = token_name;
 	txcreate.quantity = 100000000;
 	txcreate.smallest_unit = 0.0001;
 	txcreate.native_amount = 0.0;
@@ -106,40 +134,39 @@ string	create_token()
 	sprintf(tmp, "{\"Creator\": \"Hyundai-pay\", \"Manager\": \"Lee Jae Min\"}");
 	txcreate.user_data = tmp;
 
-	seriz_add(bodyszr, txcreate);
+	string sbody = txcreate.serialize();
 
 	txhdr.nodeid = getpid();	// 임시로 
 	txhdr.type = TX_CREATE_TOKEN;
-	txhdr.data_length = bodyszr.size();
+	txhdr.data_length = sbody.size();
 	txhdr.from_addr = from_addr;
 	txhdr.txclock = xgetclock();
 	txhdr.value = count;
-	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), 
+	txhdr.signature = sign_message_bin(privkey, sbody.c_str(), sbody.size(), 
 				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
-	seriz_add(hdrszr, txhdr);
+
+	string shdr = txhdr.serialize();
 
 	printf("CREATE_TOKEN:\n");
-	printf("    Serialize: hdr  length=%ld\n", hdrszr.size());
-	printf("    Serialize: body length=%ld\n", bodyszr.size());
+	printf("    Serialize: hdr  length=%ld\n", shdr.size());
+	printf("    Serialize: body length=%ld\n", sbody.size());
 	printf("    Address  : %s\n", from_addr);
-//	printf("    Message  : \n"); bodyszr.dump(10, 1);
 	printf("    Signature: %s\n", txhdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
 	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
-				bodyszr.data(), bodyszr.size(), &_cliparams.AddrHelper);
+				sbody.c_str(), sbody.size(), &_cliparams.AddrHelper);
 	printf("    verify_check=%d\n", verify_check);
 	printf("\n");
 
-	return hdrszr.getstring() + bodyszr.getstring();
+	return shdr + sbody;
 }
 
 
-string	send_token()
+string	send_token(string token_name)
 {
 	static	int	count = 0;
 
-	xserialize hdrszr, bodyszr;
 	tx_header_t	txhdr;
 	tx_send_token_t	txsend;
 	char		tmp[256] = {0};
@@ -148,37 +175,37 @@ string	send_token()
 
 	txsend.from_addr = from_addr;
 	txsend.to_addr = to_addr;
-	txsend.token_name = "XTOKEN";
+	txsend.token_name = token_name;
 	txsend.amount = 1.2345;
 	txsend.native_amount = 0.0;
 	txsend.fee = 0.0;
 	sprintf(tmp, "{\"Comment\": \"Bigdata out-sourcing\"}");
 	txsend.user_data = tmp;
 
-	seriz_add(bodyszr, txsend);
+	string sbody = txsend.serialize();
 
 	txhdr.nodeid = getpid();	// 임시로 
 	txhdr.type = TX_SEND_TOKEN;
-	txhdr.data_length = bodyszr.size();
+	txhdr.data_length = sbody.size();
 	txhdr.from_addr = from_addr;
 	txhdr.txclock = xgetclock();
 	txhdr.value = count;
-	txhdr.signature = sign_message_bin(privkey, bodyszr.data(), bodyszr.size(), 
+	txhdr.signature = sign_message_bin(privkey, sbody.c_str(), sbody.size(), 
 				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
-	seriz_add(hdrszr, txhdr);
+
+	string shdr = txhdr.serialize();
 
 	printf("SEND_TOKEN:\n");
-	printf("    Serialize: hdr  length=%ld\n", hdrszr.size());
-	printf("    Serialize: body length=%ld\n", bodyszr.size());
+	printf("    Serialize: hdr  length=%ld\n", shdr.size());
+	printf("    Serialize: body length=%ld\n", sbody.size());
 	printf("    Address  : %s\n", from_addr);
-//	printf("    Message  : \n"); bodyszr.dump(10, 1);
 	printf("    Signature: %s\n", txhdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
 	int verify_check = verify_message_bin(from_addr, txhdr.signature.c_str(), 
-				bodyszr.data(), bodyszr.size(), &_cliparams.AddrHelper);
+				sbody.c_str(), sbody.size(), &_cliparams.AddrHelper);
 	printf("    verify_check=%d\n", verify_check);
 	printf("\n");
 
-	return hdrszr.getstring() + bodyszr.getstring();
+	return shdr + sbody;
 }

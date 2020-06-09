@@ -80,6 +80,15 @@ typedef struct block_info {
 		block_clock = 0;
 		block_numtx = 0;
 	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct block_info& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	size_t		block_size;		// 블록 크기 (자신을 제외한 아래 내용)
 	string		block_hash;		// 블록 해시 sha256(block_info_t + orgdataser 리스트)
 						// 아래의 내용에 대한 hash 값임 (자신은 0000으로 초기화된 상태)
@@ -106,6 +115,15 @@ typedef struct tx_header {
 		status = 0;
 		valid = -1;
 		flag = 0;
+	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_header& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
 	}
 	uint32_t	nodeid;		// node id
 	uint32_t	type;		// TX_xxx
@@ -135,6 +153,15 @@ typedef struct file_tx_header {
 		txclock = 0;
 		recvclock = 0;
 	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct file_tx_header& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	uint32_t	nodeid;		// node id
 	uint32_t	type;		// TX_xxx
 	size_t		data_length;	// sign data length
@@ -154,28 +181,64 @@ typedef struct {
 }	txdata_t;
 
 
-typedef struct {
+typedef struct txid_info_req {
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct txid_info_req& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		txid;
 }	txid_info_req_t;
 
 
-typedef struct tx_self_txid_info_reply {
-	tx_self_txid_info_reply()
+typedef struct txid_info_reply {
+	txid_info_reply()
 	{
 		ntotal = 0;
 		nfail = 0;
+	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct txid_info_reply& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
 	}
 	int		ntotal;		// 전체 요청 온 TXID 개수 
 	int		nfail;		// 존재하지 않는 TXID 개수 
 }	txid_info_reply_t;
 
 
-typedef struct {
+typedef struct tx_sign_hash {
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_sign_hash& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		sign_hash;
 }	tx_sign_hash_t;
 
 
-typedef struct {
+typedef struct tx_verify_reply {
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_verify_reply& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		txid;
 }	tx_verify_reply_t;
 
@@ -190,13 +253,22 @@ typedef struct tx_create_token {
 		start_time = 0;
 		expire_time = 0;
 	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_create_token& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
+	}
 	string		from_addr;
 	string		to_addr;
 	string		token_name;	// 256 bytes
 
-	uint64_t	quantity;	// 발행 수량
-	uint64_t	smallest_unit;	// 최소 단위
-	uint64_t	native_amount;	// native 수량
+	double		quantity;	// 발행 수량
+	double		smallest_unit;	// 최소 단위
+	double		native_amount;	// native 수량
 	double		fee;
 
 	string		access;		// "1"=1time / "##"=N번 추가 생성 가능 / "0"=계속 생성 가능
@@ -213,6 +285,15 @@ typedef struct tx_send_token {
 		amount = 0;
 		native_amount = 0;
 		fee = 0;
+	}
+	string serialize()
+	{
+		int seriz_add(xserialize& xsz, struct tx_send_token& tx);
+		xserialize szr;
+
+		seriz_add(szr, *this);
+
+		return szr.getstring();
 	}
 	string		from_addr;
 	string		to_addr;

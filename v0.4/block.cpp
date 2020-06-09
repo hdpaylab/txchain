@@ -123,8 +123,8 @@ size_t	block_gen_prepare()
 
 
 	txdata_t newtxdata;
-	xserialize hdrszr, bodyszr;
 	tx_header_t hdr;
+	string	sbody;
 
 	// 바디 serialization
 	_mempool_lock.lock();
@@ -135,7 +135,7 @@ size_t	block_gen_prepare()
 		txid_info_req_t block_txid;
 
 		block_txid.txid = txid;
-		seriz_add(bodyszr, block_txid);
+		sbody = sbody + block_txid.serialize();
 
 		logprintf(3, "    prepare BLOCK Serialize: txid=%s \n", txid.c_str());
 	}
@@ -146,23 +146,24 @@ size_t	block_gen_prepare()
 	hdr.nodeid = getpid();	// 임시로 
 	hdr.block_height = _last_block_hdr.block_height + 1;	// 다음 생성할 블록 번호 
 	hdr.type = TX_BLOCK_GEN_REQ;
-	hdr.data_length = bodyszr.size();
+	hdr.data_length = sbody.size();
 	hdr.from_addr = _keypair.walletAddr;
 	hdr.txclock = xgetclock();
-	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), bodyszr.data(), bodyszr.size(), 
+	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), sbody.c_str(), sbody.size(), 
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
-	seriz_add(hdrszr, hdr);
+
+	string shdr = hdr.serialize();
 
 	logprintf(1, "    BLOCK_PREPARE: signature: %s\n", hdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
 	int verify_check = verify_message_bin(_keypair.walletAddr.c_str(), hdr.signature.c_str(), 
-				bodyszr.data(), bodyszr.size(), &_netparams.AddrHelper);
+				sbody.c_str(), sbody.size(), &_netparams.AddrHelper);
 	logprintf(1, "    BLOCK_PREPARE: verify_check=%d\n", verify_check);
 
 	newtxdata.hdr = hdr;
-	newtxdata.hdrser = hdrszr.getstring();
-	newtxdata.bodyser = bodyszr.getstring();
+	newtxdata.hdrser = shdr;
+	newtxdata.bodyser = sbody;
 
 	// 발송 
 	_sendq.push(newtxdata);
@@ -180,8 +181,8 @@ size_t	block_gen_prepare()
 //
 void	ps_block_gen_req(txdata_t& txdata)
 {
+	xserialize bodyszr;
 	tx_header_t *hp;
-	xserialize bodyszr, newbodyszr;
 
 	hp = &txdata.hdr;
 	bodyszr.setstring(txdata.bodyser);
@@ -246,23 +247,23 @@ void	ps_block_gen_req(txdata_t& txdata)
 	reply.ntotal = _recv_txid_info.txidlist.size();
 	reply.nfail = nfail;
 
-	seriz_add(newbodyszr, reply);
+	string snewbody = reply.serialize();
 
 	// Header serialize
 	hdr.nodeid = getpid();
 	hdr.type = TX_BLOCK_GEN_REPLY;
 	hdr.status = -nfail;
-	hdr.data_length = newbodyszr.size();
+	hdr.data_length = snewbody.size();
 	hdr.from_addr = _keypair.walletAddr;
 	hdr.txclock = xgetclock();
-	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), newbodyszr.data(), newbodyszr.size(), 
+	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), snewbody.c_str(), snewbody.size(), 
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
-	xserialize hdrszr;
-	seriz_add(hdrszr, hdr);
+
+	string shdr = hdr.serialize();
 
 	newtxdata.hdr = hdr;
-	newtxdata.hdrser = hdrszr.getstring();
-	newtxdata.bodyser = newbodyszr.getstring();
+	newtxdata.hdrser = shdr;
+	newtxdata.bodyser = snewbody;
 
 	logprintf(2, "    Add to sendq(TX_BLOCK_GEN_REPLY): type=%s nfail=%d\n",
 		get_type_name(hdr.type), hdr.status);
@@ -326,27 +327,27 @@ void	send_block_gen_reply(txdata_t& txdata)
 	txdata_t newtxdata;
 	tx_header_t hdr;
 	tx_sign_hash_t cmd;
-	xserialize hdrszr, bodyszr;
 
 	// Body serialize
 	cmd.sign_hash = _self_txid_info.sign_hash;
 
-	seriz_add(bodyszr, cmd);
+	string sbody = cmd.serialize();
 
 	// Header serialize
 	hdr.nodeid = getpid();
 	hdr.block_height = _last_block_hdr.block_height + 1;	// 다음 생성할 블록 번호 
 	hdr.type = TX_BLOCK_GEN;
-	hdr.data_length = bodyszr.size();
+	hdr.data_length = sbody.size();
 	hdr.from_addr = _keypair.walletAddr;
 	hdr.txclock = xgetclock();
-	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), bodyszr.data(), bodyszr.size(), 
+	hdr.signature = sign_message_bin(_keypair.privateKey.c_str(), sbody.c_str(), sbody.size(), 
 				&_netparams.PrivHelper, &_netparams.AddrHelper);
-	seriz_add(hdrszr, hdr);
+
+	string shdr = hdr.serialize();
 
 	newtxdata.hdr = hdr;
-	newtxdata.hdrser = hdrszr.getstring();
-	newtxdata.bodyser = bodyszr.getstring();
+	newtxdata.hdrser = shdr;
+	newtxdata.bodyser = sbody;
 
 	logprintf(2, "    Add to sendq(TX_BLOCK_GEN): type=%s sign_hash=%s\n",
 		get_type_name(hdr.type), cmd.sign_hash.c_str());
@@ -397,10 +398,9 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 			fhdr.txclock = newtxdata.hdr.txclock;
 			fhdr.recvclock = newtxdata.hdr.recvclock;
 
-			xserialize hdrszr;
-			seriz_add(hdrszr, fhdr);
+			string sfhdr = fhdr.serialize();
 
-			block_txlist += hdrszr.getstring() + newtxdata.bodyser;	// 원본 serialized 데이터를 연결 
+			block_txlist += sfhdr + newtxdata.bodyser;	// 원본 serialized 데이터를 연결 
 
 			curtxdata.hdr.flag |= FLAG_TX_DELETE;	// 삭제할 것
 
@@ -450,21 +450,18 @@ void	ps_block_gen(txdata_t& txdata, block_txid_info_t& txid_info)
 	block_hdr.block_clock = xgetclock();
 	block_hdr.block_numtx = txid_info.txidlist.size();
 
-	xserialize hdrszr;
-	seriz_add(hdrszr, block_hdr);		// block_hash == null && block_size == 0
+	string shdr = block_hdr.serialize();	// block_hash == null && block_size == 0
 
-	string infohash = sha256(hdrszr.getstring());
+	string infohash = sha256(shdr);
 	block_hdr.block_hash = sha256(infohash + txhash);
 
-	hdrszr.clear();
-	seriz_add(hdrszr, block_hdr);	// block_hash == "HASH" && block_size > 0
+	shdr = block_hdr.serialize();	// block_hash == "HASH" && block_size > 0
 
-	block_hdr.block_size = hdrszr.size() + block_txlist.size();	// 전체 블록 크기 다시 계산
+	block_hdr.block_size = shdr.size() + block_txlist.size();	// 전체 블록 크기 다시 계산
 
-	hdrszr.clear();
-	seriz_add(hdrszr, block_hdr);	// block_hash == null && block_size == 0
+	shdr = block_hdr.serialize();	// block_hash == "HASH" && block_size > 0
 
-	string block_data = hdrszr.getstring() + block_txlist;
+	string block_data = shdr + block_txlist;
 
 	// 블록 파일에 저장
 	make_block(block_hdr, block_data);
@@ -694,10 +691,9 @@ int	make_genesis_block(const char *path)
 	printf("\n");
 
 	// 헤더를 serialization 
-	xserialize szr;
-	seriz_add(szr, _genesis_block_hdr);
+	string shdr = _genesis_block_hdr.serialize();
 
-	memcpy(bp, szr.getstring().c_str(), szr.size());	// 헤더 디스크 추가 
+	memcpy(bp, shdr.c_str(), shdr.size());	// 헤더 디스크 추가 
 	bp += 518;		// 5.18 ^^
 
 	// 암호 패스워드 생성 

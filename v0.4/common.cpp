@@ -169,20 +169,15 @@ keypair_t create_keypair(const uchar *privkey, size_t keylen)
 
 tx_header_t&	parse_header_body(txdata_t& txdata)
 {
-	xserialize hdrszr, bodyszr;
+	xserialize hdrszr;
 
 	hdrszr.setstring(txdata.orgdataser);	// 헤더 + 바디 모두 들어가 있음 
 	deseriz(hdrszr, txdata.hdr, 0);		// 헤더 부분 먼저 deserialize
 	txdata.hdr.recvclock = xgetclock();
 
-	string body = hdrszr.getcurstring();	// 헤더 뒷부분: body
-	bodyszr.setstring(body);		// body 부분 
+	txdata.bodyser = hdrszr.getcurstring();	// 헤더 뒷부분: body
 
-	txdata.bodyser = body;
-
-	xserialize tmpszr;
-	seriz_add(tmpszr, txdata.hdr);
-	txdata.hdrser = tmpszr.getstring();	// 헤더 serialization 교체
+	txdata.hdrser = txdata.hdr.serialize();	// 헤더 serialization 교체
 
 	return txdata.hdr;
 }

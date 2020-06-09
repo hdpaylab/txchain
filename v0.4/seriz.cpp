@@ -326,10 +326,10 @@ int	deseriz(xserialize& xsz, tx_create_token_t& tx, int dump)
 		printf("    to_addr = %s\n", tx.to_addr.c_str());
 		printf("    token_name = %s\n", tx.token_name.c_str());
 
-		printf("    quantity = %lu\n", tx.quantity);
-		printf("    smallest_unit = %lu\n", tx.smallest_unit);
-		printf("    native_amount = %lu\n", tx.native_amount);
-		printf("    fee = %.6f\n", tx.fee);
+		printf("    quantity = %.15lg\n", tx.quantity);
+		printf("    smallest_unit = %.15g\n", tx.smallest_unit);
+		printf("    native_amount = %.15g\n", tx.native_amount);
+		printf("    fee = %.15g\n", tx.fee);
 
 		printf("    access = %s\n", tx.access.c_str());
 		printf("    start_time = %ld\n", tx.start_time);
