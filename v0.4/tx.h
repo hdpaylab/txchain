@@ -575,7 +575,15 @@ int	deseriz(xserialize& xsz, tx_grant_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_create_wallet_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_create_account_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, tx_control_t& tx, int dump = 0);
+int	deseriz(const string str, txstat_t& tx, int dump = 0);
 int	deseriz(xserialize& xsz, txstat_t& tx, int dump = 0);
+
+
+#define strdeseriz(str, tx, dump)	\
+{					\
+	xserialize szr(str);		\
+	deseriz(szr, tx, dump);		\
+}
 
 
 #endif	// __TX_H

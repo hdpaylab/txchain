@@ -9,6 +9,9 @@
 double	update_balance(string token_name, string addr, double amount);
 
 
+//
+// createtoken command implementation
+//
 bool	cmd_create_token(txdata_t& txdata, tx_create_token_t& create_token)
 {
 	string key = "TOKEN::" + create_token.token_name;
@@ -37,6 +40,9 @@ bool	cmd_create_token(txdata_t& txdata, tx_create_token_t& create_token)
 }
 
 
+//
+// sendtoken command implementation
+//
 bool	cmd_send_token(txdata_t& txdata, tx_send_token_t& send_token)
 {
 	string key = "TOKEN::" + send_token.token_name;
@@ -100,6 +106,9 @@ double	update_balance(string token_name, string addr, double amount)
 }
 
 
+//
+// createchannel command implementation
+//
 bool	cmd_create_channel(txdata_t& txdata, tx_create_channel_t& create_channel)
 {
 	string key = "CHANNEL::" + create_channel.channel_name;
@@ -122,6 +131,9 @@ bool	cmd_create_channel(txdata_t& txdata, tx_create_channel_t& create_channel)
 }
 
 
+//
+// publishchannel command implementation
+//
 bool	cmd_publish_channel(txdata_t& txdata, tx_publish_channel_t& publish_channel)
 {
 	string key = "CHANNEL::" + publish_channel.channel_name;
@@ -145,6 +157,9 @@ bool	cmd_publish_channel(txdata_t& txdata, tx_publish_channel_t& publish_channel
 }
 
 
+//
+// createcontract command implementation
+//
 bool	cmd_create_contract(txdata_t& txdata, tx_create_contract_t& create_contract)
 {
 	string key = "CONTRACT::" + create_contract.contract_name;
@@ -167,6 +182,9 @@ bool	cmd_create_contract(txdata_t& txdata, tx_create_contract_t& create_contract
 }
 
 
+//
+// destroy command implementation
+//
 bool	cmd_destroy(txdata_t& txdata, tx_destroy_t& destroy)
 {
 	string key = "DESTROY::" + destroy.type_name + "::" + destroy.target_name;
@@ -178,6 +196,9 @@ bool	cmd_destroy(txdata_t& txdata, tx_destroy_t& destroy)
 }
 
 
+//
+// grant command implementation
+//
 bool	cmd_grant(txdata_t& txdata, tx_grant_t& grant)
 {
 	if (grant.isgrant)
@@ -199,6 +220,9 @@ bool	cmd_grant(txdata_t& txdata, tx_grant_t& grant)
 }
 
 
+//
+// createwallet command implementation
+//
 bool	cmd_create_wallet(txdata_t& txdata, tx_create_wallet_t& create_wallet)
 {
 	string key = "WALLET::" + create_wallet.wallet_name;
@@ -221,6 +245,9 @@ bool	cmd_create_wallet(txdata_t& txdata, tx_create_wallet_t& create_wallet)
 }
 
 
+//
+// createaccount command implementation
+//
 bool	cmd_create_account(txdata_t& txdata, tx_create_account_t& create_account)
 {
 	string key = "ACCOUNT::" + create_account.account_name;
@@ -243,12 +270,21 @@ bool	cmd_create_account(txdata_t& txdata, tx_create_account_t& create_account)
 }
 
 
+//
+// control command implementation
+//
 bool	cmd_control(txdata_t& txdata, tx_control_t& control)
 {
 	string key = "CONTROL::" + control.from_addr;
 	string data = txdata.bodyser;
+	tx_control_t ctl;
+
+	strdeseriz(data, ctl, 0);
+
 	_systemdb.put(key, data);
-	printf("CREATE_CONTROL: write to SYSTEMDB: key=%s data=%ld\n", key.c_str(), data.size());
+	printf("CREATE_CONTROL: write to SYSTEMDB: key=%s data=%ld cmd=%s %s %s %s %s %s\n",
+		key.c_str(), data.size(), ctl.command.c_str(), ctl.arg1.c_str(),
+		ctl.arg2.c_str(), ctl.arg3.c_str(), ctl.arg4.c_str(), ctl.arg5.c_str());
 
 	return true;
 }

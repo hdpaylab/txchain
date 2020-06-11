@@ -31,8 +31,8 @@ string grant(string _from_addr, string _to_addr, string channel_name, string per
 string revoke(string _from_addr, string _to_addr, string channel_name, string perm);
 string create_wallet(string from_addr, string to_addr, string wallet_name);
 string create_account(string from_addr, string account_name);
-string control(string from_addr, string cmd, string arg1 = " ", string arg2 = " ", 
-	string arg3 = " ", string arg4 = " ", string arg5 = " ");
+string control(string from_addr, string cmd, string arg1 = "", string arg2 = "", 
+	string arg3 = "", string arg4 = "", string arg5 = "");
 
 string make_header(int type, string _from_addr, string sbody);
 
@@ -160,10 +160,10 @@ int	main(int ac, char *av[])
 	reply = s_recv(requester);
 	printf("CLIENT: Send create_account(ACC): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-//	data = control(_from_addr, "listblock", "1");
-//	ret = s_send(requester, data);
-//	reply = s_recv(requester);
-//	printf("CLIENT: Send control(listblock, 1): reply=%s  ret=%d\n", reply.c_str(), ret);
+	data = control(_from_addr, "MYCOMMAND", "ARG1", "ARG2", "ARG3");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send control(MYCOMMAND, ARG1, ARG2, ARG3): reply=%s  ret=%d\n", reply.c_str(), ret);
 }
 
 

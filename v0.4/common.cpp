@@ -96,6 +96,9 @@ const char *get_type_name(int type)
         case TX_CREATE_ACCOUNT:		return "TX_CREATE_ACCOUNT"; 
         case TX_SET_ACCOUNT:		return "TX_SET_ACCOUNT"; 
         case TX_LIST_ACCOUNT:		return "TX_LIST_ACCOUNT"; 
+
+	case TX_CONTROL:		return "TX_CONTROL";
+
 	default:
 		printf("Unknown type %d\n", type); return "UNKNOWN";
 	}

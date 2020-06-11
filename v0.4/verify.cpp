@@ -57,13 +57,11 @@ void	*thread_verifier(void *info_p)
 
 int	verify_process(txdata_t& txdata)
 {
-	tx_header_t *hp;
+	tx_header_t *hp = NULL;
 	tx_send_token_t txsend;
-	xserialize hdrszr, bodyszr;
 
 
 	hp = &txdata.hdr;
-	bodyszr.setstring(txdata.bodyser);
 
 	// TX 전파하는 경우, mempool에 넣기만 함 
 	if (hp->status == STAT_ADD_TO_MEMPOOL)
@@ -75,7 +73,7 @@ int	verify_process(txdata_t& txdata)
 	{
 		tx_create_token_t create_token;
 
-		deseriz(bodyszr, create_token, 0);
+		strdeseriz(txdata.bodyser, create_token, 0);
 		string from_addr = create_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 
@@ -88,7 +86,7 @@ int	verify_process(txdata_t& txdata)
 	{
 		tx_send_token_t send_token;
 
-		deseriz(bodyszr, send_token, 0);
+		strdeseriz(txdata.bodyser, send_token, 0);
 		string from_addr = send_token.from_addr;
 
 		hp->valid = verify_message_bin(from_addr.c_str(), hp->signature.c_str(), 

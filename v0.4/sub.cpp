@@ -182,11 +182,9 @@ void	*thread_client(void *info_p)
 int	tx_verify(txdata_t& txdata)
 {
 	tx_header_t *hp;
-	xserialize bodyszr;
 	string	from_addr;
 
 	hp = &txdata.hdr;
-	bodyszr.setstring(txdata.bodyser);
 
 	// 다른 노드에서 TX 전파한 경우: 검증 후 mempool에 넣음 
 	if (hp->status == STAT_BCAST_TX)
@@ -217,13 +215,13 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_verify_reply_t verify_reply;
 
-		deseriz(bodyszr, verify_reply, 1);
+		strdeseriz(txdata.bodyser, verify_reply, 1);
 	}
 	else if (hp->type == TX_CREATE_TOKEN)
 	{
 		tx_create_token_t create_token;
 
-		deseriz(bodyszr, create_token, 0);
+		strdeseriz(txdata.bodyser, create_token, 0);
 		from_addr = create_token.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -238,7 +236,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_send_token_t send_token;
 
-		deseriz(bodyszr, send_token, 0);
+		strdeseriz(txdata.bodyser, send_token, 0);
 		from_addr = send_token.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -253,7 +251,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_create_channel_t create_channel;
 
-		deseriz(bodyszr, create_channel, 0);
+		strdeseriz(txdata.bodyser, create_channel, 0);
 		from_addr = create_channel.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -268,7 +266,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_publish_channel_t publish_channel;
 
-		deseriz(bodyszr, publish_channel, 0);
+		strdeseriz(txdata.bodyser, publish_channel, 0);
 		from_addr = publish_channel.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -283,7 +281,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_create_contract_t create_contract;
 
-		deseriz(bodyszr, create_contract, 0);
+		strdeseriz(txdata.bodyser, create_contract, 0);
 		from_addr = create_contract.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -298,7 +296,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_destroy_t destroy;
 
-		deseriz(bodyszr, destroy, 0);
+		strdeseriz(txdata.bodyser, destroy, 0);
 		from_addr = destroy.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -313,7 +311,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_grant_t grant;
 
-		deseriz(bodyszr, grant, 0);
+		strdeseriz(txdata.bodyser, grant, 0);
 		from_addr = grant.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -328,7 +326,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_create_wallet_t create_wallet;
 
-		deseriz(bodyszr, create_wallet, 0);
+		strdeseriz(txdata.bodyser, create_wallet, 0);
 		from_addr = create_wallet.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -343,7 +341,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_create_account_t create_account;
 
-		deseriz(bodyszr, create_account, 0);
+		strdeseriz(txdata.bodyser, create_account, 0);
 		from_addr = create_account.from_addr;
 
 		verify_sign(from_addr, hp, txdata);
@@ -358,7 +356,7 @@ int	tx_verify(txdata_t& txdata)
 	{
 		tx_control_t control;
 
-		deseriz(bodyszr, control, 0);
+		strdeseriz(txdata.bodyser, control, 0);
 		from_addr = control.from_addr;
 
 		verify_sign(from_addr, hp, txdata);

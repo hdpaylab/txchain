@@ -54,6 +54,7 @@ extern int _xsz_debug;
 class xserialize {
 public:
 	xserialize(size_t sz = 1 * 1024);
+	xserialize(string str);
 	~xserialize();
 
 	void rewind();

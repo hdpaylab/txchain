@@ -27,6 +27,22 @@ xserialize::xserialize(size_t sz)
 }
 
 
+// 문자열로 초기화 
+xserialize::xserialize(string str)
+{
+	bufsz_ = str.size();
+	if (bufsz_ <= 0)
+		bufsz_ = 1 * 1024;
+	inbuf_ = outbuf_ = buf_ = (char *)calloc(1, bufsz_);
+	allocated_ = 1;
+	inbufpos_ = outbufpos_ = 0;
+	assert(buf_ != NULL);
+	debug_ = 0;
+
+	setstring(str);
+}
+
+
 xserialize::~xserialize()
 {
 	memset(buf_, 0, inbufpos_);	// safe clear

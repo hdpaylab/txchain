@@ -277,12 +277,10 @@ void	ps_block_gen_req(txdata_t& txdata)
 //
 void	ps_block_gen_reply(txdata_t& txdata)
 {
-	xserialize bodyszr;
 	tx_header_t *hp = &txdata.hdr;
 	txid_info_reply_t reply;
 
-	bodyszr.setstring(txdata.bodyser);
-	deseriz(bodyszr, reply);
+	strdeseriz(txdata.bodyser, reply, 0);
 
 	logprintf(2, "    TX_BLOCK_GEN_REPLY: fail=%d\n", hp->status);
 
@@ -795,11 +793,8 @@ keypair_t load_genesis_block(const char *path)
 		}
 	}
 
-	xserialize szr;
-
 	string hdrstr(bp, 518);		// 헤더 부분 deserialize
-	szr.setstring(hdrstr);
-	deseriz(szr, _genesis_block_hdr);
+	strdeseriz(hdrstr, _genesis_block_hdr, 0);
 	bp += 518;			// 5.18 ^^
 
 	printf("Loading genesis block:\n");
