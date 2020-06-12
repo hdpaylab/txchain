@@ -425,6 +425,7 @@ typedef struct tx_grant {
 	string		to_addr;
 	int		isgrant;	// true=grant(권한 부여) false=revoke(권한 제거)
 	string		type_name;	// token / channel / contract
+	string		target_name;	// XTOKEN / CH1 ...
 	string		permission;	// token: issue, admin
 					// channel: admin, read, write,
 					// contract: admin, read

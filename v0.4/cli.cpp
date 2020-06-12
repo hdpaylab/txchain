@@ -13,25 +13,26 @@
 #include "txcommon.h"
 
 
-const char *_privkey = "LU1fSDCGy3VmpadheAu9bnR23ABdpLQF2xmUaJCMYMSv2NWZJTLm";	// _privkey
-const char *_from_addr = "HRg2gvQWX8S4zNA8wpTdzTsv4KbDSCf4Yw";	
-const char *_to_addr = "HUGUrwcFy1VC91nq7tRuZpaJqndoHDw64e";
+const char *_from_privkey = "LRU9TP4iRbnJdrtzBrmw7C1u5i2njtGKLsLShjdw73FNW4oXM2Bj";
+const char *_from_addr = "HBRPK7cf9LKTP5SyWrGbyKd1bVknSpzD8m";	
+const char *_to_privkey = "LWbMWoSpChsrdqBBBaAmDVFekskVVt9UApzLMnrcYjLawh193DtA";
+const char *_to_addr = "HP4rn9XGyYVrJtTTyqvmFpWAyEKe8tr9tQ";
 
 
 Params_type_t _cliparams;
 
 
-string	create_token(string from_addr, string to_addr, string token_name);
-string	send_token(string from_addr, string to_addr, string token_name);
-string	create_channel(string from_addr, string to_addr, string channel_name);
-string publish_channel(string from_addr, string channel_name, string key, string value);
-string create_contract(string from_addr, string to_addr, string contract_name, string program);
-string destroy(string from_addr, string type_name, string object_name, string action);
-string grant(string _from_addr, string _to_addr, string channel_name, string perm);
-string revoke(string _from_addr, string _to_addr, string channel_name, string perm);
-string create_wallet(string from_addr, string to_addr, string wallet_name);
-string create_account(string from_addr, string account_name);
-string control(string from_addr, string cmd, string arg1 = "", string arg2 = "", 
+string create_token(string from_privkey, string from_addr, string to_addr, string token_name);
+string send_token(string from_privkey, string from_addr, string to_addr, string token_name);
+string create_channel(string from_privkey, string from_addr, string to_addr, string channel_name);
+string publish_channel(string from_privkey, string from_addr, string channel_name, string key, string value);
+string create_contract(string from_privkey, string from_addr, string to_addr, string contract_name, string program);
+string destroy(string from_privkey, string from_addr, string type_name, string object_name, string action);
+string grant(string from_privkey, string from_addr, string _to_addr, string type_name, string target_name, string perm);
+string revoke(string from_privkey, string from_addr, string _to_addr, string type_name, string target_name, string perm);
+string create_wallet(string from_privkey, string from_addr, string to_addr, string wallet_name);
+string create_account(string from_privkey, string from_addr, string account_name);
+string control(string from_privkey, string from_addr, string cmd, string arg1 = "", string arg2 = "", 
 	string arg3 = "", string arg4 = "", string arg5 = "");
 
 string make_header(int type, string _from_addr, string sbody);
@@ -61,30 +62,28 @@ int	main(int ac, char *av[])
 	_cliparams = load_params("../lib/params.dat");
 
 
-	string data = create_token(_from_addr, _to_addr, "");
+	string data = create_token(_from_privkey, _from_addr, _to_addr, "");
 	bool ret = s_send(requester, data);
 	string reply = s_recv(requester);
 
 	printf("CLIENT: Create COIN: reply=%s  ret=%d\n", reply.c_str(), ret);
 
 
-	data = create_token(_from_addr, _to_addr, "XTOKEN");
+	data = create_token(_from_privkey, _from_addr, _to_addr, "XTOKEN");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 
 	printf("CLIENT: Create token XTOKEN: reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	for (int count = 0; count < 2; count++)
+	for (int count = 0; count < 3; count++)
 	{
-		string data = send_token(_from_addr, _to_addr, "");		// coin
+		string data = send_token(_to_privkey, _to_addr, _from_addr, "");		// coin
 		bool ret = s_send(requester, data);
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
-		sleepms(1);
-		if (count % 1000 == 0)
-			printf("CLIENT: Send coin %7d: reply=%s  ret=%d\n",
-				count + 1, reply.c_str(), ret);
+		printf("CLIENT: Send coin %7d: reply=%s  ret=%d\n",
+			count + 1, reply.c_str(), ret);
 #else
 		if (count % 10000 == 0)
 			printf("CLIENT: Send coin %7d: reply=%s  ret=%d\n", 
@@ -92,91 +91,106 @@ int	main(int ac, char *av[])
 #endif
 	}
 
-	for (int count = 0; count < 2; count++)
+	for (int count = 0; count < 5; count++)
 	{
-		string data = send_token(_from_addr, _to_addr, "XTOKEN");
+		string data = send_token(_to_privkey, _to_addr, _from_addr, "XTOKEN");
 		bool ret = s_send(requester, data);
 		string reply = s_recv(requester);
 
 #ifdef DEBUG
-		sleepms(1);
-		if (count % 1000 == 0)
-			printf("CLIENT: Send token %7d: reply=%s  ret=%d\n",
-				count + 1, reply.c_str(), ret);
+		printf("CLIENT: Send token %7d: reply=%s  ret=%d\n",
+			count + 1, reply.c_str(), ret);
 #else
 		if (count % 10000 == 0)
 			printf("CLIENT: Send token %7d: reply=%s  ret=%d\n", 
 				count + 1, reply.c_str(), ret);
 #endif
 	}
-
-	data = create_channel(_from_addr, _to_addr, "CH1");
+/***
+	data = create_channel(_from_privkey, _from_addr, _to_addr, "CH1");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send create_channel(CH1): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = create_channel(_from_addr, _to_addr, "CH2");
+	data = create_channel(_from_privkey, _from_addr, _to_addr, "CH2");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send create_channel(CH1): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = publish_channel(_from_addr, "CH1", "key1", "data1");
+	data = publish_channel(_to_privkey, _to_addr, "CH1", "key1", "data1");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send publish_channel(CH1): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = publish_channel(_from_addr, "CH2", "key2", "data2");
+	data = publish_channel(_to_privkey, _to_addr, "CH2", "key2", "data2");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send publish_channel(CH2): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = create_contract(_from_addr, _to_addr, "CT1", "program");
+	data = create_contract(_from_privkey, _from_addr, _to_addr, "CT1", "program");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send create_contract(CT1, program): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = destroy(_from_addr, "token", "XTOKEN", "dsttroy");
+	data = destroy(_from_privkey, _from_addr, "token", "XTOKEN", "start");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send destroy(token XTOKEN destroy): reply=%s  ret=%d\n", reply.c_str(), ret);
+***/
 
-	data = grant(_from_addr, _to_addr, "chennel", "admin,read,write");
+/***
+	data = grant(_from_privkey, _from_addr, _to_addr, "chennel", "CH1", "admin,read,write");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send grant(from, to, channel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = revoke(_from_addr, _to_addr, "chennel", "admin,read,write");
+	data = revoke(_from_privkey, _from_addr, _to_addr, "chennel", "CH1", "read,write");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send revoke(from, to, chennel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = create_wallet(_from_addr, _to_addr, "MYWALLET");
+	data = revoke(_from_privkey, _from_addr, _to_addr, "chennel", "CH1", "admin");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send revoke(from, to, chennel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
+
+	data = revoke(_from_privkey, _from_addr, _to_addr, "chennel", "CH1", "read,write");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send revoke(from, to, chennel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
+	data = grant(_from_privkey, _from_addr, _to_addr, "chennel", "CH1", "admin,read,write");
+	ret = s_send(requester, data);
+	reply = s_recv(requester);
+	printf("CLIENT: Send grant(from, to, channel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
+***/
+
+	data = create_wallet(_from_privkey, _from_addr, _to_addr, "MYWALLET");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send create_wallet(MYWALLET): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = create_account(_from_addr, "ACC");
+	data = create_account(_from_privkey, _from_addr, "ACC");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send create_account(ACC): reply=%s  ret=%d\n", reply.c_str(), ret);
 
-	data = control(_from_addr, "MYCOMMAND", "ARG1", "ARG2", "ARG3");
+	data = control(_from_privkey, _from_addr, "MYCOMMAND", "ARG1", "ARG2", "ARG3");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send control(MYCOMMAND, ARG1, ARG2, ARG3): reply=%s  ret=%d\n", reply.c_str(), ret);
 }
 
 
-string make_header(int type, string from_addr, string sbody)
+string make_header(int type, string privkey, string addr, string sbody)
 {
 	tx_header_t txhdr;
 
 	txhdr.nodeid = getpid();	// 임시로 
 	txhdr.type = type;
 	txhdr.data_length = sbody.size();
-	txhdr.from_addr = from_addr;
+	txhdr.from_addr = addr;
 	txhdr.txclock = xgetclock();
-	txhdr.signature = sign_message_bin(_privkey, sbody.c_str(), sbody.size(), 
+	txhdr.signature = sign_message_bin(privkey.c_str(), sbody.c_str(), sbody.size(), 
 				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
 
 	string shdr = txhdr.serialize();
@@ -184,11 +198,11 @@ string make_header(int type, string from_addr, string sbody)
 	printf("%s:\n", get_type_name(type));
 	printf("    Serialize: hdr  length=%ld\n", shdr.size());
 	printf("    Serialize: body length=%ld\n", sbody.size());
-	printf("    Address  : %s\n", from_addr.c_str());
+	printf("    Address  : %s\n", addr.c_str());
 	printf("    Signature: %s\n", txhdr.signature.c_str());
 
 	// 발송 전에 미리 검증 테스트 
-	int verify_check = verify_message_bin(from_addr.c_str(), txhdr.signature.c_str(), 
+	int verify_check = verify_message_bin(addr.c_str(), txhdr.signature.c_str(), 
 				sbody.c_str(), sbody.size(), &_cliparams.AddrHelper);
 	printf("    verify_check=%d\n", verify_check);
 	printf("\n");
@@ -202,7 +216,7 @@ string make_header(int type, string from_addr, string sbody)
 // - TX 기록 TXID 반환
 // - leveldb에 엔트리 생성 (코인 관련)
 //
-string	create_token(string from_addr, string to_addr, string token_name)
+string	create_token(string from_privkey, string from_addr, string to_addr, string token_name)
 {
 	static	int	count = 0;
 
@@ -224,13 +238,13 @@ string	create_token(string from_addr, string to_addr, string token_name)
 
 	string sbody = txcreate.serialize();
 
-	string shdr = make_header(TX_CREATE_TOKEN, from_addr, sbody);
+	string shdr = make_header(TX_CREATE_TOKEN, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string	send_token(string from_addr, string to_addr, string token_name)
+string	send_token(string from_privkey, string from_addr, string to_addr, string token_name)
 {
 	tx_header_t	txhdr;
 	tx_send_token_t	txsend;
@@ -247,13 +261,13 @@ string	send_token(string from_addr, string to_addr, string token_name)
 
 	string sbody = txsend.serialize();
 
-	string shdr = make_header(TX_SEND_TOKEN, from_addr, sbody);
+	string shdr = make_header(TX_SEND_TOKEN, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string	create_channel(string from_addr, string to_addr, string channel_name)
+string	create_channel(string from_privkey, string from_addr, string to_addr, string channel_name)
 {
 	tx_header_t	txhdr;
 	tx_create_channel_t	txchannel;
@@ -268,13 +282,13 @@ string	create_channel(string from_addr, string to_addr, string channel_name)
 
 	string sbody = txchannel.serialize();
 
-	string shdr = make_header(TX_CREATE_CHANNEL, from_addr, sbody);
+	string shdr = make_header(TX_CREATE_CHANNEL, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string publish_channel(string from_addr, string channel_name, string key, string value)
+string publish_channel(string from_privkey, string from_addr, string channel_name, string key, string value)
 {
 	tx_header_t	txhdr;
 	tx_publish_channel_t	txpublish;
@@ -289,13 +303,13 @@ string publish_channel(string from_addr, string channel_name, string key, string
 
 	string sbody = txpublish.serialize();
 
-	string shdr = make_header(TX_PUBLISH_CHANNEL, from_addr, sbody);
+	string shdr = make_header(TX_PUBLISH_CHANNEL, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string create_contract(string from_addr, string to_addr, string contract_name, string program)
+string create_contract(string from_privkey, string from_addr, string to_addr, string contract_name, string program)
 {
 	tx_header_t	txhdr;
 	tx_create_contract_t	txpublish;
@@ -311,13 +325,13 @@ string create_contract(string from_addr, string to_addr, string contract_name, s
 
 	string sbody = txpublish.serialize();
 
-	string shdr = make_header(TX_CREATE_CONTRACT, from_addr, sbody);
+	string shdr = make_header(TX_CREATE_CONTRACT, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string destroy(string from_addr, string type_name, string target_name, string action)
+string destroy(string from_privkey, string from_addr, string type_name, string target_name, string action)
 {
 	tx_header_t	txhdr;
 	tx_destroy_t	txdestroy;
@@ -332,13 +346,13 @@ string destroy(string from_addr, string type_name, string target_name, string ac
 
 	string sbody = txdestroy.serialize();
 
-	string shdr = make_header(TX_DESTROY, from_addr, sbody);
+	string shdr = make_header(TX_DESTROY, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string grant(string from_addr, string to_addr, string type_name, string perm)
+string grant(string from_privkey, string from_addr, string to_addr, string type_name, string target_name, string perm)
 {
 	tx_header_t	txhdr;
 	tx_grant_t	txgrant;
@@ -348,19 +362,20 @@ string grant(string from_addr, string to_addr, string type_name, string perm)
 	txgrant.to_addr = to_addr;
 	txgrant.isgrant = true;
 	txgrant.type_name = type_name;
+	txgrant.target_name = target_name;
 	txgrant.permission = perm;
 	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
 	txgrant.user_data = tmp;
 
 	string sbody = txgrant.serialize();
 
-	string shdr = make_header(TX_GRANT, from_addr, sbody);
+	string shdr = make_header(TX_GRANT, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string revoke(string from_addr, string to_addr, string type_name, string perm)
+string revoke(string from_privkey, string from_addr, string to_addr, string type_name, string target_name, string perm)
 {
 	tx_header_t	txhdr;
 	tx_grant_t	txrevoke;
@@ -370,19 +385,20 @@ string revoke(string from_addr, string to_addr, string type_name, string perm)
 	txrevoke.to_addr = to_addr;
 	txrevoke.isgrant = false;
 	txrevoke.type_name = type_name;
+	txrevoke.target_name = target_name;
 	txrevoke.permission = perm;
 	sprintf(tmp, "{\"Creator\": \"Hyundai-Pay\"}");
 	txrevoke.user_data = tmp;
 
 	string sbody = txrevoke.serialize();
 
-	string shdr = make_header(TX_REVOKE, from_addr, sbody);
+	string shdr = make_header(TX_REVOKE, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string create_wallet(string from_addr, string to_addr, string wallet_name)
+string create_wallet(string from_privkey, string from_addr, string to_addr, string wallet_name)
 {
 	tx_header_t	txhdr;
 	tx_create_wallet_t	txwallet;
@@ -397,13 +413,13 @@ string create_wallet(string from_addr, string to_addr, string wallet_name)
 
 	string sbody = txwallet.serialize();
 
-	string shdr = make_header(TX_CREATE_WALLET, from_addr, sbody);
+	string shdr = make_header(TX_CREATE_WALLET, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string create_account(string from_addr, string account_name)
+string create_account(string from_privkey, string from_addr, string account_name)
 {
 	tx_header_t	txhdr;
 	tx_create_account_t	txaccount;
@@ -417,13 +433,13 @@ string create_account(string from_addr, string account_name)
 
 	string sbody = txaccount.serialize();
 
-	string shdr = make_header(TX_CREATE_ACCOUNT, from_addr, sbody);
+	string shdr = make_header(TX_CREATE_ACCOUNT, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }
 
 
-string control(string from_addr, string cmd, string arg1, string arg2, string arg3, string arg4, string arg5)
+string control(string from_privkey, string from_addr, string cmd, string arg1, string arg2, string arg3, string arg4, string arg5)
 {
 	tx_header_t	txhdr;
 	tx_control_t	txcontrol;
@@ -441,7 +457,7 @@ string control(string from_addr, string cmd, string arg1, string arg2, string ar
 
 	string sbody = txcontrol.serialize();
 
-	string shdr = make_header(TX_CONTROL, from_addr, sbody);
+	string shdr = make_header(TX_CONTROL, from_privkey, from_addr, sbody);
 
 	return shdr + sbody;
 }

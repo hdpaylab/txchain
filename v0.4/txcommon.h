@@ -123,6 +123,7 @@ string	dump_tx(const char *title, txdata_t& txdata, bool disp = 1);
 int	logprintf(int level, ...);
 string	datestring(time_t tm = 0);
 string	clear_string(string& ss);
+vector<string> split_string(string str, string delimiter);
 
 
 // mempool.cpp
@@ -170,7 +171,7 @@ bool	cmd_create_channel(txdata_t& txdata, tx_create_channel_t& create_channel);
 bool	cmd_publish_channel(txdata_t& txdata, tx_publish_channel_t& publish_channel);
 bool	cmd_create_contract(txdata_t& txdata, tx_create_contract_t& create_contract);
 bool	cmd_destroy(txdata_t& txdata, tx_destroy_t& destroy);
-bool	cmd_grant(txdata_t& txdata, tx_grant_t& grant);
+bool	cmd_grant_revoke(txdata_t& txdata, tx_grant_t& grant);
 bool	cmd_revoke(txdata_t& txdata, tx_grant_t& revoke);
 bool	cmd_create_wallet(txdata_t& txdata, tx_create_wallet_t& create_wallet);
 bool	cmd_create_account(txdata_t& txdata, tx_create_account_t& create_account);

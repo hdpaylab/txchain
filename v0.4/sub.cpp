@@ -318,7 +318,7 @@ int	tx_verify(txdata_t& txdata)
 
 		logprintf(3, "%s\n", dump_tx("    GRANT: ", txdata, 0).c_str());
 
-		if (cmd_grant(txdata, grant) == false)
+		if (cmd_grant_revoke(txdata, grant) == false)
 			return 0;		// ERROR: DO NOT BROADCAST
 		return 1;
 	}

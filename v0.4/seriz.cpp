@@ -199,7 +199,8 @@ int	seriz_add(xserialize& xsz, tx_destroy_t& tx)
 	int ret = 0;
 
 	ret = xsz << tx.from_addr;
-	ret = xsz << tx.target_name;	// TOKEN / CHANNEL / CONTRACT
+	ret = xsz << tx.type_name;	// token, channel, contract, wallet, account
+	ret = xsz << tx.target_name;	// XTOKEN / CH1 ...
 	ret = xsz << tx.action;		// "pause" "stop" "start" "destroy"
 
 	ret = xsz << tx.user_data;
@@ -216,11 +217,12 @@ int	seriz_add(xserialize& xsz, tx_grant_t& tx)
 	ret = xsz << tx.to_addr;
 	ret = xsz << tx.isgrant;
 	ret = xsz << tx.type_name;	// token, channel, contract, wallet, account
-	ret = xsz << tx.permission;	// TOKEN: issue, admin
-					// CHANNEL: admin, read, write,
-					// CONTRACT: admin, read
-					// WALLET: admin, read, send
-					// ACCOUNT: admin, read
+	ret = xsz << tx.target_name;	// XTOKEN / CH1 ...
+	ret = xsz << tx.permission;	// token: issue, admin
+					// channel: admin, read, write,
+					// contract: admin, read
+					// wallet: admin, read, send
+					// account: admin, read
 
 	ret = xsz << tx.start_time;	// permission 시작 시간 (0이면 즉시)
 	ret = xsz << tx.expire_time;	// permission 중단 시간 (0이면 계속)
@@ -626,7 +628,8 @@ int	deseriz(xserialize& xsz, tx_destroy_t& tx, int dump)
 	int ret = 0;
 
 	ret = xsz >> tx.from_addr;
-	ret = xsz >> tx.target_name;	// TOKEN / CHANNEL / CONTRACT
+	ret = xsz >> tx.type_name;	// token, channel, contract, wallet, account
+	ret = xsz >> tx.target_name;	// XTOKEN / CH1 ...
 	ret = xsz >> tx.action;		// "pause" "stop" "start" "destroy"
 
 	ret = xsz >> tx.user_data;
@@ -634,6 +637,7 @@ int	deseriz(xserialize& xsz, tx_destroy_t& tx, int dump)
 	if (dump)
 	{
 		printf("    from_addr = %s\n", tx.from_addr.c_str());
+		printf("    type_name = %s\n", tx.type_name.c_str());
 		printf("    target_name = %s\n", tx.target_name.c_str());
 		printf("    action = %s\n", tx.action.c_str());
 
@@ -652,11 +656,12 @@ int	deseriz(xserialize& xsz, tx_grant_t& tx, int dump)
 	ret = xsz >> tx.to_addr;
 	ret = xsz >> tx.isgrant;
 	ret = xsz >> tx.type_name;	// token, channel, contract, wallet, account
-	ret = xsz >> tx.permission;	// TOKEN: issue, admin
-					// CHANNEL: admin, read, write,
-					// CONTRACT: admin, read
-					// WALLET: admin, read, send
-					// ACCOUNT: admin, read
+	ret = xsz >> tx.target_name;	// XTOKEN / CH1 ...
+	ret = xsz >> tx.permission;	// token: issue, admin
+					// channel: admin, read, write,
+					// contract: admin, read
+					// wallet: admin, read, send
+					// account: admin, read
 
 	ret = xsz >> tx.start_time;	// permission 시작 시간 (0이면 즉시)
 	ret = xsz >> tx.expire_time;	// permission 중단 시간 (0이면 계속)
@@ -667,6 +672,9 @@ int	deseriz(xserialize& xsz, tx_grant_t& tx, int dump)
 	{
 		printf("    from_addr = %s\n", tx.from_addr.c_str());
 		printf("    to_addr = %s\n", tx.to_addr.c_str());
+		printf("    isgrant = %d\n", tx.isgrant);
+		printf("    type_name = %s\n", tx.type_name.c_str());
+		printf("    target_name = %s\n", tx.target_name.c_str());
 		printf("    permission = %s\n", tx.permission.c_str());
 
 		printf("    start_time = %ld\n", tx.start_time);
