@@ -68,7 +68,7 @@ int	main(int ac, char *av[])
 
 	printf("CLIENT: Create COIN: reply=%s  ret=%d\n", reply.c_str(), ret);
 
-
+/***
 	data = create_token(_from_privkey, _from_addr, _to_addr, "XTOKEN");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
@@ -106,7 +106,7 @@ int	main(int ac, char *av[])
 				count + 1, reply.c_str(), ret);
 #endif
 	}
-/***
+
 	data = create_channel(_from_privkey, _from_addr, _to_addr, "CH1");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
@@ -136,9 +136,7 @@ int	main(int ac, char *av[])
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send destroy(token XTOKEN destroy): reply=%s  ret=%d\n", reply.c_str(), ret);
-***/
 
-/***
 	data = grant(_from_privkey, _from_addr, _to_addr, "chennel", "CH1", "admin,read,write");
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
@@ -162,7 +160,6 @@ int	main(int ac, char *av[])
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send grant(from, to, channel, \"admin,read,write\"): reply=%s  ret=%d\n", reply.c_str(), ret);
-***/
 
 	data = create_wallet(_from_privkey, _from_addr, _to_addr, "MYWALLET");
 	ret = s_send(requester, data);
@@ -178,6 +175,7 @@ int	main(int ac, char *av[])
 	ret = s_send(requester, data);
 	reply = s_recv(requester);
 	printf("CLIENT: Send control(MYCOMMAND, ARG1, ARG2, ARG3): reply=%s  ret=%d\n", reply.c_str(), ret);
+***/
 }
 
 
@@ -190,10 +188,10 @@ string make_header(int type, string privkey, string addr, string sbody)
 	txhdr.data_length = sbody.size();
 	txhdr.from_addr = addr;
 	txhdr.txclock = xgetclock();
-	txhdr.signature = sign_message_bin(privkey.c_str(), sbody.c_str(), sbody.size(), 
-				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
 
 	string shdr = txhdr.serialize();
+	txhdr.signature = sign_message_bin(privkey.c_str(), sbody.c_str(), sbody.size(), 
+				&_cliparams.PrivHelper, &_cliparams.AddrHelper);
 
 	printf("%s:\n", get_type_name(type));
 	printf("    Serialize: hdr  length=%ld\n", shdr.size());

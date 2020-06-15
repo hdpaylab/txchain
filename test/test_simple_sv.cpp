@@ -1,6 +1,6 @@
 //
-// Sign: 2500 / sec
-// Verify: 3300 / sec
+// Sign: 2500 / sec @i9900
+// Verify: 3300 / sec @i9900
 //
 
 #include <string.h>
@@ -48,7 +48,7 @@ void SignAndVerifyTest()
 	static unsigned char   sig[256];                   // Must greater than ECDSA_size(ecKey)
 	static unsigned int    lenSig;
 	static int first = 1;
-	int             iRet;
+	int             ret;
 
 
 	// Generate Hash for signing
@@ -65,14 +65,48 @@ void SignAndVerifyTest()
 		first = 0;
 		ECDSA_sign(0, msg, SHA256_DIGEST_LENGTH, sig, &lenSig, ecKey);
 	}
-//	iRet = ECDSA_verify(0, msg, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
-//	printf("Before Fake : Verify Result is %d \n", iRet);
+//	ret = ECDSA_verify(0, msg, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
+//	printf("Before Fake : Verify Result is %d \n", ret);
 
 	// Change Message Digest.
 //	msg[0]++;
-//	iRet = ECDSA_verify(0, msg, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
-//	printf("After Fake  : Verify Result is %d \n", iRet);
+//	ret = ECDSA_verify(0, msg, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
+//	printf("After Fake  : Verify Result is %d \n", ret);
 //	puts("\n------------------------------\n");
+}
+
+
+void SignTest()
+{
+	unsigned char   msg[300] = {0};
+	static unsigned char   sig[256] = {0};	// Must greater than ECDSA_size(ecKey)
+	static unsigned int    lenSig = 0;
+	int             ret = 0;
+
+	for (int nn = 0; nn < 10000; nn++)
+	{
+		memset(sig, 0, sizeof(sig));
+		ret = ECDSA_sign(0, msg, SHA256_DIGEST_LENGTH, sig, &lenSig, ecKey);
+	}
+	printf("END sign...\n");
+}
+
+
+void VerifyTest()
+{
+	unsigned char   msg[300] = {0};
+	static unsigned char   sig[256];                   // Must greater than ECDSA_size(ecKey)
+	static unsigned int    lenSig;
+	int             ret;
+
+
+	ECDSA_sign(0, msg, SHA256_DIGEST_LENGTH, sig, &lenSig, ecKey);
+
+	for (int nn = 0; nn < 10000; nn++)
+	{
+		ret = ECDSA_verify(0, msg, SHA256_DIGEST_LENGTH, sig, lenSig, ecKey);
+	}
+	printf("END verify...\n");
 }
 
 
@@ -83,10 +117,14 @@ int main()
 
 	KeyGenInit();
 
-	for (int ii = 0; ii < 10000; ii++)
 	{
-		SignAndVerifyTest();
+	//	SignTest();
+		VerifyTest();
 	}
+
+//	SignAndVerifyTest();
+
+	KeyGenFinal();
 
 	ERR_print_errors_fp(stderr);
 

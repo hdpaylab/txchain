@@ -18,7 +18,7 @@ all: bigint_ex keypair keypair_ex leveldb_test leveldbex \
 	zmq_cli zmq_msvr zmq_svr test_params \
 	test_aes test_base58 test_base64 test_hashlib test_md5 \
 	test_rc4 test_sha1 test_sha256 test_sha512 \
-	test_cssmap test_array test_simple_sv
+	test_cssmap test_array test_simple_sv sign_verify
 
 bigint_ex: bigint_ex.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) -o $@ bigint_ex.cpp $(TXLIB) $(LIBS) $(SDKLIBS) 
@@ -92,6 +92,9 @@ test_array: test_array.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) $@.cpp -o $@ $(TXLIB)
 
 test_simple_sv: test_simple_sv.cpp $(TXLIB)
+	$(CC) $(CPPFLAGS) $@.cpp -o $@ $(TXLIB)
+
+sign_verify: sign_verify.cpp $(TXLIB)
 	$(CC) $(CPPFLAGS) $@.cpp -o $@ $(TXLIB)
 
 
