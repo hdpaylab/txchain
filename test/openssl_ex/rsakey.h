@@ -17,26 +17,26 @@
 using namespace std;
 
 
-class Key
+class rsakey
 {
 public:
-	Key()
+	rsakey()
 	{
-		rsa = privateKey = publicKey = NULL;
+		rsa = privkey = pubkey = NULL;
 	};
 
 	RSA *rsa;
-	RSA *privateKey;
-	RSA *publicKey;
+	RSA *privkey;
+	RSA *pubkey;
 
-	Key(string publicKeyFile, string privateKeyFile);
-	~Key();
-	void generateNewKey(string publicKeyFile, string privateKeyFile);
+	rsakey(string pubkeyFile, string privkeyFile);
+	~rsakey();
+	void generateNewKey(string pubkeyFile, string privkeyFile);
 	void reload();
 
 private:
-	string priName;
-	string pubName;
+	string privname;
+	string pubname;
 };
 
 

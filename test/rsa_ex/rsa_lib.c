@@ -18,7 +18,8 @@ void print_n(const void *_data, size_t len)
 	}
 }
 
-RSA *createRSA(unsigned char * key,int public)
+
+RSA	*createRSA(unsigned char * key,int public)
 {
 	RSA *rsa= NULL;
 	BIO *keybio ;
@@ -55,7 +56,7 @@ int public_encrypt(unsigned char * data,int data_len,unsigned char * key, unsign
 	return result;
 }
 
-// X86 only: CPU clock 쎌댁ㅺ린..
+// X86 only: get CPU clock 
 unsigned long long rdtsc(void)
 {
 	unsigned int low, high;
@@ -77,15 +78,15 @@ double	xgetclock()
 
 
 //
-// 踰쇰 1諛댄몄踰濡 梨
-// x86 怨댁 cpu瑜ъ⑺ 寃쎌 clock怨micro-second 媛 XOR   
-//  1諛댄몄梨 ｌ. 64諛댄= 10^135쇰 踰濡 異⑸//
+// 甕걔1獄紐甕걔嚥≤ 筌◈
+// x86 ㉱ cpu봔 野 clockicro-second 揶 XOR   
+//  1獄紐筌◈ 節. 64獄= 10^135甕걔嚥≤ 겸/
 uint8_t	*getrandom(uint8_t *buf, int buflen)
 {
 	if (buf == NULL || buflen <= 0)
 		return NULL;
 
-	// system  踰 ..
+	// system  甕걔 ..
 	char randbuf[128] = {0};
 	int bytes = 0, fd = open("/dev/urandom", O_RDONLY);
 	if (fd > 0)
@@ -95,17 +96,17 @@ uint8_t	*getrandom(uint8_t *buf, int buflen)
 		close(fd);
 	}
 
-	// Random number濡 쇱대 	int     ii = 0, clock_enable = 0;
+	// Random number嚥≤ 굿 	int     ii = 0, clock_enable = 0;
 	unsigned long long clk = 0;
 	struct timeval tv = {0};
 
-	// 踰 珥湲고. srand()濡 rand() ⑥ 珥湲고 
+	// 甕걔 Β疫꿸. srand()嚥≤ rand() Β Β疫꿸 
 	gettimeofday(&tv, NULL);
 	srand(tv.tv_usec ^ rand());
 
 	int clock_enable = 0;
 
-	// x86 CPU clock 吏硫ㅼ 珥湲고..
+	// x86 CPU clock 筌筌셋 Β疫꿸..
 	clk = rdtsc();
 	if (clk > 0)
 	{
@@ -115,10 +116,10 @@ uint8_t	*getrandom(uint8_t *buf, int buflen)
 
 	int ii = 0;
 
-	//  諛댄몄踰 (clock ㅻⅤ寃 ㅻ濡 痢遺媛)
+	//  獄紐甕걔 (clock 삘ㅵ 삥에 筌ι봔揶)
 	for (ii = 0; ii < buflen; ii++)
 	{
-		gettimeofday(&tv, NULL);	// 留댄щ珥 ъ
+		gettimeofday(&tv, NULL);	// 筌Β 
 		if (clock_enable > 0)
 		{
 			clk = rdtsc();
@@ -133,7 +134,7 @@ uint8_t	*getrandom(uint8_t *buf, int buflen)
 	}
 	printf("\n");
 
-	// LITTLE/BIG endian 泥由 (RAND쇱  ?)
+	// LITTLE/BIG endian 筌Ｂ굿 (RAND굿  ?)
 	printf("RAND="); print_n(buf, buflen); printf("\n");
 	printf("\n");
 

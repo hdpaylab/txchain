@@ -14,7 +14,7 @@ int	main(int ac, char *av[])
 	unsigned char sign_text[256] = {0};
 	unsigned char decrypt_text[256] = {0};
 	unsigned char data[256] = 
-		"댁 RSA媛  吏 ㅽ명怨 듬 명媛  댁.";
+		"Test string for encryption/decryption. 암호화가 잘 되는지 테스트하기 위한 문자열.";
 
 	unsigned int num = 0;
 

@@ -1,5 +1,5 @@
 //
-//  Key.cpp
+//  rsakey.cpp
 //  openssl
 //
 //  Created by Xinbao Dong on 15/4/4.
@@ -10,35 +10,35 @@
 #define LENGTH 1024
 
 
-#include "key.h"
+#include "rsakey.h"
 #include <iostream>
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
 
 
-Key::Key(string publicKeyFile, string privateKeyFile)
+rsakey::rsakey(string pubkeyFile, string privkeyFile)
 {
 	rsa = NULL;
-	privateKey = NULL;
-	publicKey = NULL;
-	priName = privateKeyFile;
-	pubName = publicKeyFile;
+	privkey = NULL;
+	pubkey = NULL;
+	privname = privkeyFile;
+	pubname = pubkeyFile;
 
-	if (!privateKeyFile.empty())
+	if (!privkeyFile.empty())
 	{
-		FILE *fp = fopen(privateKeyFile.c_str(), "r");
+		FILE *fp = fopen(privkeyFile.c_str(), "r");
 
 		if (fp == NULL)
 		{
 			cout << "Private Key File Error!" << endl;
 			return;
 		}
-		privateKey = PEM_read_RSAPrivateKey(fp, NULL, NULL, NULL);
+		privkey = PEM_read_RSAPrivateKey(fp, NULL, NULL, NULL);
 		fclose(fp);
 	}
-	if (!publicKeyFile.empty())
+	if (!pubkeyFile.empty())
 	{
-		FILE *fp = fopen(publicKeyFile.c_str(), "r");
+		FILE *fp = fopen(pubkeyFile.c_str(), "r");
 
 		if (fp == NULL)
 		{
@@ -46,46 +46,46 @@ Key::Key(string publicKeyFile, string privateKeyFile)
 			return;
 		}
 //		rsa = PEM_read_RSA_PUBKEY(fp, NULL, NULL, NULL);
-		publicKey = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
+		pubkey = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
 		fclose(fp);
 		return;
 	}
 	cout << "Error Open Private Key or Public Key!" << endl;
 }
 
-void Key::reload()
+void rsakey::reload()
 {
-	if (!priName.empty())
+	if (!privname.empty())
 	{
-		FILE *fp = fopen(priName.c_str(), "r");
+		FILE *fp = fopen(privname.c_str(), "r");
 
 		if (fp == NULL)
 		{
 			cout << "Private Key File Error!" << endl;
 			return;
 		}
-		privateKey = PEM_read_RSAPrivateKey(fp, NULL, NULL, NULL);
+		privkey = PEM_read_RSAPrivateKey(fp, NULL, NULL, NULL);
 		fclose(fp);
 	}
-	if (!pubName.empty())
+	if (!pubname.empty())
 	{
-		FILE *fp = fopen(pubName.c_str(), "r");
+		FILE *fp = fopen(pubname.c_str(), "r");
 
 		if (fp == NULL)
 		{
 			cout << "Public Key File Error!" << endl;
 			return;
 		}
-		publicKey = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
+		pubkey = PEM_read_RSAPublicKey(fp, NULL, NULL, NULL);
 		fclose(fp);
 		return;
 	}
 }
 
-void Key::generateNewKey(string publicKeyFile, string privateKeyFile)
+void rsakey::generateNewKey(string pubkeyFile, string privkeyFile)
 {
-	priName = privateKeyFile;
-	pubName = publicKeyFile;
+	privname = privkeyFile;
+	pubname = pubkeyFile;
 
 	RSA *rsa = RSA_generate_key(LENGTH, RSA_F4, NULL, NULL);
 
@@ -95,14 +95,14 @@ void Key::generateNewKey(string publicKeyFile, string privateKeyFile)
 		return;
 	}
 
-	BIO *priBio = BIO_new_file(privateKeyFile.c_str(), "w");
+	BIO *priBio = BIO_new_file(privkeyFile.c_str(), "w");
 
 	if (PEM_write_bio_RSAPrivateKey(priBio, rsa, NULL, NULL, 0, NULL, NULL) <= 0)
 	{
 		cout << "Save to private key file error!" << endl;
 	}
 
-	BIO *pubBio = BIO_new_file(publicKeyFile.c_str(), "w");
+	BIO *pubBio = BIO_new_file(pubkeyFile.c_str(), "w");
 
 	if (PEM_write_bio_RSAPublicKey(pubBio, rsa) <= 0)
 	{
@@ -112,13 +112,13 @@ void Key::generateNewKey(string publicKeyFile, string privateKeyFile)
 	BIO_free(priBio);
 	BIO_free(pubBio);
 
-//    FILE *priFile = fopen(privateKeyFile.c_str(), "w+");
+//    FILE *priFile = fopen(privkeyFile.c_str(), "w+");
 //    if (PEM_write_RSAPrivateKey(priFile, rsa, EVP_des_ede3_ofb(), NULL, NULL, NULL, NULL) <= 0) {
 //        cout << "Save to private key file error!" << endl;
 //    }
 //    fclose(priFile);
 //    
-//    FILE *pubFile = fopen(publicKeyFile.c_str(), "w+");
+//    FILE *pubFile = fopen(pubkeyFile.c_str(), "w+");
 //    if (PEM_write_RSA_PUBKEY(pubFile, rsa) <= 0) {
 //        cout << "Save to public key file error!" << endl;
 //    }
@@ -129,7 +129,7 @@ void Key::generateNewKey(string publicKeyFile, string privateKeyFile)
 //        cout << "BIO_new Error!" << endl;
 //        return ;
 //    }
-//    if (BIO_write_filename(bp, (void *)publicKeyFile.c_str()) <= 0) {
+//    if (BIO_write_filename(bp, (void *)pubkeyFile.c_str()) <= 0) {
 //        cout << "BIO_write_filename Error!" << endl;
 //        return ;
 //    }
@@ -139,7 +139,7 @@ void Key::generateNewKey(string publicKeyFile, string privateKeyFile)
 //    }
 //    cout << "Created Public Key" << endl;
 //    
-//    bp = BIO_new_file(privateKeyFile.c_str(), "w+");
+//    bp = BIO_new_file(privkeyFile.c_str(), "w+");
 //    if(NULL == bp) {
 //        cout << "BIO_new_file error(private key)!" << endl;
 //        return ;
@@ -151,16 +151,16 @@ void Key::generateNewKey(string publicKeyFile, string privateKeyFile)
 //
 //    BIO_free_all(bp);
 	this->rsa = rsa;
-	privateKey = RSAPrivateKey_dup(rsa);
-	publicKey = RSAPublicKey_dup(rsa);
+	privkey = RSAPrivateKey_dup(rsa);
+	pubkey = RSAPublicKey_dup(rsa);
 }
 
-Key::~Key()
+rsakey::~rsakey()
 {
 	if (rsa != NULL)
 		RSA_free(rsa);
-	if (privateKey != NULL)
-		RSA_free(privateKey);
-	if (publicKey != NULL)
-		RSA_free(publicKey);
+	if (privkey != NULL)
+		RSA_free(privkey);
+	if (pubkey != NULL)
+		RSA_free(pubkey);
 }

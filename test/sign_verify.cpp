@@ -38,11 +38,11 @@ int	main(int ac, char *av[])
 		}
 
 		// 발송 전에 미리 검증 테스트 
-		int verify_check = verify_message_bin(_addr, signature.c_str(), 
-					body, sizeof(body), &_netparams.AddrHelper);
+	//	int verify_check = verify_message_bin(_addr, signature.c_str(), 
+	//				body, sizeof(body), &_netparams.AddrHelper);
 		if (nn % 10000 == 0)
 		{
-			printf("    nn=%d verify_check=%d\n", nn, verify_check);
+	//		printf("    nn=%d verify_check=%d\n", nn, verify_check);
 		}
 	}
 

@@ -5,11 +5,9 @@
 #include <string.h>
 #include <unistd.h>
 
+
 typedef unsigned char uint8_t;
 
-uint8_t	*getrandom(uint8_t *buf, int buflen);
-unsigned long long rdtsc(void);
-double	xgetclock();
 
 void print_n(const void *_data, size_t len);
 
